@@ -88,14 +88,12 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
     window.addEventListener("keyup", keyup, true);
 
     const mousemove = (e: MouseEvent) => {
-        e.preventDefault();
         mousePos[0] = e.x;
         mousePos[1] = e.y;
     };
     window.addEventListener("mousedown", mousemove, true);
 
     const mousedown = (e: MouseEvent) => {
-        e.preventDefault();
         if (!level) return;
         if (e.button === 0) level.input("lmb", true);
         if (e.button === 2) level.input("rmb", true);
