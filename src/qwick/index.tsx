@@ -75,24 +75,24 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
     addEventListener("resize", resize);
 
     const contextmenu = (e: MouseEvent) => e.preventDefault();
-    document.addEventListener("contextmenu", contextmenu);
+    window.addEventListener("contextmenu", contextmenu);
 
     const keydown = (e: KeyboardEvent) => {
         if (e.code === "Space") fastForward = true;
     };
-    document.addEventListener("keydown", keydown);
+    window.addEventListener("keydown", keydown);
 
     const keyup = (e: KeyboardEvent) => {
         if (e.code === "Space") fastForward = false;
     };
-    document.addEventListener("keyup", keyup);
+    window.addEventListener("keyup", keyup);
 
     const mousemove = (e: MouseEvent) => {
         e.preventDefault();
         mousePos[0] = e.x;
         mousePos[1] = e.y;
     };
-    document.addEventListener("mousedown", mousemove);
+    window.addEventListener("mousedown", mousemove);
 
     const mousedown = (e: MouseEvent) => {
         e.preventDefault();
@@ -100,7 +100,7 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
         if (e.button === 0) level.input("lmb", true);
         if (e.button === 2) level.input("rmb", true);
     };
-    document.addEventListener("mousedown", mousedown);
+    window.addEventListener("mousedown", mousedown);
 
     const t = setInterval(() => {
         if (!level) return;
@@ -113,12 +113,12 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
     }, 1000 / 60);
 
     return () => {
-        document.removeEventListener("contextmenu", contextmenu);
-        document.removeEventListener("mousemove", mousemove);
-        document.removeEventListener("mousedown", mousedown);
-        document.removeEventListener("keydown", keydown);
-        document.removeEventListener("keyup", keyup);
-        document.removeEventListener("resize", resize);
+        window.removeEventListener("contextmenu", contextmenu);
+        window.removeEventListener("mousemove", mousemove);
+        window.removeEventListener("mousedown", mousedown);
+        window.removeEventListener("keydown", keydown);
+        window.removeEventListener("keyup", keyup);
+        window.removeEventListener("resize", resize);
         clearInterval(t);
         ctx = null;
     };
