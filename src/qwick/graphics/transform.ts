@@ -16,8 +16,8 @@ export const rotate = (ctx: CanvasRenderingContext2D, v: number): void => {
     ctx.rotate(v);
 };
 
-export const scale = (ctx: CanvasRenderingContext2D, v: vec2.Vec2): void => {
-    ctx.scale(v[0], v[1]);
+export const scale = (ctx: CanvasRenderingContext2D, s: number): void => {
+    ctx.scale(s, s);
 };
 
 export const at = (ctx: CanvasRenderingContext2D, pos: vec2.Vec2, func: () => void) => {

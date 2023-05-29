@@ -13,7 +13,7 @@ const createGraphics = (ctx: CanvasRenderingContext2D) => ({
     at: (pos: vec2.Vec2, func: () => void): void => transform.at(ctx, pos, func),
     translate: (v: vec2.Vec2): void => transform.translate(ctx, v),
     rotate: (v: number): void => transform.rotate(ctx, v),
-    scale: (v: vec2.Vec2): void => transform.scale(ctx, v),
+    scale: (v: number): void => transform.scale(ctx, v),
     line: (a: vec2.Vec2, b: vec2.Vec2): void => draw.line(ctx, a, b),
     lineStrip: (a: vec2.Vec2[]): void => draw.lineStrip(ctx, a),
     lineLoop: (a: vec2.Vec2[]): void => draw.lineLoop(ctx, a),

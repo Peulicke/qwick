@@ -94,7 +94,7 @@ export const circle = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number): 
     ctx.beginPath();
     transform.push(ctx);
     transform.translate(ctx, [v[0], v[1]]);
-    transform.scale(ctx, [r, r]);
+    transform.scale(ctx, r);
     ctx.moveTo(1, 0);
     ctx.arc(0, 0, 1, 0, 2 * Math.PI);
     transform.pop(ctx);
@@ -114,7 +114,7 @@ export const text = (ctx: CanvasRenderingContext2D, t: string, size: number): vo
     transform.push(ctx);
     ctx.font = "100px Arial";
     ctx.textAlign = "center";
-    transform.scale(ctx, [0.01 * size, 0.01 * size]);
+    transform.scale(ctx, 0.01 * size);
     transform.translate(ctx, [0, 25]);
     ctx.fillText(t, 0, 0);
     transform.pop(ctx);
