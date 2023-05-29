@@ -15,11 +15,13 @@ const loadGame = (qwick: Qwick) => {
                     console.log("update");
                 },
                 draw: (graphics: Graphics) => {
-                    graphics.color("red");
-                    graphics.at([-0.25 * graphics.getAspectRatio(), 0], () => {
+                    graphics.context(() => {
+                        graphics.color("red");
+                        graphics.translate([-0.25 * graphics.getAspectRatio(), 0]);
                         graphics.text("test text", 0.1);
                     });
-                    graphics.at([0.25 * graphics.getAspectRatio(), 0], () => {
+                    graphics.context(() => {
+                        graphics.translate([0.25 * graphics.getAspectRatio(), 0]);
                         graphics.scale(0.1);
                         graphics.square();
                     });

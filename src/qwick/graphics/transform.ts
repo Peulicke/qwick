@@ -20,9 +20,8 @@ export const scale = (ctx: CanvasRenderingContext2D, s: number): void => {
     ctx.scale(s, s);
 };
 
-export const at = (ctx: CanvasRenderingContext2D, pos: vec2.Vec2, func: () => void) => {
+export const context = (ctx: CanvasRenderingContext2D, func: () => void) => {
     push(ctx);
-    translate(ctx, pos);
     func();
     pop(ctx);
 };

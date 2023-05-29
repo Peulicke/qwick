@@ -10,7 +10,7 @@ const createGraphics = (ctx: CanvasRenderingContext2D) => ({
     color: (color: string): void => utils.setColor(ctx, color),
     push: (): void => transform.push(ctx),
     pop: (): void => transform.pop(ctx),
-    at: (pos: vec2.Vec2, func: () => void): void => transform.at(ctx, pos, func),
+    context: (func: () => void): void => transform.context(ctx, func),
     translate: (v: vec2.Vec2): void => transform.translate(ctx, v),
     rotate: (v: number): void => transform.rotate(ctx, v),
     scale: (v: number): void => transform.scale(ctx, v),
