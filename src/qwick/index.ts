@@ -17,8 +17,6 @@ export type Game<LevelData> = {
     resize: () => void;
 };
 
-let ctx: CanvasRenderingContext2D | null = null;
-
 export type Qwick = {
     width: number;
     height: number;
@@ -28,7 +26,15 @@ export type Qwick = {
     levelLost: () => void;
 };
 
-const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
+export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.background = "#3056bf";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
     const mousePos: [number, number] = [0, 0];
     let levelNum = 0;
     let level: Level | null = null;
@@ -43,7 +49,7 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
     };
 
     qwick.drawImage = (image: HTMLImageElement, pos: [number, number]) => {
-        if (ctx) ctx.drawImage(image, pos[0], pos[1]);
+        ctx.drawImage(image, pos[0], pos[1]);
     };
 
     qwick.getMousePos = () => mousePos;
@@ -65,6 +71,8 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
     let fastForward = false;
 
     const resize = () => {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
         qwick.width = innerWidth;
         qwick.height = innerHeight;
         game.resize();
@@ -102,12 +110,12 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
         for (let i = 0; i < (fastForward ? 10 : 1); ++i) {
             level.update();
         }
-        if (!ctx) return;
         ctx.clearRect(0, 0, innerWidth, innerHeight);
         level.draw();
     }, 1000 / 60);
 
     return () => {
+        document.body.removeChild(canvas);
         window.removeEventListener("contextmenu", contextmenu, true);
         window.removeEventListener("mousemove", mousemove, true);
         window.removeEventListener("mousedown", mousedown, true);
@@ -115,17 +123,5 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
         window.removeEventListener("keyup", keyup, true);
         window.removeEventListener("resize", resize, true);
         clearInterval(t);
-        ctx = null;
     };
-};
-
-export default <LevelData,>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvas.style.background = "#3056bf";
-    document.body.appendChild(canvas);
-    ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    return createGame(loadGame);
 };
