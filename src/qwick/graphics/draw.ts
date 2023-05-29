@@ -70,11 +70,11 @@ export const lineStrips = (ctx: CanvasRenderingContext2D, a: vec2.Vec2[][]): voi
 
 export const square = (ctx: CanvasRenderingContext2D): void => {
     lineStrip(ctx, [
-        [1, 1],
-        [-1, 1],
-        [-1, -1],
-        [1, -1],
-        [1, 1]
+        [0.5, 0.5],
+        [-0.5, 0.5],
+        [-0.5, -0.5],
+        [0.5, -0.5],
+        [0.5, 0.5]
     ]);
 };
 
