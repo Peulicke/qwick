@@ -20,7 +20,7 @@ const loadGame = (qwick: Qwick) => {
             }
         },
         resize: () => {
-            console.log("resize");
+            console.log("resize:", qwick.width, qwick.height);
         }
     }
 }

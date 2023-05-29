@@ -1,10 +1,7 @@
-import React, { useRef, useEffect } from "react";
-import ReactDOM from "react-dom/client";
 import "./index.css";
-import { useWindowSize } from "@react-hook/window-size";
 
-export { default as random } from "./random"
-export * as vec3 from "./vec3"
+export { default as random } from "./random";
+export * as vec3 from "./vec3";
 
 export type InputType = "lmb" | "rmb";
 
@@ -12,13 +9,13 @@ export type Level = {
     update: () => void;
     draw: () => void;
     input: (type: InputType, down: boolean) => void;
-}
+};
 
 export type Game<LevelData> = {
     levels: LevelData[];
     loadLevel: (ld: LevelData) => Level;
     resize: () => void;
-}
+};
 
 let ctx: CanvasRenderingContext2D | null = null;
 
@@ -29,7 +26,7 @@ export type Qwick = {
     getMousePos: () => [number, number];
     levelCompleted: () => void;
     levelLost: () => void;
-}
+};
 
 const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
     const mousePos: [number, number] = [0, 0];
@@ -39,15 +36,15 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
     const qwick: Qwick = {
         width: innerWidth,
         height: innerHeight,
-        drawImage: () => { },
+        drawImage: () => {},
         getMousePos: () => [0, 0],
-        levelCompleted: () => { },
-        levelLost: () => { }
-    }
+        levelCompleted: () => {},
+        levelLost: () => {}
+    };
 
     qwick.drawImage = (image: HTMLImageElement, pos: [number, number]) => {
         if (ctx) ctx.drawImage(image, pos[0], pos[1]);
-    }
+    };
 
     qwick.getMousePos = () => mousePos;
 
@@ -57,12 +54,12 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
         if (!game) return;
         ++levelNum;
         level = game.loadLevel(game.levels[levelNum]);
-    }
+    };
 
     qwick.levelLost = () => {
         if (!game) return;
         level = game.loadLevel(game.levels[levelNum]);
-    }
+    };
 
     level = game.loadLevel(game.levels[levelNum]);
     let fastForward = false;
@@ -123,26 +120,12 @@ const createGame = <LevelData,>(loadGame: (q: Qwick) => Game<LevelData>) => {
 };
 
 export default <LevelData,>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
-    const App = () => {
-        const ref = useRef<HTMLCanvasElement>(null);
-        const [width, height] = useWindowSize();
-
-        useEffect(() => {
-            if (!ref.current) return;
-            ctx = ref.current.getContext("2d");
-            if (!ctx) return;
-            return createGame(loadGame);
-        }, [ref]);
-
-        return <canvas ref={ref} width={width} height={height} style={{ background: "#3056bf" }} />;
-    };
-
-    const root = ReactDOM.createRoot(
-        document.getElementById("root") as HTMLElement
-    );
-    root.render(
-        <React.StrictMode>
-            <App />
-        </React.StrictMode>
-    );
-}
+    const canvas = document.createElement("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.background = "#3056bf";
+    document.body.appendChild(canvas);
+    ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    return createGame(loadGame);
+};

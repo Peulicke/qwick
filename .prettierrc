@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSave": true,
+    "tabWidth": 4,
+    "useTabs": false,
+    "jsxBracketSameLine": true,
+    "trailingComma": "none",
+    "printWidth": 120,
+    "arrowParens": "avoid"
+}
