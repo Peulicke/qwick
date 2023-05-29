@@ -1,4 +1,4 @@
-import createQwick, { Qwick, InputType } from "./qwick"
+import createQwick, { Qwick, InputType, Graphics } from "./qwick";
 
 type LevelData = string;
 
@@ -14,15 +14,21 @@ const loadGame = (qwick: Qwick) => {
                 update: () => {
                     console.log("update");
                 },
-                draw: () => {
+                draw: (graphics: Graphics) => {
                     console.log("draw");
+                    graphics.arrow([0, qwick.height], [100, -100]);
+                    graphics.push();
+                    graphics.translate([100, 100]);
+                    graphics.scale([50, 50]);
+                    graphics.text("test text");
+                    graphics.pop();
                 }
-            }
+            };
         },
         resize: () => {
             console.log("resize:", qwick.width, qwick.height);
         }
-    }
-}
+    };
+};
 
 createQwick(loadGame);

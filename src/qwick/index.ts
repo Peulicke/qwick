@@ -1,13 +1,15 @@
+import createGraphics, { Graphics } from "./graphics";
 import "./index.css";
 
 export { default as random } from "./random";
 export * as vec3 from "./vec3";
+export type { Graphics } from "./graphics";
 
 export type InputType = "lmb" | "rmb";
 
 export type Level = {
     update: () => void;
-    draw: () => void;
+    draw: (graphics: Graphics) => void;
     input: (type: InputType, down: boolean) => void;
 };
 
@@ -47,6 +49,7 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         levelCompleted: () => {},
         levelLost: () => {}
     };
+    const graphics = createGraphics(ctx);
 
     qwick.drawImage = (image: HTMLImageElement, pos: [number, number]) => {
         ctx.drawImage(image, pos[0], pos[1]);
@@ -111,7 +114,7 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
             level.update();
         }
         ctx.clearRect(0, 0, innerWidth, innerHeight);
-        level.draw();
+        level.draw(graphics);
     }, 1000 / 60);
 
     return () => {
