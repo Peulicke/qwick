@@ -16,15 +16,15 @@ const createGraphics = (ctx: CanvasRenderingContext2D) => ({
     scale: (v: number): void => transform.scale(ctx, v),
     line: (a: vec2.Vec2, b: vec2.Vec2): void => draw.line(ctx, a, b),
     lineStrip: (a: vec2.Vec2[]): void => draw.lineStrip(ctx, a),
-    lineLoop: (a: vec2.Vec2[]): void => draw.lineLoop(ctx, a),
+    lineLoop: (a: vec2.Vec2[], fill: boolean): void => draw.lineLoop(ctx, a, fill),
     lineStrips: (a: vec2.Vec2[][]): void => draw.lineStrips(ctx, a),
     circle: (v: vec2.Vec2, r: number): void => draw.circle(ctx, v, r),
     s: (v: vec2.Vec2, r: number): void => draw.s(ctx, v, r),
     text: (text: string, size: number): void => draw.text(ctx, text, size),
     arrow: (a: vec2.Vec2, r: vec2.Vec2): void => draw.arrow(ctx, a, r),
     fork: (a: vec2.Vec2, r: vec2.Vec2): void => draw.fork(ctx, a, r),
-    square: (): void => draw.square(ctx),
-    rect: (a: vec2.Vec2, b: vec2.Vec2): void => draw.rect(ctx, a, b)
+    square: (fill: boolean): void => draw.square(ctx, fill),
+    rect: (a: vec2.Vec2, b: vec2.Vec2, fill: boolean): void => draw.rect(ctx, a, b, fill)
 });
 
 export type Graphics = ReturnType<typeof createGraphics>;

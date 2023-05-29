@@ -38,3 +38,5 @@ export const proj = (a: Vec2, b: Vec2): Vec2 => {
 export const dist = (a: Vec2, b: Vec2): number => length(sub(b, a));
 
 export const dir = (a: Vec2, b: Vec2): Vec2 => normalize(sub(b, a));
+
+export const round = (v: Vec2): Vec2 => [Math.round(v[0]), Math.round(v[1])];

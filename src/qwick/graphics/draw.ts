@@ -1,10 +1,11 @@
 import * as vec2 from "../vec2";
 import * as transform from "./transform";
 
-const stroke = (ctx: CanvasRenderingContext2D): void => {
+const stroke = (ctx: CanvasRenderingContext2D, fill: boolean): void => {
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.stroke();
+    if (fill) ctx.fill();
     ctx.restore();
 };
 
@@ -12,7 +13,7 @@ export const line = (ctx: CanvasRenderingContext2D, a: vec2.Vec2, b: vec2.Vec2):
     ctx.beginPath();
     ctx.moveTo(a[0], a[1]);
     ctx.lineTo(b[0], b[1]);
-    stroke(ctx);
+    stroke(ctx, false);
 };
 
 export const arrow = (ctx: CanvasRenderingContext2D, a: vec2.Vec2, r: vec2.Vec2): void => {
@@ -42,10 +43,10 @@ export const lineStrip = (ctx: CanvasRenderingContext2D, a: vec2.Vec2[]): void =
         if (i === 0) return;
         ctx.lineTo(p[0], p[1]);
     });
-    stroke(ctx);
+    stroke(ctx, false);
 };
 
-export const lineLoop = (ctx: CanvasRenderingContext2D, a: vec2.Vec2[]): void => {
+export const lineLoop = (ctx: CanvasRenderingContext2D, a: vec2.Vec2[], fill: boolean): void => {
     ctx.beginPath();
     ctx.moveTo(a[0][0], a[0][1]);
     a.forEach((p, i) => {
@@ -53,7 +54,7 @@ export const lineLoop = (ctx: CanvasRenderingContext2D, a: vec2.Vec2[]): void =>
         ctx.lineTo(p[0], p[1]);
     });
     ctx.lineTo(a[0][0], a[0][1]);
-    stroke(ctx);
+    stroke(ctx, fill);
 };
 
 export const lineStrips = (ctx: CanvasRenderingContext2D, a: vec2.Vec2[][]): void => {
@@ -65,29 +66,35 @@ export const lineStrips = (ctx: CanvasRenderingContext2D, a: vec2.Vec2[][]): voi
             ctx.lineTo(p[0], p[1]);
         });
     });
-    stroke(ctx);
+    stroke(ctx, false);
 };
 
-export const square = (ctx: CanvasRenderingContext2D): void => {
-    lineStrip(ctx, [
-        [0.5, 0.5],
-        [-0.5, 0.5],
-        [-0.5, -0.5],
-        [0.5, -0.5],
-        [0.5, 0.5]
-    ]);
+export const square = (ctx: CanvasRenderingContext2D, fill: boolean): void => {
+    lineLoop(
+        ctx,
+        [
+            [0.5, 0.5],
+            [-0.5, 0.5],
+            [-0.5, -0.5],
+            [0.5, -0.5]
+        ],
+        fill
+    );
 };
 
-export const rect = (ctx: CanvasRenderingContext2D, a: vec2.Vec2, b: vec2.Vec2): void => {
+export const rect = (ctx: CanvasRenderingContext2D, a: vec2.Vec2, b: vec2.Vec2, fill: boolean): void => {
     ctx.beginPath();
-    lineStrip(ctx, [
-        [a[0], a[1]],
-        [a[0], b[1]],
-        [b[0], b[1]],
-        [b[0], a[1]],
-        [a[0], a[1]]
-    ]);
-    stroke(ctx);
+    lineLoop(
+        ctx,
+        [
+            [a[0], a[1]],
+            [a[0], b[1]],
+            [b[0], b[1]],
+            [b[0], a[1]]
+        ],
+        fill
+    );
+    stroke(ctx, false);
 };
 
 export const circle = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number): void => {
@@ -98,7 +105,7 @@ export const circle = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number): 
     ctx.moveTo(1, 0);
     ctx.arc(0, 0, 1, 0, 2 * Math.PI);
     transform.pop(ctx);
-    stroke(ctx);
+    stroke(ctx, false);
 };
 
 export const s = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number): void => {
@@ -107,7 +114,7 @@ export const s = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number): void 
     ctx.arc(v[0] - r / 2, v[1], r / 2, 0, Math.PI);
     ctx.moveTo(v[0], v[1]);
     ctx.arc(v[0] + r / 2, v[1], r / 2, -Math.PI, 0);
-    stroke(ctx);
+    stroke(ctx, false);
 };
 
 export const text = (ctx: CanvasRenderingContext2D, t: string, size: number): void => {

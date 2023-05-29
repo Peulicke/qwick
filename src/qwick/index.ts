@@ -107,6 +107,13 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     };
     window.addEventListener("mousedown", mousedown, true);
 
+    const mouseup = (e: MouseEvent) => {
+        if (!level) return;
+        if (e.button === 0) level.input("lmb", false);
+        if (e.button === 2) level.input("rmb", false);
+    };
+    window.addEventListener("mouseup", mouseup, true);
+
     const t = setInterval(() => {
         if (!level) return;
         for (let i = 0; i < (fastForward ? 10 : 1); ++i) {
