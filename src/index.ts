@@ -1,4 +1,5 @@
 import createQwick, { Qwick, InputType, Graphics } from "./qwick";
+import * as vec2 from "./qwick/vec2";
 
 const transpose = <T>(grid: T[][]) => grid[0].map((_, i) => grid.map((_, j) => grid[j][i]));
 
@@ -10,11 +11,23 @@ const stringToGrid = <T>(s: string, transformer: (char: string) => T) =>
             .map(line => line.split("").map(transformer))
     );
 
-type LevelData = {
-    walls: boolean[][];
+const teamColors = ["#008000", "#800000"];
+
+type UnitType = "sword" | "bow";
+
+type Unit = {
+    team: number;
+    type: UnitType;
+    pos: vec2.Vec2;
 };
 
-const level1 = {
+type LevelData = {
+    walls: boolean[][];
+    ownUnitTypes: UnitType[];
+    opponentUnitTypes: UnitType[];
+};
+
+const level1: LevelData = {
     walls: stringToGrid(
         `
 ##############
@@ -28,7 +41,9 @@ const level1 = {
 ##############
 `,
         char => char === "#"
-    )
+    ),
+    ownUnitTypes: ["sword", "sword", "bow"],
+    opponentUnitTypes: ["sword", "bow"]
 };
 
 const levels: LevelData[] = [level1];
@@ -37,15 +52,37 @@ const loadGame = (qwick: Qwick) => {
     return {
         levels,
         loadLevel: (levelData: LevelData) => {
-            let angle = 0;
-            console.log(levelData);
+            const units: Unit[] = [
+                ...levelData.ownUnitTypes.map(
+                    (type, i): Unit => ({
+                        team: 0,
+                        type,
+                        pos: [
+                            -2,
+                            Math.floor(
+                                (levelData.walls[0].length - 1) / 2 + (i - (levelData.ownUnitTypes.length - 1) / 2)
+                            )
+                        ]
+                    })
+                ),
+                ...levelData.opponentUnitTypes.map(
+                    (type, i): Unit => ({
+                        team: 1,
+                        type,
+                        pos: [
+                            levelData.walls.length + 1,
+                            Math.floor(
+                                (levelData.walls[0].length - 1) / 2 + (i - (levelData.opponentUnitTypes.length - 1) / 2)
+                            )
+                        ]
+                    })
+                )
+            ];
             return {
                 input: (type: InputType, down: boolean) => {
                     console.log("input", type, down);
                 },
-                update: () => {
-                    angle += 0.01;
-                },
+                update: () => {},
                 draw: (graphics: Graphics) => {
                     graphics.context(() => {
                         const border = 0.2;
@@ -60,17 +97,31 @@ const loadGame = (qwick: Qwick) => {
                                 });
                             });
                         });
+                        units.forEach(unit => {
+                            graphics.context(() => {
+                                graphics.color(teamColors[unit.team]);
+                                if (unit.type === "bow") graphics.circle(unit.pos, 0.5);
+                                if (unit.type === "sword") {
+                                    graphics.translate(unit.pos);
+                                    graphics.circle([0, 0], 0.5);
+                                    graphics.lineStrips([
+                                        [
+                                            [-0.5, 0],
+                                            [0.5, 0]
+                                        ],
+                                        [
+                                            [0, -0.5],
+                                            [0, 0.5]
+                                        ]
+                                    ]);
+                                }
+                            });
+                        });
                     });
                     graphics.context(() => {
                         graphics.color("#800000");
                         graphics.translate([0, -0.45]);
                         graphics.text("Battle game test", 0.05);
-                    });
-                    graphics.context(() => {
-                        graphics.translate(qwick.getMousePos());
-                        graphics.scale(0.1);
-                        graphics.rotate(angle);
-                        graphics.square();
                     });
                 }
             };
