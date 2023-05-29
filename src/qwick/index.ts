@@ -95,10 +95,10 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     window.addEventListener("keyup", keyup, true);
 
     const mousemove = (e: MouseEvent) => {
-        mousePos[0] = e.x;
-        mousePos[1] = e.y;
+        mousePos[0] = (e.x - 0.5 * qwick.width) / qwick.height;
+        mousePos[1] = (e.y - 0.5 * qwick.height) / qwick.height;
     };
-    window.addEventListener("mousedown", mousemove, true);
+    window.addEventListener("mousemove", mousemove, true);
 
     const mousedown = (e: MouseEvent) => {
         if (!level) return;

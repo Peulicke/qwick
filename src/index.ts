@@ -6,13 +6,14 @@ const loadGame = (qwick: Qwick) => {
     return {
         levels: ["a", "b", "c"],
         loadLevel: (levelData: LevelData) => {
+            let angle = 0;
             console.log(levelData);
             return {
                 input: (type: InputType, down: boolean) => {
                     console.log("input", type, down);
                 },
                 update: () => {
-                    console.log("update");
+                    angle += 0.01;
                 },
                 draw: (graphics: Graphics) => {
                     graphics.context(() => {
@@ -21,8 +22,9 @@ const loadGame = (qwick: Qwick) => {
                         graphics.text("test text", 0.1);
                     });
                     graphics.context(() => {
-                        graphics.translate([0.25 * graphics.getAspectRatio(), 0]);
+                        graphics.translate(qwick.getMousePos());
                         graphics.scale(0.1);
+                        graphics.rotate(angle);
                         graphics.square();
                     });
                 }
