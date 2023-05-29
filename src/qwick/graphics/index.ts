@@ -3,30 +3,7 @@ import * as utils from "./utils";
 import * as transform from "./transform";
 import * as draw from "./draw";
 
-export type Graphics = {
-    getAspectRatio: () => number;
-    begin: () => void;
-    end: () => void;
-    color: (color: string) => void;
-    push: () => void;
-    pop: () => void;
-    translate: (v: vec2.Vec2) => void;
-    rotate: (v: number) => void;
-    scale: (v: vec2.Vec2) => void;
-    line: (a: vec2.Vec2, b: vec2.Vec2) => void;
-    lineStrip: (a: vec2.Vec2[]) => void;
-    lineLoop: (a: vec2.Vec2[]) => void;
-    lineStrips: (a: vec2.Vec2[][]) => void;
-    circle: (v: vec2.Vec2, r: number) => void;
-    s: (v: vec2.Vec2, r: number) => void;
-    text: (text: string) => void;
-    arrow: (a: vec2.Vec2, r: vec2.Vec2) => void;
-    fork: (a: vec2.Vec2, r: vec2.Vec2) => void;
-    square: () => void;
-    rect: (a: vec2.Vec2, b: vec2.Vec2) => void;
-};
-
-export default (ctx: CanvasRenderingContext2D): Graphics => ({
+const createGraphics = (ctx: CanvasRenderingContext2D) => ({
     getAspectRatio: (): number => ctx.canvas.width / ctx.canvas.height,
     begin: (): void => utils.begin(ctx),
     end: (): void => utils.end(ctx),
@@ -48,3 +25,7 @@ export default (ctx: CanvasRenderingContext2D): Graphics => ({
     square: (): void => draw.square(ctx),
     rect: (a: vec2.Vec2, b: vec2.Vec2): void => draw.rect(ctx, a, b)
 });
+
+export type Graphics = ReturnType<typeof createGraphics>;
+
+export default createGraphics;
