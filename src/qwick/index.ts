@@ -32,9 +32,8 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     const canvas = document.createElement("canvas");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    canvas.style.background = "#3056bf";
     document.body.appendChild(canvas);
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
     const mousePos: [number, number] = [0, 0];
@@ -113,8 +112,9 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         for (let i = 0; i < (fastForward ? 10 : 1); ++i) {
             level.update();
         }
-        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        graphics.begin();
         level.draw(graphics);
+        graphics.end();
     }, 1000 / 60);
 
     return () => {

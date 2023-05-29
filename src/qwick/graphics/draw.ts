@@ -110,12 +110,12 @@ export const s = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number): void 
     stroke(ctx);
 };
 
-export const text = (ctx: CanvasRenderingContext2D, t: string): void => {
+export const text = (ctx: CanvasRenderingContext2D, t: string, size: number): void => {
     transform.push(ctx);
-    transform.translate(ctx, [0, 0.26]);
     ctx.font = "100px Arial";
     ctx.textAlign = "center";
-    transform.scale(ctx, [0.01, 0.01]);
+    transform.scale(ctx, [0.01 * size, 0.01 * size]);
+    transform.translate(ctx, [0, 25]);
     ctx.fillText(t, 0, 0);
     transform.pop(ctx);
 };

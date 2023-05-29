@@ -9,7 +9,7 @@ export const pop = (ctx: CanvasRenderingContext2D): void => {
 };
 
 export const translate = (ctx: CanvasRenderingContext2D, v: vec2.Vec2): void => {
-    ctx.translate(v[0], v[0]);
+    ctx.translate(v[0], v[1]);
 };
 
 export const rotate = (ctx: CanvasRenderingContext2D, v: number): void => {
@@ -18,4 +18,11 @@ export const rotate = (ctx: CanvasRenderingContext2D, v: number): void => {
 
 export const scale = (ctx: CanvasRenderingContext2D, v: vec2.Vec2): void => {
     ctx.scale(v[0], v[1]);
+};
+
+export const at = (ctx: CanvasRenderingContext2D, pos: vec2.Vec2, func: () => void) => {
+    push(ctx);
+    translate(ctx, pos);
+    func();
+    pop(ctx);
 };

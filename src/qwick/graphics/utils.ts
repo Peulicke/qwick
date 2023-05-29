@@ -1,9 +1,9 @@
 export const begin = (ctx: CanvasRenderingContext2D): void => {
     const aspectRatio = ctx.canvas.width / ctx.canvas.height;
     ctx.save();
-    ctx.scale(ctx.canvas.width, ctx.canvas.height);
+    ctx.scale(ctx.canvas.height, ctx.canvas.height);
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, aspectRatio, 1);
+    ctx.clearRect(0, 0, aspectRatio, 1);
     ctx.lineWidth = 3;
     ctx.fillStyle = "white";
     ctx.strokeStyle = "white";

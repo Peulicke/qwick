@@ -15,13 +15,12 @@ const loadGame = (qwick: Qwick) => {
                     console.log("update");
                 },
                 draw: (graphics: Graphics) => {
-                    console.log("draw");
-                    graphics.arrow([0, qwick.height], [100, -100]);
-                    graphics.push();
-                    graphics.translate([100, 100]);
-                    graphics.scale([50, 50]);
-                    graphics.text("test text");
-                    graphics.pop();
+                    graphics.at([-0.25 * graphics.getAspectRatio(), 0], () => {
+                        graphics.text("test text", 0.1);
+                    });
+                    graphics.at([0.25 * graphics.getAspectRatio(), 0], () => {
+                        graphics.arrow([0, 0], [-0.1, -0.1]);
+                    });
                 }
             };
         },
