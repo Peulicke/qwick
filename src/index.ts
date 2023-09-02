@@ -15,7 +15,7 @@ const teamColors = ["#008000", "#800000"];
 
 type AreaType = "none" | "wall" | "placable";
 
-const charToAreaType = {
+const charToAreaType: Record<string, AreaType> = {
     ".": "none",
     "#": "wall",
     "0": "placable",
@@ -66,6 +66,8 @@ const loadGame = (qwick: Qwick) => {
 
             const areas = grid.map(row => row.map(char => charToAreaType[char]));
 
+            const getArea = (pos: vec2.Vec2) => areas[pos[0]][pos[1]];
+
             const units = levelData.ownUnitTypes.map(
                 (type, i): Unit => ({
                     team: 0,
@@ -109,13 +111,18 @@ const loadGame = (qwick: Qwick) => {
             const startButtonPos: vec2.Vec2 = [0, 0.45];
             const startButtonSize: vec2.Vec2 = [0.1, 0.04];
 
+            const insideButton = () => insideRect(qwick.getMousePos(), startButtonPos, startButtonSize);
+
+            const allUnitsPlaced = () => units.filter(u => u.team === 0).every(u => getArea(u.pos) === "placable");
+
             let started = false;
 
             return {
                 input: (type: InputType, down: boolean) => {
                     if (type !== "lmb") return;
                     if (down) {
-                        if (insideRect(qwick.getMousePos(), startButtonPos, startButtonSize)) started = !started;
+                        if (!started && insideButton() && allUnitsPlaced()) started = true;
+                        else if (started && insideButton()) started = false;
                     }
                     if (started) return;
                     if (down) {
