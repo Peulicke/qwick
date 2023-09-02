@@ -258,6 +258,20 @@ const loadGame = (qwick: Qwick) => {
                 }
             };
 
+            const unitCollisions = () => {
+                for (let i = 0; i < units.length; ++i) {
+                    for (let j = i + 1; j < units.length; ++j) {
+                        const c = vec2.scale(vec2.add(units[i].pos, units[j].pos), 0.5);
+                        const d = vec2.sub(units[j].pos, units[i].pos);
+                        const l = vec2.length(d);
+                        if (l > 1) continue;
+                        const n = vec2.scale(d, 0.5 / l);
+                        units[i].pos = vec2.sub(c, n);
+                        units[j].pos = vec2.add(c, n);
+                    }
+                }
+            };
+
             let started = false;
 
             return {
@@ -302,6 +316,7 @@ const loadGame = (qwick: Qwick) => {
                                 );
                         });
                         wallCollisions();
+                        unitCollisions();
                     } else {
                         if (selectedUnitIndex !== -1) {
                             units[selectedUnitIndex].pos = vec2.add(getMousePos(), selectOffset);
@@ -371,12 +386,12 @@ const loadGame = (qwick: Qwick) => {
                                         ]
                                     ]);
                                 }
-                                const g = getMatrixGradient(
-                                    smell[1 - unit.team],
-                                    vec2.scale(unit.pos, smellResolution)
-                                );
-                                const v = vec2.normalize(g);
-                                graphics.arrow([0, 0], v);
+                                // const g = getMatrixGradient(
+                                //     smell[1 - unit.team],
+                                //     vec2.scale(unit.pos, smellResolution)
+                                // );
+                                // const v = vec2.normalize(g);
+                                // graphics.arrow([0, 0], v);
                             });
                         });
                     });
