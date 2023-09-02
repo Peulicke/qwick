@@ -53,6 +53,11 @@ const level1: LevelData = {
 
 const levels: LevelData[] = [level1];
 
+const insideRect = (pos: vec2.Vec2, rectPos: vec2.Vec2, rectSize: vec2.Vec2) => {
+    const dPos = vec2.sub(pos, rectPos);
+    return Math.abs(dPos[0]) < rectSize[0] && Math.abs(dPos[1]) < rectSize[1];
+};
+
 const loadGame = (qwick: Qwick) => {
     return {
         levels,
@@ -87,7 +92,7 @@ const loadGame = (qwick: Qwick) => {
                 })
             );
 
-            const border = 0.2;
+            const border = 0.25;
             const boardScale = (1 - border) / areas[0].length;
             const boardTranslate: vec2.Vec2 = [-(areas.length - 1) / 2, -(areas[0].length - 1) / 2];
             const getMousePos = () => vec2.sub(vec2.scale(qwick.getMousePos(), 1 / boardScale), boardTranslate);
@@ -101,9 +106,18 @@ const loadGame = (qwick: Qwick) => {
                 });
             };
 
+            const startButtonPos: vec2.Vec2 = [0, 0.45];
+            const startButtonSize: vec2.Vec2 = [0.1, 0.04];
+
+            let started = false;
+
             return {
                 input: (type: InputType, down: boolean) => {
                     if (type !== "lmb") return;
+                    if (down) {
+                        if (insideRect(qwick.getMousePos(), startButtonPos, startButtonSize)) started = !started;
+                    }
+                    if (started) return;
                     if (down) {
                         units.forEach((unit, i) => {
                             if (unit.team !== 0) return;
@@ -111,14 +125,20 @@ const loadGame = (qwick: Qwick) => {
                             selectedUnitIndex = i;
                             selectOffset = vec2.sub(unit.pos, getMousePos());
                         });
-                    } else {
+                    } else if (selectedUnitIndex !== -1) {
                         units[selectedUnitIndex].pos = vec2.round(units[selectedUnitIndex].pos);
                         selectedUnitIndex = -1;
                     }
                 },
                 update: () => {
-                    if (selectedUnitIndex !== -1) {
-                        units[selectedUnitIndex].pos = vec2.add(getMousePos(), selectOffset);
+                    if (started) {
+                        units.forEach(unit => {
+                            unit.pos[0] += 0.001;
+                        });
+                    } else {
+                        if (selectedUnitIndex !== -1) {
+                            units[selectedUnitIndex].pos = vec2.add(getMousePos(), selectOffset);
+                        }
                     }
                 },
                 draw: (graphics: Graphics) => {
@@ -163,6 +183,11 @@ const loadGame = (qwick: Qwick) => {
                         graphics.color("#800000");
                         graphics.translate([0, -0.45]);
                         graphics.text("Battle game test", 0.05);
+                    });
+                    graphics.context(() => {
+                        graphics.translate(startButtonPos);
+                        graphics.text(started ? "Stop" : "Start", 0.05);
+                        graphics.rect(vec2.negate(startButtonSize), startButtonSize, false);
                     });
                 }
             };
