@@ -34,6 +34,14 @@ type Unit = {
     chargeTime: number;
 };
 
+const createUnit = (team: number, type: UnitType, pos: vec2.Vec2): Unit => ({
+    team,
+    type,
+    pos,
+    hpLost: 0,
+    chargeTime: 0
+});
+
 type UnitSpecs = {
     speed: number;
     range: number;
@@ -172,34 +180,18 @@ const loadGame = (qwick: Qwick) => {
                 (areas[Math.round(pos[0])] ?? [])[Math.round(pos[1])];
 
             const units = levelData.ownUnitTypes.map(
-                (type, i): Unit => ({
-                    team: 0,
-                    type,
-                    pos: [-2, Math.round((areas[0].length - 1) / 2 + (i - (levelData.ownUnitTypes.length - 1) / 2))],
-                    hpLost: 0,
-                    chargeTime: 0
-                })
+                (type, i): Unit =>
+                    createUnit(0, type, [
+                        -2,
+                        Math.round((areas[0].length - 1) / 2 + (i - (levelData.ownUnitTypes.length - 1) / 2))
+                    ])
             );
 
             grid.forEach((row, i) =>
                 row.forEach((c, j) => {
                     const pos: vec2.Vec2 = [i, j];
-                    if (c === "s")
-                        units.push({
-                            team: 1,
-                            type: "sword",
-                            pos,
-                            hpLost: 0,
-                            chargeTime: 0
-                        });
-                    if (c === "b")
-                        units.push({
-                            team: 1,
-                            type: "bow",
-                            pos,
-                            hpLost: 0,
-                            chargeTime: 0
-                        });
+                    if (c === "s") units.push(createUnit(1, "sword", pos));
+                    if (c === "b") units.push(createUnit(1, "bow", pos));
                 })
             );
 
