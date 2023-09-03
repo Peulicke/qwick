@@ -57,9 +57,18 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
 
     qwick.getMousePos = () => mousePos;
 
-    const startButton = createButton(qwick.getMousePos, [0, 0], [0.1, 0.04], "Start");
+    const startButton = createButton(qwick.getMousePos, [0, -0.1], [0.1, 0.04], "Start");
 
     const game = loadGame(qwick);
+
+    const levelButtons = game.levels.map((_, i) =>
+        createButton(
+            qwick.getMousePos,
+            [game.levels.length === 1 ? 0 : i / (game.levels.length - 1) - 0.5, 0.1],
+            [0.1, 0.04],
+            `${i + 1}`
+        )
+    );
 
     qwick.levelCompleted = () => {
         ++levelNum;
@@ -108,6 +117,12 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
                 levelNum = 0;
                 level = game.loadLevel(game.levels[levelNum]);
             }
+            for (let i = 0; i < levelButtons.length; ++i) {
+                if (levelButtons[i].clicked(type, down)) {
+                    levelNum = i;
+                    level = game.loadLevel(game.levels[levelNum]);
+                }
+            }
         }
     };
 
@@ -126,6 +141,9 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     const updateMenu = () => {
         graphics.begin();
         startButton.draw(graphics);
+        levelButtons.forEach(b => {
+            b.draw(graphics);
+        });
         graphics.end();
     };
 
