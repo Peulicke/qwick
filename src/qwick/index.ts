@@ -66,20 +66,20 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
 
     qwick.getMousePosPixels = () => mousePos;
 
-    const startButton = createButton(qwick.getMousePos, [0, -0.1], [0.1, 0.04], "Start");
+    const startButton = createButton(qwick.getMousePos, [0, -0.3], [0.1, 0.04], "Start");
     const successButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Next level");
     const failButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Retry");
 
     const game = loadGame(qwick);
 
-    const levelButtons = game.levels.map((_, i) =>
-        createButton(
-            qwick.getMousePos,
-            [game.levels.length === 1 ? 0 : i / (game.levels.length - 1) - 0.5, 0.1],
-            [0.1, 0.04],
-            `${i + 1}`
-        )
-    );
+    const buttonGridWidth = Math.ceil(Math.sqrt(game.levels.length));
+    const levelButtons = game.levels.map((_, i) => {
+        const xIndex = i % buttonGridWidth;
+        const yIndex = Math.floor(i / buttonGridWidth);
+        const x = (xIndex - (buttonGridWidth - 1) / 2) * 0.22;
+        const y = yIndex * 0.1 - 0.15;
+        return createButton(qwick.getMousePos, [x, y], [0.1, 0.04], `${i + 1}`);
+    });
 
     qwick.levelCompleted = () => {
         levelSuccess = true;
