@@ -365,34 +365,6 @@ const loadGame = (qwick: Qwick) => {
                                 graphics.square(true);
                             });
                         });
-                        // forEachArea((type, pos) => {
-                        //     graphics.context(() => {
-                        //         const r = getMatrixValue(smell[1], vec2.scale(pos, smellResolution));
-                        //         const g = getMatrixValue(smell[0], vec2.scale(pos, smellResolution));
-                        //         const b = 0;
-                        //         graphics.color(`rgb(${255 * r}, ${255 * g}, ${255 * b})`);
-                        //         graphics.translate(pos);
-                        //         graphics.square(true);
-                        //     });
-                        // });
-                        // forEachArea((type, pos) => {
-                        //     graphics.context(() => {
-                        //         graphics.color("#00ff00");
-                        //         graphics.translate(pos);
-                        //         const g = getMatrixGradient(smell[0], vec2.scale(pos, smellResolution));
-                        //         const v = vec2.scale(g, 1 / (0.01 + vec2.length(g)));
-                        //         graphics.arrow([0, 0], v);
-                        //     });
-                        // });
-                        // forEachArea((type, pos) => {
-                        //     graphics.context(() => {
-                        //         graphics.color("#ff0000");
-                        //         graphics.translate(pos);
-                        //         const g = getMatrixGradient(smell[1], vec2.scale(pos, smellResolution));
-                        //         const v = vec2.scale(g, 1 / (0.01 + vec2.length(g)));
-                        //         graphics.arrow([0, 0], v);
-                        //     });
-                        // });
                         forEachAreaOfType("wall", pos => {
                             graphics.context(() => {
                                 graphics.translate(pos);
@@ -417,12 +389,6 @@ const loadGame = (qwick: Qwick) => {
                                         ]
                                     ]);
                                 }
-                                // const g = getMatrixGradient(
-                                //     smell[1 - unit.team],
-                                //     vec2.scale(unit.pos, smellResolution)
-                                // );
-                                // const v = vec2.normalize(g);
-                                // graphics.arrow([0, 0], v);
                             });
                         });
                     });
