@@ -40,6 +40,8 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     const mousePos: [number, number] = [0, 0];
     let levelNum = 0;
     let level: Level | null = null;
+    let levelSuccess = false;
+    let levelFail = false;
 
     const qwick: Qwick = {
         width: innerWidth,
@@ -58,6 +60,8 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     qwick.getMousePos = () => mousePos;
 
     const startButton = createButton(qwick.getMousePos, [0, -0.1], [0.1, 0.04], "Start");
+    const successButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Next level");
+    const failButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Retry");
 
     const game = loadGame(qwick);
 
@@ -71,13 +75,11 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     );
 
     qwick.levelCompleted = () => {
-        ++levelNum;
-        if (levelNum >= game.levels.length) level = null;
-        else level = game.loadLevel(game.levels[levelNum]);
+        levelSuccess = true;
     };
 
     qwick.levelLost = () => {
-        level = game.loadLevel(game.levels[levelNum]);
+        levelFail = true;
     };
 
     let fastForward = false;
@@ -110,17 +112,32 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     };
     window.addEventListener("mousemove", mousemove, true);
 
+    const loadLevel = () => {
+        levelSuccess = false;
+        levelFail = false;
+        level = game.loadLevel(game.levels[levelNum]);
+    };
+
     const onInput = (type: InputType, down: boolean) => {
-        if (level) level.input(type, down);
-        else {
+        if (level) {
+            if (levelSuccess) {
+                if (successButton.clicked(type, down)) {
+                    ++levelNum;
+                    if (levelNum >= game.levels.length) level = null;
+                    else loadLevel();
+                }
+            } else if (levelFail) {
+                if (failButton.clicked(type, down)) loadLevel();
+            } else level.input(type, down);
+        } else {
             if (startButton.clicked(type, down)) {
                 levelNum = 0;
-                level = game.loadLevel(game.levels[levelNum]);
+                loadLevel();
             }
             for (let i = 0; i < levelButtons.length; ++i) {
                 if (levelButtons[i].clicked(type, down)) {
                     levelNum = i;
-                    level = game.loadLevel(game.levels[levelNum]);
+                    loadLevel();
                 }
             }
         }
@@ -148,12 +165,16 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     };
 
     const updateLevel = (l: Level) => {
-        const lvlNum = levelNum;
-        for (let i = 0; i < (fastForward ? 10 : 1) && lvlNum === levelNum; ++i) {
-            l.update();
+        if (!levelSuccess && !levelFail) {
+            const lvlNum = levelNum;
+            for (let i = 0; i < (fastForward ? 10 : 1) && lvlNum === levelNum; ++i) {
+                l.update();
+            }
         }
         graphics.begin();
         l.draw(graphics);
+        if (levelSuccess) successButton.draw(graphics);
+        if (levelFail) failButton.draw(graphics);
         graphics.end();
     };
 
