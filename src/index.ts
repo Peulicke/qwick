@@ -33,29 +33,29 @@ type Unit = {
     chargeTime: number;
 };
 
-const unitTypeToSpeed: Record<UnitType, number> = {
-    bow: 0.01,
-    sword: 0.01
+type UnitSpecs = {
+    speed: number;
+    range: number;
+    rechargeTime: number;
+    damage: number;
+    hp: number;
 };
 
-const unitTypeToRange: Record<UnitType, number> = {
-    bow: 3,
-    sword: 1
-};
-
-const unitTypeToRechargeTime: Record<UnitType, number> = {
-    bow: 100,
-    sword: 100
-};
-
-const unitTypeToDamage: Record<UnitType, number> = {
-    bow: 1,
-    sword: 2
-};
-
-const unitTypeToHp: Record<UnitType, number> = {
-    bow: 3,
-    sword: 10
+const unitTypeToSpecs: Record<UnitType, UnitSpecs> = {
+    sword: {
+        speed: 0.01,
+        range: 1,
+        rechargeTime: 100,
+        damage: 2,
+        hp: 10
+    },
+    bow: {
+        speed: 0.01,
+        range: 3,
+        rechargeTime: 100,
+        damage: 1,
+        hp: 3
+    }
 };
 
 type LevelData = {
@@ -251,9 +251,10 @@ const loadGame = (qwick: Qwick) => {
                 units.forEach(unit => {
                     ++unit.chargeTime;
                     const nearestEnemy = getNearestEnemy(unit);
-                    if (nearestEnemy && vec2.dist(unit.pos, nearestEnemy.pos) < unitTypeToRange[unit.type]) {
-                        if (unit.chargeTime > unitTypeToRechargeTime[unit.type]) {
-                            nearestEnemy.hpLost += unitTypeToDamage[unit.type];
+                    const specs = unitTypeToSpecs[unit.type];
+                    if (nearestEnemy && vec2.dist(unit.pos, nearestEnemy.pos) < specs.range) {
+                        if (unit.chargeTime > specs.rechargeTime) {
+                            nearestEnemy.hpLost += specs.damage;
                             unit.chargeTime = 0;
                         }
                     } else
@@ -263,12 +264,12 @@ const loadGame = (qwick: Qwick) => {
                                 vec2.normalize(
                                     getMatrixGradient(smell[1 - unit.team], vec2.scale(unit.pos, smellResolution))
                                 ),
-                                unitTypeToSpeed[unit.type]
+                                specs.speed
                             )
                         );
                 });
                 for (let i = units.length - 1; i >= 0; --i) {
-                    if (units[i].hpLost >= unitTypeToHp[units[i].type]) units.splice(i, 1);
+                    if (units[i].hpLost >= unitTypeToSpecs[units[i].type].hp) units.splice(i, 1);
                 }
             };
 
