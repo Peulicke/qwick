@@ -29,6 +29,8 @@ type Unit = {
     team: number;
     type: UnitType;
     pos: vec2.Vec2;
+    hpLost: number;
+    chargeTime: number;
 };
 
 const unitTypeToSpeed: Record<UnitType, number> = {
@@ -39,6 +41,21 @@ const unitTypeToSpeed: Record<UnitType, number> = {
 const unitTypeToRange: Record<UnitType, number> = {
     bow: 3,
     sword: 1
+};
+
+const unitTypeToRechargeTime: Record<UnitType, number> = {
+    bow: 100,
+    sword: 100
+};
+
+const unitTypeToDamage: Record<UnitType, number> = {
+    bow: 1,
+    sword: 2
+};
+
+const unitTypeToHp: Record<UnitType, number> = {
+    bow: 3,
+    sword: 10
 };
 
 type LevelData = {
@@ -129,7 +146,9 @@ const loadGame = (qwick: Qwick) => {
                 (type, i): Unit => ({
                     team: 0,
                     type,
-                    pos: [-2, Math.round((areas[0].length - 1) / 2 + (i - (levelData.ownUnitTypes.length - 1) / 2))]
+                    pos: [-2, Math.round((areas[0].length - 1) / 2 + (i - (levelData.ownUnitTypes.length - 1) / 2))],
+                    hpLost: 0,
+                    chargeTime: 0
                 })
             );
 
@@ -140,13 +159,17 @@ const loadGame = (qwick: Qwick) => {
                         units.push({
                             team: 1,
                             type: "sword",
-                            pos
+                            pos,
+                            hpLost: 0,
+                            chargeTime: 0
                         });
                     if (c === "b")
                         units.push({
                             team: 1,
                             type: "bow",
-                            pos
+                            pos,
+                            hpLost: 0,
+                            chargeTime: 0
                         });
                 })
             );
@@ -224,6 +247,31 @@ const loadGame = (qwick: Qwick) => {
 
             const allUnitsPlaced = () => units.filter(u => u.team === 0).every(u => getAreaType(u.pos) === "placable");
 
+            const updateUnits = () => {
+                units.forEach(unit => {
+                    ++unit.chargeTime;
+                    const nearestEnemy = getNearestEnemy(unit);
+                    if (nearestEnemy && vec2.dist(unit.pos, nearestEnemy.pos) < unitTypeToRange[unit.type]) {
+                        if (unit.chargeTime > unitTypeToRechargeTime[unit.type]) {
+                            nearestEnemy.hpLost += unitTypeToDamage[unit.type];
+                            unit.chargeTime = 0;
+                        }
+                    } else
+                        unit.pos = vec2.add(
+                            unit.pos,
+                            vec2.scale(
+                                vec2.normalize(
+                                    getMatrixGradient(smell[1 - unit.team], vec2.scale(unit.pos, smellResolution))
+                                ),
+                                unitTypeToSpeed[unit.type]
+                            )
+                        );
+                });
+                for (let i = units.length - 1; i >= 0; --i) {
+                    if (units[i].hpLost >= unitTypeToHp[units[i].type]) units.splice(i, 1);
+                }
+            };
+
             const wallCollisions = () => {
                 const r = 0.2;
                 for (const unit of units) {
@@ -297,24 +345,7 @@ const loadGame = (qwick: Qwick) => {
                 update: () => {
                     if (started) {
                         updateSmell();
-                        units.forEach(unit => {
-                            const nearestEnemy = getNearestEnemy(unit);
-                            if (nearestEnemy && vec2.dist(unit.pos, nearestEnemy.pos) < unitTypeToRange[unit.type]) {
-                                console.log("Attack");
-                            } else
-                                unit.pos = vec2.add(
-                                    unit.pos,
-                                    vec2.scale(
-                                        vec2.normalize(
-                                            getMatrixGradient(
-                                                smell[1 - unit.team],
-                                                vec2.scale(unit.pos, smellResolution)
-                                            )
-                                        ),
-                                        unitTypeToSpeed[unit.type]
-                                    )
-                                );
-                        });
+                        updateUnits();
                         wallCollisions();
                         unitCollisions();
                     } else {
