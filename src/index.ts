@@ -94,7 +94,25 @@ const level2: LevelData = {
     ownUnitTypes: ["sword", "sword", "sword", "sword", "bow", "bow", "bow", "bow"]
 };
 
-const levels: LevelData[] = [level1, level2];
+const level3: LevelData = {
+    areas: `
+##################
+#00.#.......#..00#
+#00.#.......#..00#
+#...#..#..#.#....#
+#...#..#ss#.#....#
+#......#ss#......#
+#......#ss#......#
+#...#..#ss#.#....#
+#...#..#..#.#....#
+#00.#.......#..00#
+#00.#.......#..00#
+##################
+`,
+    ownUnitTypes: ["sword", "sword", "sword", "sword", "bow", "bow", "bow", "bow"]
+};
+
+const levels: LevelData[] = [level1, level2, level3];
 
 const lerp = (a: number, b: number, w: number) => a * (1 - w) + b * w;
 
@@ -319,13 +337,14 @@ const loadGame = (qwick: Qwick) => {
             };
 
             const unitCollisions = () => {
+                const r = 0.1;
                 for (let i = 0; i < units.length; ++i) {
                     for (let j = i + 1; j < units.length; ++j) {
                         const c = vec2.scale(vec2.add(units[i].pos, units[j].pos), 0.5);
                         const d = vec2.sub(units[j].pos, units[i].pos);
                         const l = vec2.length(d);
-                        if (l > 1) continue;
-                        const n = vec2.scale(d, 0.5 / l);
+                        if (l > 1 - r) continue;
+                        const n = vec2.scale(d, (1 - r) * (0.5 / l));
                         units[i].pos = vec2.sub(c, n);
                         units[j].pos = vec2.add(c, n);
                     }
