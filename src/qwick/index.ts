@@ -1,3 +1,4 @@
+import { createButton } from "./button";
 import createGraphics, { Graphics } from "./graphics";
 import "./index.css";
 
@@ -56,20 +57,20 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
 
     qwick.getMousePos = () => mousePos;
 
+    const startButton = createButton(qwick.getMousePos, [0, 0], [0.1, 0.04], "Start");
+
     const game = loadGame(qwick);
 
     qwick.levelCompleted = () => {
-        if (!game) return;
         ++levelNum;
-        level = game.loadLevel(game.levels[levelNum]);
+        if (levelNum >= game.levels.length) level = null;
+        else level = game.loadLevel(game.levels[levelNum]);
     };
 
     qwick.levelLost = () => {
-        if (!game) return;
         level = game.loadLevel(game.levels[levelNum]);
     };
 
-    level = game.loadLevel(game.levels[levelNum]);
     let fastForward = false;
 
     const resize = () => {
@@ -100,28 +101,47 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     };
     window.addEventListener("mousemove", mousemove, true);
 
+    const onInput = (type: InputType, down: boolean) => {
+        if (level) level.input(type, down);
+        else {
+            if (startButton.clicked(type, down)) {
+                levelNum = 0;
+                level = game.loadLevel(game.levels[levelNum]);
+            }
+        }
+    };
+
     const mousedown = (e: MouseEvent) => {
-        if (!level) return;
-        if (e.button === 0) level.input("lmb", true);
-        if (e.button === 2) level.input("rmb", true);
+        if (e.button === 0) onInput("lmb", true);
+        if (e.button === 2) onInput("rmb", true);
     };
     window.addEventListener("mousedown", mousedown, true);
 
     const mouseup = (e: MouseEvent) => {
-        if (!level) return;
-        if (e.button === 0) level.input("lmb", false);
-        if (e.button === 2) level.input("rmb", false);
+        if (e.button === 0) onInput("lmb", false);
+        if (e.button === 2) onInput("rmb", false);
     };
     window.addEventListener("mouseup", mouseup, true);
 
-    const t = setInterval(() => {
-        if (!level) return;
-        for (let i = 0; i < (fastForward ? 10 : 1); ++i) {
-            level.update();
+    const updateMenu = () => {
+        graphics.begin();
+        startButton.draw(graphics);
+        graphics.end();
+    };
+
+    const updateLevel = (l: Level) => {
+        const lvlNum = levelNum;
+        for (let i = 0; i < (fastForward ? 10 : 1) && lvlNum === levelNum; ++i) {
+            l.update();
         }
         graphics.begin();
-        level.draw(graphics);
+        l.draw(graphics);
         graphics.end();
+    };
+
+    const t = setInterval(() => {
+        if (level) updateLevel(level);
+        else updateMenu();
     }, 1000 / 60);
 
     return () => {

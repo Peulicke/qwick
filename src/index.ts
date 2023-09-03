@@ -1,5 +1,6 @@
 import createQwick, { Qwick, InputType, Graphics } from "./qwick";
 import * as vec2 from "./qwick/vec2";
+import { createButton } from "./qwick/button";
 
 const transpose = <T>(grid: T[][]) => grid[0].map((_, i) => grid.map((_, j) => grid[j][i]));
 
@@ -94,11 +95,6 @@ const level2: LevelData = {
 };
 
 const levels: LevelData[] = [level1, level2];
-
-const insideRect = (pos: vec2.Vec2, rectPos: vec2.Vec2, rectSize: vec2.Vec2) => {
-    const dPos = vec2.sub(pos, rectPos);
-    return Math.abs(dPos[0]) < rectSize[0] && Math.abs(dPos[1]) < rectSize[1];
-};
 
 const lerp = (a: number, b: number, w: number) => a * (1 - w) + b * w;
 
@@ -257,8 +253,8 @@ const loadGame = (qwick: Qwick) => {
 
             const startButtonPos: vec2.Vec2 = [0, 0.45];
             const startButtonSize: vec2.Vec2 = [0.1, 0.04];
-
-            const insideButton = () => insideRect(qwick.getMousePos(), startButtonPos, startButtonSize);
+            const startButton = createButton(qwick.getMousePos, startButtonPos, startButtonSize, "Start");
+            const stopButton = createButton(qwick.getMousePos, startButtonPos, startButtonSize, "Stop");
 
             const allUnitsPlaced = () => units.filter(u => u.team === 0).every(u => getAreaType(u.pos) === "placable");
 
@@ -340,11 +336,9 @@ const loadGame = (qwick: Qwick) => {
 
             return {
                 input: (type: InputType, down: boolean) => {
+                    if (!started && startButton.clicked(type, down) && allUnitsPlaced()) started = true;
+                    else if (started && stopButton.clicked(type, down)) started = false;
                     if (type !== "lmb") return;
-                    if (down) {
-                        if (!started && insideButton() && allUnitsPlaced()) started = true;
-                        else if (started && insideButton()) started = false;
-                    }
                     if (started) return;
                     if (down) {
                         units.forEach((unit, i) => {
@@ -415,11 +409,8 @@ const loadGame = (qwick: Qwick) => {
                         graphics.translate([0, -0.45]);
                         graphics.text("Battle game test", 0.05);
                     });
-                    graphics.context(() => {
-                        graphics.translate(startButtonPos);
-                        graphics.text(started ? "Stop" : "Start", 0.05);
-                        graphics.rect(vec2.negate(startButtonSize), startButtonSize, false);
-                    });
+                    if (!started) startButton.draw(graphics);
+                    else stopButton.draw(graphics);
                 }
             };
         },
