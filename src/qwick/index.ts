@@ -25,6 +25,7 @@ export type Qwick = {
     height: number;
     drawImage: (image: HTMLImageElement, pos: [number, number]) => void;
     getMousePos: () => [number, number];
+    getMousePosPixels: () => [number, number];
     levelCompleted: () => void;
     levelLost: () => void;
 };
@@ -48,6 +49,7 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         height: innerHeight,
         drawImage: () => {},
         getMousePos: () => [0, 0],
+        getMousePosPixels: () => [0, 0],
         levelCompleted: () => {},
         levelLost: () => {}
     };
@@ -57,7 +59,12 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         ctx.drawImage(image, pos[0], pos[1]);
     };
 
-    qwick.getMousePos = () => mousePos;
+    qwick.getMousePos = () => [
+        (mousePos[0] - 0.5 * qwick.width) / qwick.height,
+        (mousePos[1] - 0.5 * qwick.height) / qwick.height
+    ];
+
+    qwick.getMousePosPixels = () => mousePos;
 
     const startButton = createButton(qwick.getMousePos, [0, -0.1], [0.1, 0.04], "Start");
     const successButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Next level");
@@ -107,8 +114,8 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     window.addEventListener("keyup", keyup, true);
 
     const mousemove = (e: MouseEvent) => {
-        mousePos[0] = (e.x - 0.5 * qwick.width) / qwick.height;
-        mousePos[1] = (e.y - 0.5 * qwick.height) / qwick.height;
+        mousePos[0] = e.x;
+        mousePos[1] = e.y;
     };
     window.addEventListener("mousemove", mousemove, true);
 
