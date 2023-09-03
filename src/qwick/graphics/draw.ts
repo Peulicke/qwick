@@ -126,3 +126,25 @@ export const text = (ctx: CanvasRenderingContext2D, t: string, size: number): vo
     ctx.fillText(t, 0, 0);
     transform.pop(ctx);
 };
+
+export type IconType = "o" | "+" | "square";
+
+export const icon = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number, type: IconType, filled: boolean): void => {
+    transform.context(ctx, () => {
+        transform.translate(ctx, v);
+        transform.scale(ctx, r);
+        if (type === "o") return circle(ctx, [0, 0], 1);
+        if (type === "+")
+            return lineStrips(ctx, [
+                [
+                    [-1, 0],
+                    [1, 0]
+                ],
+                [
+                    [0, -1],
+                    [0, 1]
+                ]
+            ]);
+        if (type === "square") return square(ctx, filled);
+    });
+};

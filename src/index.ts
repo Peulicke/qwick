@@ -384,33 +384,20 @@ const loadGame = (qwick: Qwick) => {
                         forEachAreaOfType("placable", pos => {
                             graphics.context(() => {
                                 graphics.color("#444444");
-                                graphics.translate(pos);
-                                graphics.square(true);
+                                graphics.icon(pos, 1, "square", true);
                             });
                         });
                         forEachAreaOfType("wall", pos => {
-                            graphics.context(() => {
-                                graphics.translate(pos);
-                                graphics.square(false);
-                            });
+                            graphics.icon(pos, 1, "square", false);
                         });
                         units.forEach(unit => {
                             graphics.context(() => {
                                 graphics.color(teamColors[unit.team]);
                                 graphics.translate(unit.pos);
-                                if (unit.type === "bow") graphics.circle([0, 0], 0.5);
+                                if (unit.type === "bow") graphics.icon([0, 0], 0.5, "o");
                                 if (unit.type === "sword") {
-                                    graphics.circle([0, 0], 0.5);
-                                    graphics.lineStrips([
-                                        [
-                                            [-0.5, 0],
-                                            [0.5, 0]
-                                        ],
-                                        [
-                                            [0, -0.5],
-                                            [0, 0.5]
-                                        ]
-                                    ]);
+                                    graphics.icon([0, 0], 0.5, "o");
+                                    graphics.icon([0, 0], 0.5, "+");
                                 }
                             });
                         });

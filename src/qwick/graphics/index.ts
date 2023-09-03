@@ -24,7 +24,8 @@ const createGraphics = (ctx: CanvasRenderingContext2D) => ({
     arrow: (a: vec2.Vec2, r: vec2.Vec2): void => draw.arrow(ctx, a, r),
     fork: (a: vec2.Vec2, r: vec2.Vec2): void => draw.fork(ctx, a, r),
     square: (fill: boolean): void => draw.square(ctx, fill),
-    rect: (a: vec2.Vec2, b: vec2.Vec2, fill: boolean): void => draw.rect(ctx, a, b, fill)
+    rect: (a: vec2.Vec2, b: vec2.Vec2, fill: boolean): void => draw.rect(ctx, a, b, fill),
+    icon: (v: vec2.Vec2, r: number, type: draw.IconType, filled = false): void => draw.icon(ctx, v, r, type, filled)
 });
 
 export type Graphics = ReturnType<typeof createGraphics>;
