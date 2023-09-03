@@ -78,7 +78,22 @@ const level1: LevelData = {
     ownUnitTypes: ["sword", "sword", "bow", "bow", "bow", "bow"]
 };
 
-const levels: LevelData[] = [level1];
+const level2: LevelData = {
+    areas: `
+##################
+#0000...........b#
+#0000...........b#
+#0000.....s......#
+#0000.....s......#
+#0000.....s......#
+#0000...........b#
+#0000...........b#
+##################
+`,
+    ownUnitTypes: ["sword", "sword", "sword", "sword", "bow", "bow", "bow", "bow"]
+};
+
+const levels: LevelData[] = [level1, level2];
 
 const insideRect = (pos: vec2.Vec2, rectPos: vec2.Vec2, rectSize: vec2.Vec2) => {
     const dPos = vec2.sub(pos, rectPos);
@@ -349,6 +364,8 @@ const loadGame = (qwick: Qwick) => {
                         updateUnits();
                         wallCollisions();
                         unitCollisions();
+                        if (units.every(u => u.team !== 0)) qwick.levelLost();
+                        else if (units.every(u => u.team === 0)) qwick.levelCompleted();
                     } else {
                         if (selectedUnitIndex !== -1) {
                             units[selectedUnitIndex].pos = vec2.add(getMousePos(), selectOffset);
