@@ -71,11 +71,11 @@ const level1: LevelData = {
 #0000#.......#
 #0000........#
 #0000..####..#
-#0000..#s....#
-#0000..#.b...#
+#0000..#sss..#
+#0000..#ss...#
 ##############
 `,
-    ownUnitTypes: ["sword", "sword", "bow"]
+    ownUnitTypes: ["sword", "sword", "bow", "bow", "bow", "bow"]
 };
 
 const levels: LevelData[] = [level1];
