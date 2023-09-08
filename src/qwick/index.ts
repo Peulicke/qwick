@@ -66,6 +66,12 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
 
     qwick.getMousePosPixels = () => mousePos;
 
+    const menuButton = createButton(
+        qwick.getMousePos,
+        () => [-0.5 * graphics.getAspectRatio() + 0.11, -0.5 + 0.05],
+        [0.1, 0.04],
+        "Menu"
+    );
     const startButton = createButton(qwick.getMousePos, [0, -0.3], [0.1, 0.04], "Start");
     const successButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Next level");
     const failButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Retry");
@@ -127,6 +133,10 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
 
     const onInput = (type: InputType, down: boolean) => {
         if (level) {
+            if (menuButton.clicked(type, down)) {
+                level = null;
+                return;
+            }
             if (levelSuccess) {
                 if (successButton.clicked(type, down)) {
                     ++levelNum;
@@ -184,6 +194,7 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
             graphics.translate([0.5 * graphics.getAspectRatio() - 0.1, -0.5 + 0.05]);
             graphics.text(`Level ${levelNum + 1}`, 0.05);
         });
+        menuButton.draw(graphics);
         if (levelSuccess) successButton.draw(graphics);
         if (levelFail) failButton.draw(graphics);
         graphics.end();

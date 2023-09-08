@@ -15,12 +15,18 @@ const insideRect = (pos: vec2.Vec2, rectPos: vec2.Vec2, rectSize: vec2.Vec2) => 
 const insideButton = (getMousePos: () => vec2.Vec2, pos: vec2.Vec2, size: vec2.Vec2) =>
     insideRect(getMousePos(), pos, size);
 
-export const createButton = (getMousePos: () => vec2.Vec2, pos: vec2.Vec2, size: vec2.Vec2, text: string): Button => {
+export const createButton = (
+    getMousePos: () => vec2.Vec2,
+    pos: vec2.Vec2 | (() => vec2.Vec2),
+    size: vec2.Vec2,
+    text: string
+): Button => {
+    const getPos = typeof pos === "function" ? pos : () => pos;
     let mouseDown = false;
     return {
         clicked: (type: InputType, down: boolean) => {
             if (type !== "lmb") return false;
-            if (!insideButton(getMousePos, pos, size)) {
+            if (!insideButton(getMousePos, getPos(), size)) {
                 mouseDown = false;
                 return false;
             }
@@ -36,7 +42,7 @@ export const createButton = (getMousePos: () => vec2.Vec2, pos: vec2.Vec2, size:
         },
         draw: (graphics: Graphics) => {
             graphics.context(() => {
-                graphics.translate(pos);
+                graphics.translate(getPos());
                 graphics.text(text, 0.05);
                 graphics.rect(vec2.negate(size), size, false);
             });
