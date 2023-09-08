@@ -180,6 +180,10 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         }
         graphics.begin();
         l.draw(graphics);
+        graphics.context(() => {
+            graphics.translate([0.5 * graphics.getAspectRatio() - 0.1, -0.5 + 0.05]);
+            graphics.text(`Level ${levelNum + 1}`, 0.05);
+        });
         if (levelSuccess) successButton.draw(graphics);
         if (levelFail) failButton.draw(graphics);
         graphics.end();
