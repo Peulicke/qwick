@@ -1,6 +1,8 @@
 import createQwick, { Qwick, InputType, Graphics } from "./qwick";
 import * as vec2 from "./qwick/vec2";
+import * as vec3 from "./qwick/vec3";
 import { createButton } from "./qwick/button";
+import { hsv2rgb, rgb2hsv } from "./qwick/graphics/utils";
 
 const transpose = <T>(grid: T[][]) => grid[0].map((_, i) => grid.map((_, j) => grid[j][i]));
 
@@ -396,6 +398,11 @@ const loadGame = (qwick: Qwick) => {
                                 graphics.translate(unit.pos);
                                 graphics.icon([0, 0], 0.5, "o");
                                 graphics.text(unit.type, 0.25);
+                                const totalHp = unitTypeToSpecs[unit.type].hp;
+                                const hp = totalHp - unit.hpLost;
+                                const frac = hp / totalHp;
+                                graphics.color(hsv2rgb(vec3.lerp(rgb2hsv([1, 0, 0]), rgb2hsv([0, 1, 0]), frac)));
+                                graphics.rect([-0.5, -0.5], [frac - 0.5, -0.4], true);
                             });
                         });
                     });
