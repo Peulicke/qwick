@@ -16,6 +16,11 @@ export const rotate = (ctx: CanvasRenderingContext2D, v: number): void => {
     ctx.rotate(v);
 };
 
+export const orient = (ctx: CanvasRenderingContext2D, v: vec2.Vec2): void => {
+    const angle = Math.atan2(v[1], v[0]);
+    ctx.rotate(angle);
+};
+
 export const scale = (ctx: CanvasRenderingContext2D, s: number): void => {
     ctx.scale(s, s);
 };

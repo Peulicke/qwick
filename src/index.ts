@@ -36,6 +36,13 @@ type Unit = {
     chargeTime: number;
 };
 
+type Attack = {
+    team: number;
+    pos: vec2.Vec2;
+    target: Unit;
+    unitType: UnitType;
+};
+
 const createUnit = (team: number, type: UnitType, pos: vec2.Vec2): Unit => ({
     team,
     type,
@@ -189,6 +196,8 @@ const loadGame = (qwick: Qwick) => {
                     ])
             );
 
+            const attacks: Attack[] = [];
+
             grid.forEach((row, i) =>
                 row.forEach((c, j) => {
                     const pos: vec2.Vec2 = [i, j];
@@ -277,7 +286,7 @@ const loadGame = (qwick: Qwick) => {
                     const specs = unitTypeToSpecs[unit.type];
                     if (nearestEnemy && vec2.dist(unit.pos, nearestEnemy.pos) < specs.range) {
                         if (unit.chargeTime > specs.rechargeTime) {
-                            nearestEnemy.hpLost += specs.damage;
+                            attacks.push({ team: unit.team, pos: unit.pos, target: nearestEnemy, unitType: unit.type });
                             unit.chargeTime = 0;
                         }
                     } else
@@ -293,6 +302,22 @@ const loadGame = (qwick: Qwick) => {
                 });
                 for (let i = units.length - 1; i >= 0; --i) {
                     if (units[i].hpLost >= unitTypeToSpecs[units[i].type].hp) units.splice(i, 1);
+                }
+            };
+
+            const updateAttacks = () => {
+                const attackSpeed = 0.1;
+                for (let i = attacks.length - 1; i >= 0; --i) {
+                    const attack = attacks[i];
+                    const d = vec2.sub(attack.target.pos, attack.pos);
+                    const l = vec2.length(d);
+                    if (l < attackSpeed) {
+                        attack.target.hpLost += unitTypeToSpecs[attack.unitType].damage;
+                        attacks.splice(i, 1);
+                        continue;
+                    }
+                    const n = vec2.scale(d, attackSpeed / l);
+                    attack.pos = vec2.add(attack.pos, n);
                 }
             };
 
@@ -369,6 +394,7 @@ const loadGame = (qwick: Qwick) => {
                     if (started) {
                         updateSmell();
                         updateUnits();
+                        updateAttacks();
                         wallCollisions();
                         unitCollisions();
                         if (units.every(u => u.team !== 0)) qwick.levelLost();
@@ -403,6 +429,15 @@ const loadGame = (qwick: Qwick) => {
                                 const frac = hp / totalHp;
                                 graphics.color(hsv2rgb(vec3.lerp(rgb2hsv([1, 0, 0]), rgb2hsv([0, 1, 0]), frac)));
                                 graphics.rect([-0.5, -0.5], [frac - 0.5, -0.4], true);
+                            });
+                        });
+                        attacks.forEach(attack => {
+                            graphics.context(() => {
+                                graphics.color(teamColors[attack.team]);
+                                graphics.translate(attack.pos);
+                                graphics.orient(vec2.sub(attack.target.pos, attack.pos));
+                                if (attack.unitType === "sword") graphics.icon([0, 0], 1, "sword", true);
+                                if (attack.unitType === "bow") graphics.icon([0, 0], 0.5, "arrow", true);
                             });
                         });
                     });

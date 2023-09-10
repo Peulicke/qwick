@@ -127,7 +127,7 @@ export const text = (ctx: CanvasRenderingContext2D, t: string, size: number): vo
     transform.pop(ctx);
 };
 
-export type IconType = "o" | "+" | "square";
+export type IconType = "o" | "+" | "square" | "arrow" | "sword";
 
 export const icon = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number, type: IconType, filled: boolean): void => {
     transform.context(ctx, () => {
@@ -146,5 +146,20 @@ export const icon = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number, typ
                 ]
             ]);
         if (type === "square") return square(ctx, filled);
+        if (type === "arrow") {
+            line(ctx, [-0.5, 0], [0.5, 0]);
+            line(ctx, [-0.5, 0], [-0.6, -0.1]);
+            line(ctx, [-0.5, 0], [-0.6, 0.1]);
+            line(ctx, [-0.4, 0], [-0.5, -0.1]);
+            line(ctx, [-0.4, 0], [-0.5, 0.1]);
+            line(ctx, [0.5, 0], [0.4, -0.1]);
+            line(ctx, [0.5, 0], [0.4, 0.1]);
+            return;
+        }
+        if (type === "sword") {
+            line(ctx, [-0.5, 0], [0.5, 0]);
+            line(ctx, [-0.2, -0.2], [-0.2, 0.2]);
+            return;
+        }
     });
 };
