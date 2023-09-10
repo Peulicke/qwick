@@ -3,7 +3,6 @@ import createGraphics, { Graphics } from "./graphics";
 import "./index.css";
 
 export { default as random } from "./random";
-export * as vec3 from "./vec3";
 export type { Graphics } from "./graphics";
 
 export type InputType = "lmb" | "rmb";

@@ -1,6 +1,7 @@
 import createQwick, { Qwick, InputType, Graphics } from "./qwick";
 import * as vec2 from "./qwick/vec2";
 import * as vec3 from "./qwick/vec3";
+import * as matrix from "./qwick/matrix";
 import { createButton } from "./qwick/button";
 import { hsv2rgb, rgb2hsv } from "./qwick/graphics/utils";
 
@@ -131,48 +132,6 @@ const level3: LevelData = {
 
 const levels: LevelData[] = [level1, level2, level3];
 
-const lerp = (a: number, b: number, w: number) => a * (1 - w) + b * w;
-
-const lerp2 = (v00: number, v10: number, v01: number, v11: number, w: vec2.Vec2) =>
-    lerp(lerp(v00, v10, w[0]), lerp(v01, v11, w[0]), w[1]);
-
-const getMatrixValue = (matrix: number[][], pos: vec2.Vec2, defaultValue = 0): number => {
-    const i = Math.floor(pos[0]);
-    const j = Math.floor(pos[1]);
-    return lerp2(
-        (matrix[i] ?? [])[j] ?? defaultValue,
-        (matrix[i + 1] ?? [])[j] ?? defaultValue,
-        (matrix[i] ?? [])[j + 1] ?? defaultValue,
-        (matrix[i + 1] ?? [])[j + 1] ?? defaultValue,
-        vec2.sub(pos, [i, j])
-    );
-};
-
-const getMatrixGradient = (matrix: number[][], pos: vec2.Vec2, defaultValue = 0): vec2.Vec2 => {
-    const x1 = getMatrixValue(matrix, vec2.add(pos, [-0.5, 0]), defaultValue);
-    const x2 = getMatrixValue(matrix, vec2.add(pos, [0.5, 0]), defaultValue);
-    const y1 = getMatrixValue(matrix, vec2.add(pos, [0, -0.5]), defaultValue);
-    const y2 = getMatrixValue(matrix, vec2.add(pos, [0, 0.5]), defaultValue);
-    return [x2 - x1, y2 - y1];
-};
-
-const addMatrixValue = (matrix: number[][], pos: vec2.Vec2, amount: number): void => {
-    if (matrix[pos[0]] == undefined) return;
-    if (matrix[pos[0]][pos[1]] == undefined) return;
-    matrix[pos[0]][pos[1]] += amount;
-};
-
-const addMatrixValueInterpolated = (matrix: number[][], pos: vec2.Vec2, amount: number): void => {
-    const i = Math.floor(pos[0]);
-    const j = Math.floor(pos[1]);
-    const u = pos[0] - i;
-    const v = pos[1] - j;
-    addMatrixValue(matrix, [i, j], (1 - u) * (1 - v) * amount);
-    addMatrixValue(matrix, [i + 1, j], u * (1 - v) * amount);
-    addMatrixValue(matrix, [i, j + 1], (1 - u) * v * amount);
-    addMatrixValue(matrix, [i + 1, j + 1], u * v * amount);
-};
-
 const smellResolution = 2;
 
 createQwick((qwick: Qwick) => {
@@ -215,7 +174,7 @@ createQwick((qwick: Qwick) => {
             );
             const updateSmell = () => {
                 units.forEach(unit => {
-                    addMatrixValueInterpolated(smell[unit.team], vec2.scale(unit.pos, smellResolution), 0.1);
+                    matrix.addValueInterpolated(smell[unit.team], vec2.scale(unit.pos, smellResolution), 0.1);
                 });
                 for (let team = 0; team < smell.length; ++team) {
                     smell[team] = smell[team].map((row, i) =>
@@ -233,7 +192,7 @@ createQwick((qwick: Qwick) => {
                             ];
                             return (
                                 ((smell[team][i][j] +
-                                    posList.map(pos => getMatrixValue(smell[team], pos)).reduce((s, v) => s + v, 0) /
+                                    posList.map(pos => matrix.getValue(smell[team], pos)).reduce((s, v) => s + v, 0) /
                                         4) /
                                     2) *
                                 0.999
@@ -272,7 +231,7 @@ createQwick((qwick: Qwick) => {
                             unit.pos,
                             vec2.scale(
                                 vec2.normalize(
-                                    getMatrixGradient(smell[1 - unit.team], vec2.scale(unit.pos, smellResolution))
+                                    matrix.getGradient(smell[1 - unit.team], vec2.scale(unit.pos, smellResolution))
                                 ),
                                 specs.speed
                             )
