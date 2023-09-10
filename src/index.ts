@@ -394,11 +394,8 @@ const loadGame = (qwick: Qwick) => {
                             graphics.context(() => {
                                 graphics.color(teamColors[unit.team]);
                                 graphics.translate(unit.pos);
-                                if (unit.type === "bow") graphics.icon([0, 0], 0.5, "o");
-                                if (unit.type === "sword") {
-                                    graphics.icon([0, 0], 0.5, "o");
-                                    graphics.icon([0, 0], 0.5, "+");
-                                }
+                                graphics.icon([0, 0], 0.5, "o");
+                                graphics.text(unit.type, 0.25);
                             });
                         });
                     });
