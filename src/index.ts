@@ -206,18 +206,9 @@ createQwick((qwick: Qwick) => {
                 })
             );
 
-            const getNearestEnemy = (unit: Unit): Unit | undefined => {
-                const enemies = units.filter(u => u.team !== unit.team);
-                let minDist = Infinity;
-                let result: Unit | undefined = undefined;
-                for (const u of enemies) {
-                    const dist = vec2.dist(unit.pos, u.pos);
-                    if (dist > minDist) continue;
-                    minDist = dist;
-                    result = u;
-                }
-                return result;
-            };
+            const getEnemies = (unit: Unit) => units.filter(u => u.team !== unit.team);
+
+            const getNearestEnemy = (unit: Unit) => vec2.getNearestObject(unit, getEnemies(unit), u => u.pos);
 
             const smell = teamColors.map(() =>
                 [...Array(areas.length * smellResolution)].map(() =>

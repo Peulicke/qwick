@@ -40,3 +40,18 @@ export const dist = (a: Vec2, b: Vec2): number => length(sub(b, a));
 export const dir = (a: Vec2, b: Vec2): Vec2 => normalize(sub(b, a));
 
 export const round = (v: Vec2): Vec2 => [Math.round(v[0]), Math.round(v[1])];
+
+export const getNearestObject = <T>(obj: T, allObjs: T[], pos: (t: T) => Vec2): T | undefined => {
+    let result: T | undefined = undefined;
+    let minDist = Infinity;
+    for (const o of allObjs) {
+        if (o === obj) continue;
+        const d = dist(pos(obj), pos(o));
+        if (d > minDist) continue;
+        minDist = d;
+        result = o;
+    }
+    return result;
+};
+
+export const getNearest = (v: Vec2, all: Vec2[]) => getNearestObject(v, all, t => t);
