@@ -177,7 +177,7 @@ const addMatrixValueInterpolated = (matrix: number[][], pos: vec2.Vec2, amount: 
 
 const smellResolution = 2;
 
-const loadGame = (qwick: Qwick) => {
+createQwick((qwick: Qwick) => {
     return {
         levels,
         loadLevel: (levelData: LevelData) => {
@@ -267,10 +267,6 @@ const loadGame = (qwick: Qwick) => {
                     });
                 });
             };
-            const forEachAreaOfType = (type: AreaType, func: (pos: vec2.Vec2) => void) =>
-                forEachArea((t, p) => {
-                    if (t === type) func(p);
-                });
 
             const startButtonPos: vec2.Vec2 = [0, 0.45];
             const startButtonSize: vec2.Vec2 = [0.1, 0.04];
@@ -409,14 +405,11 @@ const loadGame = (qwick: Qwick) => {
                     graphics.context(() => {
                         graphics.scale(boardScale);
                         graphics.translate(boardTranslate);
-                        forEachAreaOfType("placable", pos => {
-                            graphics.context(() => {
-                                graphics.color("#444444");
-                                graphics.icon(pos, 1, "square", true);
-                            });
-                        });
-                        forEachAreaOfType("wall", pos => {
-                            graphics.icon(pos, 1, "square", false);
+                        forEachArea((type, pos) => {
+                            graphics.color("#555555");
+                            if (type === "wall") graphics.color("#000000");
+                            if (type === "placable" && !started) graphics.color("#888888");
+                            graphics.icon(pos, 1, "square", true);
                         });
                         units.forEach(unit => {
                             graphics.context(() => {
@@ -453,8 +446,7 @@ const loadGame = (qwick: Qwick) => {
         },
         resize: () => {
             console.log("resize:", qwick.width, qwick.height);
-        }
+        },
+        backgroundColor: "#60b1c7"
     };
-};
-
-createQwick(loadGame);
+});

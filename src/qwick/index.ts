@@ -18,6 +18,7 @@ export type Game<LevelData> = {
     levels: LevelData[];
     loadLevel: (ld: LevelData) => Level;
     resize: () => void;
+    backgroundColor: string;
 };
 
 export type Qwick = {
@@ -53,7 +54,6 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         levelCompleted: () => {},
         levelLost: () => {}
     };
-    const graphics = createGraphics(ctx);
 
     qwick.drawImage = (image: HTMLImageElement, pos: [number, number]) => {
         ctx.drawImage(image, pos[0], pos[1]);
@@ -66,6 +66,10 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
 
     qwick.getMousePosPixels = () => mousePos;
 
+    const game = loadGame(qwick);
+
+    const graphics = createGraphics(ctx, game.backgroundColor);
+
     const menuButton = createButton(
         qwick.getMousePos,
         () => [-0.5 * graphics.getAspectRatio() + 0.11, -0.5 + 0.05],
@@ -75,8 +79,6 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     const startButton = createButton(qwick.getMousePos, [0, -0.3], [0.1, 0.04], "Start");
     const successButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Next level");
     const failButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Retry");
-
-    const game = loadGame(qwick);
 
     const buttonGridWidth = Math.ceil(Math.sqrt(game.levels.length));
     const levelButtons = game.levels.map((_, i) => {
