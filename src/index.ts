@@ -251,13 +251,6 @@ createQwick((qwick: Qwick) => {
             const getMousePos = () => vec2.sub(vec2.scale(qwick.getMousePos(), 1 / boardScale), boardTranslate);
             let selectedUnitIndex = -1;
             let selectOffset: vec2.Vec2 = [0, 0];
-            const forEachArea = (func: (type: AreaType, pos: vec2.Vec2) => void) => {
-                areas.forEach((row, x) => {
-                    row.forEach((t, y) => {
-                        func(t, [x, y]);
-                    });
-                });
-            };
 
             const startButtonPos: vec2.Vec2 = [0, 0.45];
             const startButtonSize: vec2.Vec2 = [0.1, 0.04];
@@ -396,11 +389,13 @@ createQwick((qwick: Qwick) => {
                     graphics.context(() => {
                         graphics.scale(boardScale);
                         graphics.translate(boardTranslate);
-                        forEachArea((type, pos) => {
-                            graphics.color("#555555");
-                            if (type === "wall") graphics.color("#000000");
-                            if (type === "placable" && !started) graphics.color("#888888");
-                            graphics.icon(pos, 1, "square", true);
+                        areas.forEach((row, x) => {
+                            row.forEach((type, y) => {
+                                graphics.color("#555555");
+                                if (type === "wall") graphics.color("#000000");
+                                if (type === "placable" && !started) graphics.color("#888888");
+                                graphics.icon([x, y], 1, "square", true);
+                            });
                         });
                         units.forEach(unit => {
                             graphics.context(() => {
