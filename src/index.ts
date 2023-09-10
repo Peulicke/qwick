@@ -149,13 +149,11 @@ const getMatrixValue = (matrix: number[][], pos: vec2.Vec2, defaultValue = 0): n
 };
 
 const getMatrixGradient = (matrix: number[][], pos: vec2.Vec2, defaultValue = 0): vec2.Vec2 => {
-    const v00 = getMatrixValue(matrix, pos, defaultValue);
-    const v10 = getMatrixValue(matrix, vec2.add(pos, [1, 0]), defaultValue);
-    const v01 = getMatrixValue(matrix, vec2.add(pos, [0, 1]), defaultValue);
-    const v11 = getMatrixValue(matrix, vec2.add(pos, [1, 1]), defaultValue);
-    const di = (v10 - v00 + v11 - v01) / 2;
-    const dj = (v01 - v00 + v11 - v10) / 2;
-    return [di, dj];
+    const x1 = getMatrixValue(matrix, vec2.add(pos, [-0.5, 0]), defaultValue);
+    const x2 = getMatrixValue(matrix, vec2.add(pos, [0.5, 0]), defaultValue);
+    const y1 = getMatrixValue(matrix, vec2.add(pos, [0, -0.5]), defaultValue);
+    const y2 = getMatrixValue(matrix, vec2.add(pos, [0, 0.5]), defaultValue);
+    return [x2 - x1, y2 - y1];
 };
 
 const addMatrixValue = (matrix: number[][], pos: vec2.Vec2, amount: number): void => {
