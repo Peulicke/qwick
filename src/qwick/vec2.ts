@@ -39,6 +39,8 @@ export const dist = (a: Vec2, b: Vec2): number => length(sub(b, a));
 
 export const dir = (a: Vec2, b: Vec2): Vec2 => normalize(sub(b, a));
 
+export const floor = (v: Vec2): Vec2 => [Math.floor(v[0]), Math.floor(v[1])];
+
 export const round = (v: Vec2): Vec2 => [Math.round(v[0]), Math.round(v[1])];
 
 export const getNearestObject = <T>(obj: T, allObjs: T[], pos: (t: T) => Vec2): T | undefined => {

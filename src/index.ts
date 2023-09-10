@@ -2,13 +2,12 @@ import createQwick, { Qwick, InputType, Graphics } from "./qwick";
 import * as vec2 from "./qwick/vec2";
 import * as vec3 from "./qwick/vec3";
 import * as matrix from "./qwick/matrix";
+import * as grid from "./qwick/grid";
 import { createButton } from "./qwick/button";
 import { hsv2rgb, rgb2hsv } from "./qwick/graphics/utils";
 
-const transpose = <T>(grid: T[][]) => grid[0].map((_, i) => grid.map((_, j) => grid[j][i]));
-
 const stringToGrid = (s: string) =>
-    transpose(
+    grid.transpose(
         s
             .trim()
             .split("\n")
@@ -138,12 +137,11 @@ createQwick((qwick: Qwick) => {
     return {
         levels,
         loadLevel: (levelData: LevelData) => {
-            const grid = stringToGrid(levelData.areas);
+            const gridData = stringToGrid(levelData.areas);
 
-            const areas = grid.map(row => row.map(char => charToAreaType[char]));
+            const areas = grid.map(gridData, char => charToAreaType[char]);
 
-            const getAreaType = (pos: vec2.Vec2): AreaType | undefined =>
-                (areas[Math.round(pos[0])] ?? [])[Math.round(pos[1])];
+            const getAreaType = (pos: vec2.Vec2) => grid.getNearestCell(areas, pos);
 
             const units = levelData.ownUnitTypes.map(
                 (type, i): Unit =>
@@ -155,50 +153,37 @@ createQwick((qwick: Qwick) => {
 
             const attacks: Attack[] = [];
 
-            grid.forEach((row, i) =>
-                row.forEach((c, j) => {
-                    const pos: vec2.Vec2 = [i, j];
-                    if (c === "s") units.push(createUnit(1, "sword", pos));
-                    if (c === "b") units.push(createUnit(1, "bow", pos));
-                })
-            );
+            grid.map(gridData, (c, pos) => {
+                if (c === "s") units.push(createUnit(1, "sword", pos));
+                if (c === "b") units.push(createUnit(1, "bow", pos));
+            });
 
             const getEnemies = (unit: Unit) => units.filter(u => u.team !== unit.team);
 
             const getNearestEnemy = (unit: Unit) => vec2.getNearestObject(unit, getEnemies(unit), u => u.pos);
 
             const smell = teamColors.map(() =>
-                [...Array(areas.length * smellResolution)].map(() =>
-                    [...Array(areas[0].length * smellResolution)].map(() => 0)
-                )
+                grid.create(vec2.scale([areas.length, areas[0].length], smellResolution), 0)
             );
+
             const updateSmell = () => {
                 units.forEach(unit => {
                     matrix.addValueInterpolated(smell[unit.team], vec2.scale(unit.pos, smellResolution), 0.1);
                 });
                 for (let team = 0; team < smell.length; ++team) {
-                    smell[team] = smell[team].map((row, i) =>
-                        row.map((_, j) => {
-                            if (
-                                getAreaType([Math.floor(i / smellResolution), Math.floor(j / smellResolution)]) ===
-                                "wall"
-                            )
-                                return 0;
-                            const posList: vec2.Vec2[] = [
-                                [i - 1, j],
-                                [i + 1, j],
-                                [i, j - 1],
-                                [i, j + 1]
-                            ];
-                            return (
-                                ((smell[team][i][j] +
-                                    posList.map(pos => matrix.getValue(smell[team], pos)).reduce((s, v) => s + v, 0) /
-                                        4) /
-                                    2) *
-                                0.999
-                            );
-                        })
-                    );
+                    smell[team] = grid.map(smell[team], (value, [i, j]) => {
+                        if (getAreaType(vec2.floor(vec2.scale([i, j], 1 / smellResolution))) === "wall") return 0;
+                        return (
+                            ((value +
+                                (matrix.getValue(smell[team], [i - 1, j]) +
+                                    matrix.getValue(smell[team], [i + 1, j]) +
+                                    matrix.getValue(smell[team], [i, j - 1]) +
+                                    matrix.getValue(smell[team], [i, j + 1])) /
+                                    4) /
+                                2) *
+                            0.999
+                        );
+                    });
                 }
             };
 
@@ -346,13 +331,11 @@ createQwick((qwick: Qwick) => {
                     graphics.context(() => {
                         graphics.scale(boardScale);
                         graphics.translate(boardTranslate);
-                        areas.forEach((row, x) => {
-                            row.forEach((type, y) => {
-                                graphics.color("#555555");
-                                if (type === "wall") graphics.color("#000000");
-                                if (type === "placable" && !started) graphics.color("#888888");
-                                graphics.icon([x, y], 1, "square", true);
-                            });
+                        grid.map(areas, (type, pos) => {
+                            graphics.color("#555555");
+                            if (type === "wall") graphics.color("#000000");
+                            if (type === "placable" && !started) graphics.color("#888888");
+                            graphics.icon(pos, 1, "square", true);
                         });
                         units.forEach(unit => {
                             graphics.context(() => {
