@@ -246,34 +246,18 @@ createQwick((qwick: Qwick) => {
             const wallCollisions = () => {
                 const r = 0.2;
                 for (const unit of units) {
-                    const i = Math.round(unit.pos[0]);
-                    const j = Math.round(unit.pos[1]);
-                    const di = unit.pos[0] - i;
-                    const dj = unit.pos[1] - j;
-                    if (di > r && getAreaType([i + 1, j]) === "wall") unit.pos[0] = i + r;
-                    if (di < -r && getAreaType([i - 1, j]) === "wall") unit.pos[0] = i - r;
-                    if (dj > r && getAreaType([i, j + 1]) === "wall") unit.pos[1] = j + r;
-                    if (dj < -r && getAreaType([i, j - 1]) === "wall") unit.pos[1] = j - r;
-                    const p11: vec2.Vec2 = [i + 0.5, j + 0.5];
-                    const p10: vec2.Vec2 = [i + 0.5, j - 0.5];
-                    const p01: vec2.Vec2 = [i - 0.5, j + 0.5];
-                    const p00: vec2.Vec2 = [i - 0.5, j - 0.5];
-                    const d11 = vec2.sub(unit.pos, p11);
-                    const d10 = vec2.sub(unit.pos, p10);
-                    const d01 = vec2.sub(unit.pos, p01);
-                    const d00 = vec2.sub(unit.pos, p00);
-                    const l11 = vec2.length(d11);
-                    const l10 = vec2.length(d10);
-                    const l01 = vec2.length(d01);
-                    const l00 = vec2.length(d00);
-                    if (l11 < 0.5 - r && getAreaType([i + 1, j + 1]) === "wall")
-                        unit.pos = vec2.add(p11, vec2.scale(d11, (0.5 - r) / l11));
-                    if (l10 < 0.5 - r && getAreaType([i + 1, j - 1]) === "wall")
-                        unit.pos = vec2.add(p10, vec2.scale(d10, (0.5 - r) / l10));
-                    if (l01 < 0.5 - r && getAreaType([i - 1, j + 1]) === "wall")
-                        unit.pos = vec2.add(p01, vec2.scale(d01, (0.5 - r) / l01));
-                    if (l00 < 0.5 - r && getAreaType([i - 1, j - 1]) === "wall")
-                        unit.pos = vec2.add(p00, vec2.scale(d00, (0.5 - r) / l00));
+                    const center = vec2.round(unit.pos);
+                    vec2.mapEdgeDirs(n => {
+                        if (getAreaType(vec2.add(center, n)) !== "wall") return;
+                        const edge = vec2.add(center, vec2.scale(n, 0.5));
+                        const edgePoint = vec2.add(vec2.proj(vec2.sub(edge, unit.pos), n), unit.pos);
+                        unit.pos = vec2.resolveCollision(unit.pos, edgePoint, 0.5 - r);
+                    });
+                    vec2.mapCornerDirs(n => {
+                        if (getAreaType(vec2.add(center, n)) !== "wall") return;
+                        const corner = vec2.add(center, vec2.scale(n, 0.5));
+                        unit.pos = vec2.resolveCollision(unit.pos, corner, 0.5 - r);
+                    });
                 }
             };
 

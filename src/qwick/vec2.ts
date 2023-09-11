@@ -57,3 +57,30 @@ export const getNearestObject = <T>(obj: T, allObjs: T[], pos: (t: T) => Vec2): 
 };
 
 export const getNearest = (v: Vec2, all: Vec2[]) => getNearestObject(v, all, t => t);
+
+export const resolveCollision = (pos: Vec2, collisionPoint: Vec2, radius: number): Vec2 => {
+    const d = sub(pos, collisionPoint);
+    const l = length(d);
+    if (l > radius) return pos;
+    return add(collisionPoint, scale(d, radius / l));
+};
+
+export const mapEdgeDirs = <T>(func: (n: Vec2) => T) => {
+    const edgeDirs: Vec2[] = [
+        [1, 0],
+        [0, 1],
+        [-1, 0],
+        [0, -1]
+    ];
+    return edgeDirs.map(func);
+};
+
+export const mapCornerDirs = <T>(func: (n: Vec2) => T) => {
+    const cornerDirs: Vec2[] = [
+        [1, 1],
+        [-1, 1],
+        [-1, -1],
+        [1, -1]
+    ];
+    return cornerDirs.map(func);
+};
