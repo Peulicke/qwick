@@ -245,7 +245,7 @@ createQwick((qwick: Qwick) => {
             };
 
             const wallCollisions = () => {
-                const r = 0.2;
+                const r = 0.3;
                 for (const unit of units) {
                     const center = vec2.round(unit.pos);
                     vec2.gridNeighbors()
@@ -255,17 +255,17 @@ createQwick((qwick: Qwick) => {
                             return isEdge ? vec2.projOnLine(wallPoint, unit.pos, n) : wallPoint;
                         })
                         .forEach(point => {
-                            unit.pos = vec2.resolveCollision(unit.pos, point, 0.5 - r);
+                            unit.pos = vec2.resolveCollision(unit.pos, point, r);
                         });
                 }
             };
 
             const unitCollisions = () => {
-                const r = 0.05;
+                const r = 0.45;
                 forEachPair(units, (a, b) => {
                     const c = vec2.lerp(a.pos, b.pos, 0.5);
-                    a.pos = vec2.resolveCollision(a.pos, c, 0.5 - r);
-                    b.pos = vec2.resolveCollision(b.pos, c, 0.5 - r);
+                    a.pos = vec2.resolveCollision(a.pos, c, r);
+                    b.pos = vec2.resolveCollision(b.pos, c, r);
                 });
             };
 
