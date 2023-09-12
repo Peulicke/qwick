@@ -262,16 +262,12 @@ createQwick((qwick: Qwick) => {
             };
 
             const unitCollisions = () => {
-                const r = 0.1;
+                const r = 0.05;
                 for (let i = 0; i < units.length; ++i) {
                     for (let j = i + 1; j < units.length; ++j) {
-                        const c = vec2.scale(vec2.add(units[i].pos, units[j].pos), 0.5);
-                        const d = vec2.sub(units[j].pos, units[i].pos);
-                        const l = vec2.length(d);
-                        if (l > 1 - r) continue;
-                        const n = vec2.scale(d, (1 - r) * (0.5 / l));
-                        units[i].pos = vec2.sub(c, n);
-                        units[j].pos = vec2.add(c, n);
+                        const c = vec2.lerp(units[i].pos, units[j].pos, 0.5);
+                        units[i].pos = vec2.resolveCollision(units[i].pos, c, 0.5 - r);
+                        units[j].pos = vec2.resolveCollision(units[j].pos, c, 0.5 - r);
                     }
                 }
             };
