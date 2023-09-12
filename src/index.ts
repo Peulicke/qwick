@@ -3,6 +3,7 @@ import * as vec2 from "./qwick/vec2";
 import * as vec3 from "./qwick/vec3";
 import * as matrix from "./qwick/matrix";
 import * as grid from "./qwick/grid";
+import { forEachPair } from "./qwick/utils";
 import { createButton } from "./qwick/button";
 import { hsv2rgb, rgb2hsv } from "./qwick/graphics/utils";
 
@@ -263,13 +264,11 @@ createQwick((qwick: Qwick) => {
 
             const unitCollisions = () => {
                 const r = 0.05;
-                for (let i = 0; i < units.length; ++i) {
-                    for (let j = i + 1; j < units.length; ++j) {
-                        const c = vec2.lerp(units[i].pos, units[j].pos, 0.5);
-                        units[i].pos = vec2.resolveCollision(units[i].pos, c, 0.5 - r);
-                        units[j].pos = vec2.resolveCollision(units[j].pos, c, 0.5 - r);
-                    }
-                }
+                forEachPair(units, (a, b) => {
+                    const c = vec2.lerp(a.pos, b.pos, 0.5);
+                    a.pos = vec2.resolveCollision(a.pos, c, 0.5 - r);
+                    b.pos = vec2.resolveCollision(b.pos, c, 0.5 - r);
+                });
             };
 
             let started = false;
