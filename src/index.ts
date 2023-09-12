@@ -3,7 +3,7 @@ import * as vec2 from "./qwick/vec2";
 import * as vec3 from "./qwick/vec3";
 import * as matrix from "./qwick/matrix";
 import * as grid from "./qwick/grid";
-import { forEachPair } from "./qwick/utils";
+import { forEachPair, spliceWhere } from "./qwick/utils";
 import { createButton } from "./qwick/button";
 import { hsv2rgb, rgb2hsv } from "./qwick/graphics/utils";
 
@@ -230,18 +230,14 @@ createQwick((qwick: Qwick) => {
 
             const updateAttacks = () => {
                 const attackSpeed = 0.1;
-                for (let i = attacks.length - 1; i >= 0; --i) {
-                    const attack = attacks[i];
-                    const d = vec2.sub(attack.target.pos, attack.pos);
-                    const l = vec2.length(d);
-                    if (l < attackSpeed) {
-                        attack.target.hpLost += unitTypeToSpecs[attack.unitType].damage;
-                        attacks.splice(i, 1);
-                        continue;
-                    }
-                    const n = vec2.scale(d, attackSpeed / l);
+                const hits = spliceWhere(attacks, attack => vec2.dist(attack.pos, attack.target.pos) < attackSpeed);
+                hits.forEach(attack => {
+                    attack.target.hpLost += unitTypeToSpecs[attack.unitType].damage;
+                });
+                attacks.forEach(attack => {
+                    const n = vec2.dir(attack.pos, attack.target.pos, attackSpeed);
                     attack.pos = vec2.add(attack.pos, n);
-                }
+                });
             };
 
             const wallCollisions = () => {

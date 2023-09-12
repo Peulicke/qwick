@@ -40,7 +40,7 @@ export const projOnLine = (v: Vec2, lineStart: Vec2, lineDir: Vec2): Vec2 =>
 
 export const dist = (a: Vec2, b: Vec2): number => length(sub(b, a));
 
-export const dir = (a: Vec2, b: Vec2): Vec2 => normalize(sub(b, a));
+export const dir = (a: Vec2, b: Vec2, l: number): Vec2 => scale(normalize(sub(b, a)), l);
 
 export const floor = (v: Vec2): Vec2 => [Math.floor(v[0]), Math.floor(v[1])];
 
