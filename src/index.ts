@@ -248,17 +248,15 @@ createQwick((qwick: Qwick) => {
                 const r = 0.2;
                 for (const unit of units) {
                     const center = vec2.round(unit.pos);
-                    vec2.mapEdgeDirs(n => {
-                        if (getAreaType(vec2.add(center, n)) !== "wall") return;
-                        const edge = vec2.add(center, vec2.scale(n, 0.5));
-                        const edgePoint = vec2.projOnLine(edge, unit.pos, n);
-                        unit.pos = vec2.resolveCollision(unit.pos, edgePoint, 0.5 - r);
-                    });
-                    vec2.mapCornerDirs(n => {
-                        if (getAreaType(vec2.add(center, n)) !== "wall") return;
-                        const corner = vec2.add(center, vec2.scale(n, 0.5));
-                        unit.pos = vec2.resolveCollision(unit.pos, corner, 0.5 - r);
-                    });
+                    vec2.gridNeighbors()
+                        .filter(({ n }) => getAreaType(vec2.add(center, n)) === "wall")
+                        .map(({ n, isEdge }) => {
+                            const wallPoint = vec2.add(center, vec2.scale(n, 0.5));
+                            return isEdge ? vec2.projOnLine(wallPoint, unit.pos, n) : wallPoint;
+                        })
+                        .forEach(point => {
+                            unit.pos = vec2.resolveCollision(unit.pos, point, 0.5 - r);
+                        });
                 }
             };
 

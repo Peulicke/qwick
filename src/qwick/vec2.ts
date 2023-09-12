@@ -68,22 +68,21 @@ export const resolveCollision = (pos: Vec2, collisionPoint: Vec2, radius: number
     return add(collisionPoint, scale(d, radius / l));
 };
 
-export const mapEdgeDirs = <T>(func: (n: Vec2) => T) => {
-    const edgeDirs: Vec2[] = [
-        [1, 0],
-        [0, 1],
-        [-1, 0],
-        [0, -1]
-    ];
-    return edgeDirs.map(func);
-};
+export const edgeDirs = (): Vec2[] => [
+    [1, 0],
+    [0, 1],
+    [-1, 0],
+    [0, -1]
+];
 
-export const mapCornerDirs = <T>(func: (n: Vec2) => T) => {
-    const cornerDirs: Vec2[] = [
-        [1, 1],
-        [-1, 1],
-        [-1, -1],
-        [1, -1]
-    ];
-    return cornerDirs.map(func);
-};
+export const cornerDirs = (): Vec2[] => [
+    [1, 1],
+    [-1, 1],
+    [-1, -1],
+    [1, -1]
+];
+
+export const gridNeighbors = () => [
+    ...edgeDirs().map(n => ({ n, isEdge: true })),
+    ...cornerDirs().map(n => ({ n, isEdge: false }))
+];
