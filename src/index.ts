@@ -251,7 +251,7 @@ createQwick((qwick: Qwick) => {
                     vec2.mapEdgeDirs(n => {
                         if (getAreaType(vec2.add(center, n)) !== "wall") return;
                         const edge = vec2.add(center, vec2.scale(n, 0.5));
-                        const edgePoint = vec2.add(vec2.proj(vec2.sub(edge, unit.pos), n), unit.pos);
+                        const edgePoint = vec2.projOnLine(edge, unit.pos, n);
                         unit.pos = vec2.resolveCollision(unit.pos, edgePoint, 0.5 - r);
                     });
                     vec2.mapCornerDirs(n => {

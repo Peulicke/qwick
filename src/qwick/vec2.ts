@@ -35,6 +35,9 @@ export const proj = (a: Vec2, b: Vec2): Vec2 => {
     return scale(nb, dot(a, nb));
 };
 
+export const projOnLine = (v: Vec2, lineStart: Vec2, lineDir: Vec2): Vec2 =>
+    add(proj(sub(v, lineStart), lineDir), lineStart);
+
 export const dist = (a: Vec2, b: Vec2): number => length(sub(b, a));
 
 export const dir = (a: Vec2, b: Vec2): Vec2 => normalize(sub(b, a));
