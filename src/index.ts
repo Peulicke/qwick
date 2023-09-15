@@ -257,6 +257,21 @@ createQwick((qwick: Qwick) => {
                 });
             };
 
+            const updatePreparation = () => {
+                if (selectedUnitIndex === -1) return;
+                units[selectedUnitIndex].pos = vec2.add(getMousePos(), selectOffset);
+            };
+
+            const updateSimulation = () => {
+                updateSmell();
+                updateUnits();
+                updateAttacks();
+                wallCollisions();
+                unitCollisions();
+                if (units.every(u => u.team !== 0)) qwick.levelLost();
+                else if (units.every(u => u.team === 0)) qwick.levelCompleted();
+            };
+
             let started = false;
 
             return {
@@ -278,19 +293,8 @@ createQwick((qwick: Qwick) => {
                     }
                 },
                 update: () => {
-                    if (started) {
-                        updateSmell();
-                        updateUnits();
-                        updateAttacks();
-                        wallCollisions();
-                        unitCollisions();
-                        if (units.every(u => u.team !== 0)) qwick.levelLost();
-                        else if (units.every(u => u.team === 0)) qwick.levelCompleted();
-                    } else {
-                        if (selectedUnitIndex !== -1) {
-                            units[selectedUnitIndex].pos = vec2.add(getMousePos(), selectOffset);
-                        }
-                    }
+                    if (started) updateSimulation();
+                    else updatePreparation();
                 },
                 draw: (graphics: Graphics) => {
                     graphics.context(() => {
