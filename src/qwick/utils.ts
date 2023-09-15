@@ -13,3 +13,7 @@ export const spliceWhere = <T>(list: T[], condition: (t: T) => boolean): T[] => 
     }
     return spliced;
 };
+
+export const sum = (array: number[]): number => array.reduce((s, v) => s + v, 0);
+
+export const mean = (array: number[]): number => sum(array) / array.length;

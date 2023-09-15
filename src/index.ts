@@ -3,7 +3,7 @@ import * as vec2 from "./qwick/vec2";
 import * as vec3 from "./qwick/vec3";
 import * as matrix from "./qwick/matrix";
 import * as grid from "./qwick/grid";
-import { forEachPair, spliceWhere } from "./qwick/utils";
+import { forEachPair, mean, spliceWhere } from "./qwick/utils";
 import { createButton } from "./qwick/button";
 import { hsv2rgb, rgb2hsv } from "./qwick/graphics/utils";
 
@@ -172,18 +172,10 @@ createQwick((qwick: Qwick) => {
                     matrix.addValueInterpolated(smell[unit.team], vec2.scale(unit.pos, smellResolution), 0.1);
                 });
                 for (let team = 0; team < smell.length; ++team) {
-                    smell[team] = grid.map(smell[team], (value, [i, j]) => {
-                        if (getAreaType(vec2.floor(vec2.scale([i, j], 1 / smellResolution))) === "wall") return 0;
-                        return (
-                            ((value +
-                                (matrix.getValue(smell[team], [i - 1, j]) +
-                                    matrix.getValue(smell[team], [i + 1, j]) +
-                                    matrix.getValue(smell[team], [i, j - 1]) +
-                                    matrix.getValue(smell[team], [i, j + 1])) /
-                                    4) /
-                                2) *
-                            0.999
-                        );
+                    smell[team] = grid.map(smell[team], (value, pos) => {
+                        if (getAreaType(vec2.floor(vec2.scale(pos, 1 / smellResolution))) === "wall") return 0;
+                        const neighborMean = mean(vec2.gridEdges(pos).map(({ p }) => matrix.getValue(smell[team], p)));
+                        return mean([value, neighborMean]) * 0.999;
                     });
                 }
             };
@@ -244,10 +236,10 @@ createQwick((qwick: Qwick) => {
                 const r = 0.3;
                 for (const unit of units) {
                     const areaCenter = vec2.round(unit.pos);
-                    vec2.gridNeighbors()
-                        .filter(({ n }) => getAreaType(vec2.add(areaCenter, n)) === "wall")
-                        .map(({ n, isEdge }) => {
-                            const wallPoint = vec2.add(areaCenter, vec2.scale(n, 0.5));
+                    vec2.gridNeighbors(areaCenter)
+                        .filter(({ p }) => getAreaType(p) === "wall")
+                        .map(({ p, n, isEdge }) => {
+                            const wallPoint = vec2.lerp(areaCenter, p, 0.5);
                             return isEdge ? vec2.projOnLine(wallPoint, unit.pos, n) : wallPoint;
                         })
                         .forEach(point => {

@@ -84,7 +84,11 @@ export const cornerDirs = (): Vec2[] => [
     [1, -1]
 ];
 
-export const gridNeighbors = () => [
-    ...edgeDirs().map(n => ({ n, isEdge: true })),
-    ...cornerDirs().map(n => ({ n, isEdge: false }))
+export const gridEdges = (pos: Vec2) => edgeDirs().map(n => ({ n, p: add(pos, n) }));
+
+export const gridCorners = (pos: Vec2) => cornerDirs().map(n => ({ n, p: add(pos, n) }));
+
+export const gridNeighbors = (pos: Vec2 = [0, 0]) => [
+    ...gridEdges(pos).map(({ n, p }) => ({ n, p, isEdge: true })),
+    ...gridCorners(pos).map(({ n, p }) => ({ n, p, isEdge: false }))
 ];
