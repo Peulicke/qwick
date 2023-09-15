@@ -9,6 +9,8 @@ export type InputType = "lmb" | "rmb";
 
 export type Level = {
     update: () => void;
+    hasWon: () => boolean;
+    hasLost: () => boolean;
     draw: (graphics: Graphics) => void;
     input: (type: InputType, down: boolean) => void;
 };
@@ -26,8 +28,6 @@ export type Qwick = {
     drawImage: (image: HTMLImageElement, pos: [number, number]) => void;
     getMousePos: () => [number, number];
     getMousePosPixels: () => [number, number];
-    levelCompleted: () => void;
-    levelLost: () => void;
 };
 
 export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
@@ -49,9 +49,7 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         height: innerHeight,
         drawImage: () => {},
         getMousePos: () => [0, 0],
-        getMousePosPixels: () => [0, 0],
-        levelCompleted: () => {},
-        levelLost: () => {}
+        getMousePosPixels: () => [0, 0]
     };
 
     qwick.drawImage = (image: HTMLImageElement, pos: [number, number]) => {
@@ -87,14 +85,6 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         const y = yIndex * 0.1 - 0.15;
         return createButton(qwick.getMousePos, [x, y], [0.1, 0.04], `${i + 1}`);
     });
-
-    qwick.levelCompleted = () => {
-        levelSuccess = true;
-    };
-
-    qwick.levelLost = () => {
-        levelFail = true;
-    };
 
     let fastForward = false;
 
@@ -183,11 +173,10 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     };
 
     const updateLevel = (l: Level) => {
-        if (!levelSuccess && !levelFail) {
-            const lvlNum = levelNum;
-            for (let i = 0; i < (fastForward ? 10 : 1) && lvlNum === levelNum; ++i) {
-                l.update();
-            }
+        for (let i = 0; i < (fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
+            l.update();
+            if (l.hasWon()) levelSuccess = true;
+            else if (l.hasLost()) levelFail = true;
         }
         graphics.begin();
         l.draw(graphics);

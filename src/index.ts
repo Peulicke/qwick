@@ -268,8 +268,6 @@ createQwick((qwick: Qwick) => {
                 updateAttacks();
                 wallCollisions();
                 unitCollisions();
-                if (units.every(u => u.team !== 0)) qwick.levelLost();
-                else if (units.every(u => u.team === 0)) qwick.levelCompleted();
             };
 
             let started = false;
@@ -296,6 +294,8 @@ createQwick((qwick: Qwick) => {
                     if (started) updateSimulation();
                     else updatePreparation();
                 },
+                hasWon: () => units.every(u => u.team === 0),
+                hasLost: () => units.every(u => u.team !== 0),
                 draw: (graphics: Graphics) => {
                     graphics.context(() => {
                         graphics.scale(boardScale);
