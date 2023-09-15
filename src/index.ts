@@ -202,23 +202,28 @@ createQwick((qwick: Qwick) => {
 
             const allUnitsPlaced = () => units.filter(u => u.team === 0).every(u => getAreaType(u.pos) === "placable");
 
+            const unitMove = (unit: Unit) => {
+                const gradient = matrix.getGradient(smell[1 - unit.team], vec2.scale(unit.pos, smellResolution));
+                unit.pos = vec2.add(unit.pos, vec2.resize(gradient, unitTypeToSpecs[unit.type].speed));
+            };
+
+            const unitHasAttackPosition = (unit: Unit, enemy: Unit | undefined) => {
+                if (!enemy) return false;
+                return vec2.dist(unit.pos, enemy.pos) < unitTypeToSpecs[unit.type].range;
+            };
+
+            const unitAttack = (unit: Unit, enemy: Unit) => {
+                attacks.push({ team: unit.team, pos: unit.pos, target: enemy, unitType: unit.type });
+                unit.chargeTime = 0;
+            };
+
             const updateUnits = () => {
                 units.forEach(unit => {
                     ++unit.chargeTime;
-                    const nearestEnemy = getNearestEnemy(unit);
-                    const specs = unitTypeToSpecs[unit.type];
-                    const hasAttackPosition = nearestEnemy && vec2.dist(unit.pos, nearestEnemy.pos) < specs.range;
-                    if (!hasAttackPosition) {
-                        const movement = vec2.resize(
-                            matrix.getGradient(smell[1 - unit.team], vec2.scale(unit.pos, smellResolution)),
-                            specs.speed
-                        );
-                        unit.pos = vec2.add(unit.pos, movement);
-                        return;
-                    }
-                    if (unit.chargeTime < specs.rechargeTime) return;
-                    attacks.push({ team: unit.team, pos: unit.pos, target: nearestEnemy, unitType: unit.type });
-                    unit.chargeTime = 0;
+                    const enemy = getNearestEnemy(unit);
+                    if (!unitHasAttackPosition(unit, enemy)) return unitMove(unit);
+                    if (!enemy) return;
+                    if (unit.chargeTime >= unitTypeToSpecs[unit.type].rechargeTime) unitAttack(unit, enemy);
                 });
                 spliceWhere(units, unit => unit.hpLost >= unitTypeToSpecs[unit.type].hp);
             };
