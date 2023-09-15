@@ -207,25 +207,20 @@ createQwick((qwick: Qwick) => {
                     ++unit.chargeTime;
                     const nearestEnemy = getNearestEnemy(unit);
                     const specs = unitTypeToSpecs[unit.type];
-                    if (nearestEnemy && vec2.dist(unit.pos, nearestEnemy.pos) < specs.range) {
-                        if (unit.chargeTime > specs.rechargeTime) {
-                            attacks.push({ team: unit.team, pos: unit.pos, target: nearestEnemy, unitType: unit.type });
-                            unit.chargeTime = 0;
-                        }
-                    } else
-                        unit.pos = vec2.add(
-                            unit.pos,
-                            vec2.scale(
-                                vec2.normalize(
-                                    matrix.getGradient(smell[1 - unit.team], vec2.scale(unit.pos, smellResolution))
-                                ),
-                                specs.speed
-                            )
+                    const hasAttackPosition = nearestEnemy && vec2.dist(unit.pos, nearestEnemy.pos) < specs.range;
+                    if (!hasAttackPosition) {
+                        const movement = vec2.resize(
+                            matrix.getGradient(smell[1 - unit.team], vec2.scale(unit.pos, smellResolution)),
+                            specs.speed
                         );
+                        unit.pos = vec2.add(unit.pos, movement);
+                        return;
+                    }
+                    if (unit.chargeTime < specs.rechargeTime) return;
+                    attacks.push({ team: unit.team, pos: unit.pos, target: nearestEnemy, unitType: unit.type });
+                    unit.chargeTime = 0;
                 });
-                for (let i = units.length - 1; i >= 0; --i) {
-                    if (units[i].hpLost >= unitTypeToSpecs[units[i].type].hp) units.splice(i, 1);
-                }
+                spliceWhere(units, unit => unit.hpLost >= unitTypeToSpecs[unit.type].hp);
             };
 
             const updateAttacks = () => {

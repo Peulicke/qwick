@@ -18,6 +18,8 @@ export const normalize = (a: Vec2): Vec2 => {
     return scale(a, 1 / l);
 };
 
+export const resize = (v: Vec2, l: number): Vec2 => scale(normalize(v), l);
+
 export const dot = (a: Vec2, b: Vec2): number => a[0] * b[0] + a[1] * b[1];
 
 export const cross = (a: Vec2): Vec2 => [-a[1], a[0]];
