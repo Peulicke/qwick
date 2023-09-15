@@ -243,11 +243,11 @@ createQwick((qwick: Qwick) => {
             const wallCollisions = () => {
                 const r = 0.3;
                 for (const unit of units) {
-                    const center = vec2.round(unit.pos);
+                    const areaCenter = vec2.round(unit.pos);
                     vec2.gridNeighbors()
-                        .filter(({ n }) => getAreaType(vec2.add(center, n)) === "wall")
+                        .filter(({ n }) => getAreaType(vec2.add(areaCenter, n)) === "wall")
                         .map(({ n, isEdge }) => {
-                            const wallPoint = vec2.add(center, vec2.scale(n, 0.5));
+                            const wallPoint = vec2.add(areaCenter, vec2.scale(n, 0.5));
                             return isEdge ? vec2.projOnLine(wallPoint, unit.pos, n) : wallPoint;
                         })
                         .forEach(point => {
