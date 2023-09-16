@@ -4,6 +4,10 @@ import "./index.css";
 
 export { default as random } from "./random";
 export type { Graphics } from "./graphics";
+export * as vec2 from "./vec2";
+export * as vec3 from "./vec3";
+export * as matrix from "./matrix";
+export * as grid from "./grid";
 
 export type InputType = "lmb" | "rmb";
 
