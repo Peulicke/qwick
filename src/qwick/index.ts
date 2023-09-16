@@ -20,6 +20,7 @@ export type Level = {
 };
 
 export type Game<LevelData> = {
+    name: string;
     levels: LevelData[];
     loadLevel: (ld: LevelData) => Level;
     resize: () => void;
@@ -96,7 +97,7 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         [0.1, 0.04],
         "Restart"
     );
-    const startButton = createButton(qwick.getMousePos, [0, -0.3], [0.1, 0.04], "Start");
+    const startButton = createButton(qwick.getMousePos, [0, -0.2], [0.1, 0.04], "Start");
     const successButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Next level");
     const failButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Retry");
 
@@ -105,7 +106,7 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         const xIndex = i % buttonGridWidth;
         const yIndex = Math.floor(i / buttonGridWidth);
         const x = (xIndex - (buttonGridWidth - 1) / 2) * 0.22;
-        const y = yIndex * 0.1 - 0.15;
+        const y = yIndex * 0.1 - 0.05;
         return createButton(qwick.getMousePos, [x, y], [0.1, 0.04], `${i + 1}`);
     });
 
@@ -192,6 +193,12 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
 
     const updateMenu = () => {
         graphics.begin();
+        graphics.context(() => {
+            graphics.color("gray");
+            graphics.translate([0, -0.35]);
+            graphics.scale(2);
+            graphics.text(game.name, 0.05);
+        });
         startButton.draw(graphics);
         const completedLevels = getCompletedLevels();
         levelButtons.forEach((b, i) => {

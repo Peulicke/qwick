@@ -136,6 +136,7 @@ const smellResolution = 2;
 
 createQwick((qwick: Qwick) => {
     return {
+        name: "Battle game test",
         levels,
         loadLevel: (levelData: LevelData) => {
             const gridData = stringToGrid(levelData.areas);
@@ -326,11 +327,6 @@ createQwick((qwick: Qwick) => {
                                 if (attack.unitType === "bow") graphics.icon([0, 0], 0.5, "arrow", true);
                             });
                         });
-                    });
-                    graphics.context(() => {
-                        graphics.color("#800000");
-                        graphics.translate([0, -0.45]);
-                        graphics.text("Battle game test", 0.05);
                     });
                     if (!started) startButton.draw(graphics);
                 }
