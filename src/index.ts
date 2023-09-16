@@ -331,8 +331,5 @@ createQwick((qwick: Qwick) => ({
     name: "Battle game test",
     levels,
     loadLevel: loadLevel(qwick),
-    resize: () => {
-        console.log("resize:", qwick.width, qwick.height);
-    },
     backgroundColor: "#60b1c7"
 }));

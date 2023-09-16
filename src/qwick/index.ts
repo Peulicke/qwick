@@ -23,7 +23,7 @@ export type Game<LevelData> = {
     name: string;
     levels: LevelData[];
     loadLevel: (ld: LevelData) => Level;
-    resize: () => void;
+    resize?: () => void;
     backgroundColor: string;
 };
 
@@ -117,7 +117,7 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
         canvas.height = innerHeight;
         qwick.width = innerWidth;
         qwick.height = innerHeight;
-        game.resize();
+        if (game.resize) game.resize();
     };
     window.addEventListener("resize", resize, true);
 
