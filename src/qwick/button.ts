@@ -1,10 +1,11 @@
 import { InputType } from ".";
 import { Graphics } from "./graphics";
+import { Color } from "./graphics/utils";
 import * as vec2 from "./vec2";
 
 export type Button = {
     clicked: (type: InputType, down: boolean) => boolean;
-    draw: (graphics: Graphics) => void;
+    draw: (graphics: Graphics, fillColor?: Color, borderColor?: Color) => void;
 };
 
 const insideRect = (pos: vec2.Vec2, rectPos: vec2.Vec2, rectSize: vec2.Vec2) => {
@@ -40,11 +41,14 @@ export const createButton = (
             }
             return false;
         },
-        draw: (graphics: Graphics) => {
+        draw: (graphics: Graphics, fillColor: Color = "rgba(0,0,0,0)", borderColor: Color = "black") => {
             graphics.context(() => {
                 graphics.translate(getPos());
-                graphics.text(text, 0.05);
+                graphics.color(fillColor);
+                graphics.rect(vec2.negate(size), size, true);
+                graphics.color(borderColor);
                 graphics.rect(vec2.negate(size), size, false);
+                graphics.text(text, 0.05);
             });
         }
     };

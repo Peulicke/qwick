@@ -1,5 +1,4 @@
 import * as vec2 from "../vec2";
-import * as vec3 from "../vec3";
 import * as utils from "./utils";
 import * as transform from "./transform";
 import * as draw from "./draw";
@@ -8,7 +7,7 @@ const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: string) 
     getAspectRatio: (): number => ctx.canvas.width / ctx.canvas.height,
     begin: (): void => utils.begin(ctx, backgroundColor),
     end: (): void => utils.end(ctx),
-    color: (color: string | vec3.Vec3): void => utils.setColor(ctx, color),
+    color: (color: utils.Color): void => utils.setColor(ctx, color),
     push: (): void => transform.push(ctx),
     pop: (): void => transform.pop(ctx),
     context: (func: () => void): void => transform.context(ctx, func),

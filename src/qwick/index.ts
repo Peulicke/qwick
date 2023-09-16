@@ -30,6 +30,19 @@ export type Qwick = {
     getMousePosPixels: () => [number, number];
 };
 
+enum LocalStorage {
+    CompletedLevels = "completedLevels"
+}
+
+const getCompletedLevels = (): Set<number> =>
+    new Set(JSON.parse(localStorage.getItem(LocalStorage.CompletedLevels) ?? "[]"));
+
+const setLevelCompleted = (levelNum: number): void =>
+    localStorage.setItem(
+        LocalStorage.CompletedLevels,
+        JSON.stringify([...new Set([...getCompletedLevels(), levelNum])])
+    );
+
 export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     const canvas = document.createElement("canvas");
     canvas.width = window.innerWidth;
@@ -176,8 +189,9 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     const updateMenu = () => {
         graphics.begin();
         startButton.draw(graphics);
-        levelButtons.forEach(b => {
-            b.draw(graphics);
+        const completedLevels = getCompletedLevels();
+        levelButtons.forEach((b, i) => {
+            b.draw(graphics, completedLevels.has(i) ? "green" : "gray");
         });
         graphics.end();
     };
@@ -185,12 +199,15 @@ export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     const updateLevel = (l: Level) => {
         for (let i = 0; i < (fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
             l.update();
-            if (l.hasWon()) levelSuccess = true;
-            else if (l.hasLost()) levelFail = true;
+            if (l.hasWon()) {
+                levelSuccess = true;
+                setLevelCompleted(levelNum);
+            } else if (l.hasLost()) levelFail = true;
         }
         graphics.begin();
         l.draw(graphics);
         graphics.context(() => {
+            graphics.color("black");
             graphics.translate([0.5 * graphics.getAspectRatio() - 0.1, -0.5 + 0.05]);
             graphics.text(`Level ${levelNum + 1}`, 0.05);
         });

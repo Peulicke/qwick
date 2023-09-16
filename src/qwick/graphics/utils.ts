@@ -57,7 +57,9 @@ export const hsv2rgb = (hsv: Vec3): Vec3 => {
     }
 };
 
-export const setColor = (ctx: CanvasRenderingContext2D, color: string | Vec3): void => {
+export type Color = string | Vec3;
+
+export const setColor = (ctx: CanvasRenderingContext2D, color: Color): void => {
     const colorString = typeof color === "string" ? color : `rgb(${color.map(c => 255 * c).join(",")})`;
     ctx.fillStyle = colorString;
     ctx.strokeStyle = colorString;
