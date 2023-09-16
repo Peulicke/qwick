@@ -190,7 +190,6 @@ createQwick((qwick: Qwick) => {
             const startButtonPos: vec2.Vec2 = [0, 0.45];
             const startButtonSize: vec2.Vec2 = [0.1, 0.04];
             const startButton = createButton(qwick.getMousePos, startButtonPos, startButtonSize, "Start");
-            const stopButton = createButton(qwick.getMousePos, startButtonPos, startButtonSize, "Stop");
 
             const allUnitsPlaced = () => units.filter(u => u.team === 0).every(u => getAreaType(u.pos) === "placable");
 
@@ -275,7 +274,6 @@ createQwick((qwick: Qwick) => {
             return {
                 input: (type: InputType, down: boolean) => {
                     if (!started && startButton.clicked(type, down) && allUnitsPlaced()) started = true;
-                    else if (started && stopButton.clicked(type, down)) started = false;
                     if (type !== "lmb") return;
                     if (started) return;
                     if (down) {
@@ -335,7 +333,6 @@ createQwick((qwick: Qwick) => {
                         graphics.text("Battle game test", 0.05);
                     });
                     if (!started) startButton.draw(graphics);
-                    else stopButton.draw(graphics);
                 }
             };
         },
