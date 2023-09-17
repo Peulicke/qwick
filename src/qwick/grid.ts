@@ -12,3 +12,11 @@ export const getNearestCell = <T>(grid: Grid<T>, pos: vec2.Vec2): T | undefined 
     (grid[Math.round(pos[0])] ?? [])[Math.round(pos[1])];
 
 export const transpose = <T>(grid: Grid<T>) => grid[0].map((_, i) => grid.map((_, j) => grid[j][i]));
+
+export const stringToGrid = (s: string) =>
+    transpose(
+        s
+            .trim()
+            .split("\n")
+            .map(line => line.split(""))
+    );

@@ -7,14 +7,6 @@ const smellResolution = 2;
 const border = 0.25;
 const unitRadius = 0.45;
 
-const stringToGrid = (s: string) =>
-    grid.transpose(
-        s
-            .trim()
-            .split("\n")
-            .map(line => line.split(""))
-    );
-
 const teamColors = ["#008000", "#800000"];
 
 type AreaType = "none" | "wall" | "placable";
@@ -133,7 +125,7 @@ const level3: LevelData = {
 const levels: LevelData[] = [level1, level2, level3];
 
 const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
-    const gridData = stringToGrid(levelData.areas);
+    const gridData = grid.stringToGrid(levelData.areas);
 
     const areas = grid.map(gridData, char => charToAreaType[char]);
 
