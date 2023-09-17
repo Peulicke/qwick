@@ -5,6 +5,7 @@ import { hsv2rgb, rgb2hsv } from "./qwick/graphics/utils";
 
 const smellResolution = 2;
 const border = 0.25;
+const unitRadius = 0.45;
 
 const stringToGrid = (s: string) =>
     grid.transpose(
@@ -226,7 +227,6 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     };
 
     const wallCollisions = () => {
-        const r = 0.3;
         for (const unit of units) {
             const areaCenter = vec2.round(unit.pos);
             vec2.gridNeighbors(areaCenter)
@@ -236,17 +236,16 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
                     return isEdge ? vec2.projOnLine(wallPoint, unit.pos, n) : wallPoint;
                 })
                 .forEach(point => {
-                    unit.pos = vec2.resolveCollision(unit.pos, point, r);
+                    unit.pos = vec2.resolveCollision(unit.pos, point, unitRadius);
                 });
         }
     };
 
     const unitCollisions = () => {
-        const r = 0.45;
         forEachPair(units, (a, b) => {
             const c = vec2.lerp(a.pos, b.pos, 0.5);
-            a.pos = vec2.resolveCollision(a.pos, c, r);
-            b.pos = vec2.resolveCollision(b.pos, c, r);
+            a.pos = vec2.resolveCollision(a.pos, c, unitRadius);
+            b.pos = vec2.resolveCollision(b.pos, c, unitRadius);
         });
     };
 
@@ -299,7 +298,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
                     graphics.context(() => {
                         graphics.color(teamColors[unit.team]);
                         graphics.translate(unit.pos);
-                        graphics.icon([0, 0], 0.5, "o");
+                        graphics.icon([0, 0], unitRadius, "o");
                         graphics.text(unit.type, 0.25);
                         const totalHp = unitTypeToSpecs[unit.type].hp;
                         const hp = totalHp - unit.hpLost;
