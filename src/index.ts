@@ -156,7 +156,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     const getNearestEnemy = (unit: Unit) => vec2.getNearestObject(unit, getEnemies(unit), u => u.pos);
 
-    const smell = teamColors.map(() => grid.create(vec2.scale([areas.length, areas[0].length], smellResolution), 0));
+    const smell = teamColors.map(() => grid.create(vec2.scale(vec2.sizeOfGrid(areas), smellResolution), 0));
 
     const updateSmell = () => {
         units.forEach(unit => {
@@ -173,7 +173,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     const border = 0.25;
     const boardScale = (1 - border) / areas[0].length;
-    const boardTranslate: vec2.Vec2 = [-(areas.length - 1) / 2, -(areas[0].length - 1) / 2];
+    const boardTranslate = vec2.scale(vec2.sub(vec2.sizeOfGrid(areas), [1, 1]), -0.5);
     const getMousePos = () => vec2.sub(vec2.scale(qwick.getMousePos(), 1 / boardScale), boardTranslate);
     const selectedUnit: { index: number; offset: vec2.Vec2 } = { index: -1, offset: [0, 0] };
 

@@ -1,3 +1,5 @@
+import { Grid } from "./grid";
+
 export type Vec2 = [number, number];
 
 export const equals = (a: Vec2, b: Vec2): boolean => a[0] === b[0] && a[1] === b[1];
@@ -92,3 +94,5 @@ export const gridNeighbors = (pos: Vec2 = [0, 0]) => [
     ...gridEdges(pos).map(({ n, p }) => ({ n, p, isEdge: true })),
     ...gridCorners(pos).map(({ n, p }) => ({ n, p, isEdge: false }))
 ];
+
+export const sizeOfGrid = <T>(grid: Grid<T>): Vec2 => [grid.length, grid[0].length];
