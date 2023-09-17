@@ -131,10 +131,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     const units = levelData.ownUnitTypes.map(
         (type, i): Unit =>
-            createUnit(0, type, [
-                -2,
-                Math.round((areas[0].length - 1) / 2 + (i - (levelData.ownUnitTypes.length - 1) / 2))
-            ])
+            createUnit(0, type, [-2, i + Math.round((areas[0].length - levelData.ownUnitTypes.length) / 2)])
     );
 
     const attacks: Attack[] = [];
