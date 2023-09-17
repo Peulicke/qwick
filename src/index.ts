@@ -1,8 +1,4 @@
-import createQwick, { Qwick, InputType, Graphics } from "./qwick";
-import * as vec2 from "./qwick/vec2";
-import * as vec3 from "./qwick/vec3";
-import * as matrix from "./qwick/matrix";
-import * as grid from "./qwick/grid";
+import createQwick, { Qwick, InputType, Graphics, vec2, vec3, matrix, grid } from "./qwick";
 import { forEachPair, mean, spliceWhere } from "./qwick/utils";
 import { createButton } from "./qwick/button";
 import { hsv2rgb, rgb2hsv } from "./qwick/graphics/utils";
