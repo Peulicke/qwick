@@ -175,8 +175,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     const boardScale = (1 - border) / areas[0].length;
     const boardTranslate: vec2.Vec2 = [-(areas.length - 1) / 2, -(areas[0].length - 1) / 2];
     const getMousePos = () => vec2.sub(vec2.scale(qwick.getMousePos(), 1 / boardScale), boardTranslate);
-    let selectedUnitIndex = -1;
-    let selectOffset: vec2.Vec2 = [0, 0];
+    const selectedUnit: { index: number; offset: vec2.Vec2 } = { index: -1, offset: [0, 0] };
 
     const startButtonPos: vec2.Vec2 = [0, 0.45];
     const startButtonSize: vec2.Vec2 = [0.1, 0.04];
@@ -248,8 +247,8 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     };
 
     const updatePreparation = () => {
-        if (selectedUnitIndex === -1) return;
-        units[selectedUnitIndex].pos = vec2.add(getMousePos(), selectOffset);
+        if (selectedUnit.index === -1) return;
+        units[selectedUnit.index].pos = vec2.add(getMousePos(), selectedUnit.offset);
     };
 
     const updateSimulation = () => {
@@ -271,12 +270,12 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
                 units.forEach((unit, i) => {
                     if (unit.team !== 0) return;
                     if (vec2.dist(getMousePos(), unit.pos) > 0.5) return;
-                    selectedUnitIndex = i;
-                    selectOffset = vec2.sub(unit.pos, getMousePos());
+                    selectedUnit.index = i;
+                    selectedUnit.offset = vec2.sub(unit.pos, getMousePos());
                 });
-            } else if (selectedUnitIndex !== -1) {
-                units[selectedUnitIndex].pos = vec2.round(units[selectedUnitIndex].pos);
-                selectedUnitIndex = -1;
+            } else if (selectedUnit.index !== -1) {
+                units[selectedUnit.index].pos = vec2.round(units[selectedUnit.index].pos);
+                selectedUnit.index = -1;
             }
         },
         update: () => {
