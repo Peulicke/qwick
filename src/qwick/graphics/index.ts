@@ -2,6 +2,7 @@ import * as vec2 from "../vec2";
 import * as utils from "./utils";
 import * as transform from "./transform";
 import * as draw from "./draw";
+import { Transform2 } from "../transform2";
 
 const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: string) => ({
     getAspectRatio: (): number => ctx.canvas.width / ctx.canvas.height,
@@ -15,6 +16,7 @@ const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: string) 
     rotate: (v: number): void => transform.rotate(ctx, v),
     orient: (v: vec2.Vec2): void => transform.orient(ctx, v),
     scale: (v: number): void => transform.scale(ctx, v),
+    transform: (t: Transform2) => transform.transform(ctx, t),
     line: (a: vec2.Vec2, b: vec2.Vec2): void => draw.line(ctx, a, b),
     lineStrip: (a: vec2.Vec2[]): void => draw.lineStrip(ctx, a),
     lineLoop: (a: vec2.Vec2[], fill: boolean): void => draw.lineLoop(ctx, a, fill),

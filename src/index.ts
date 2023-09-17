@@ -1,7 +1,10 @@
-import createQwick, { Qwick, InputType, Graphics, vec2, vec3, matrix, grid } from "./qwick";
+import createQwick, { Qwick, InputType, Graphics, vec2, vec3, matrix, grid, transform2 } from "./qwick";
 import { forEachPair, mean, spliceWhere } from "./qwick/utils";
 import { createButton } from "./qwick/button";
 import { hsv2rgb, rgb2hsv } from "./qwick/graphics/utils";
+
+const smellResolution = 2;
+const border = 0.25;
 
 const stringToGrid = (s: string) =>
     grid.transpose(
@@ -128,8 +131,6 @@ const level3: LevelData = {
 
 const levels: LevelData[] = [level1, level2, level3];
 
-const smellResolution = 2;
-
 const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     const gridData = stringToGrid(levelData.areas);
 
@@ -171,10 +172,12 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         }
     };
 
-    const border = 0.25;
-    const boardScale = (1 - border) / areas[0].length;
-    const boardTranslate = vec2.scale(vec2.sub(vec2.sizeOfGrid(areas), [1, 1]), -0.5);
-    const getMousePos = () => vec2.sub(vec2.scale(qwick.getMousePos(), 1 / boardScale), boardTranslate);
+    const boardToScreen = transform2.compose([
+        transform2.translate(vec2.scale(vec2.sub(vec2.sizeOfGrid(areas), [1, 1]), -0.5)),
+        transform2.scale((1 - border) / areas[0].length)
+    ]);
+
+    const getMousePos = () => transform2.apply(transform2.inverse(boardToScreen), qwick.getMousePos());
     const selectedUnit: { index: number; offset: vec2.Vec2 } = { index: -1, offset: [0, 0] };
 
     const startButton = createButton(qwick.getMousePos, [0, 0.45], [0.1, 0.04], "Start");
@@ -284,8 +287,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         hasLost: () => units.every(u => u.team !== 0),
         draw: (graphics: Graphics) => {
             graphics.context(() => {
-                graphics.scale(boardScale);
-                graphics.translate(boardTranslate);
+                graphics.transform(boardToScreen);
                 grid.map(areas, (type, pos) => {
                     graphics.color("#555555");
                     if (type === "wall") graphics.color("#000000");

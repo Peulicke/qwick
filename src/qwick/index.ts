@@ -8,6 +8,7 @@ export * as vec2 from "./vec2";
 export * as vec3 from "./vec3";
 export * as matrix from "./matrix";
 export * as grid from "./grid";
+export * as transform2 from "./transform2";
 
 export type InputType = "lmb" | "rmb";
 

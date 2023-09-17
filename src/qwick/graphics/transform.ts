@@ -1,3 +1,4 @@
+import { Transform2, TransformType } from "../transform2";
 import * as vec2 from "../vec2";
 
 export const push = (ctx: CanvasRenderingContext2D): void => {
@@ -23,6 +24,15 @@ export const orient = (ctx: CanvasRenderingContext2D, v: vec2.Vec2): void => {
 
 export const scale = (ctx: CanvasRenderingContext2D, s: number): void => {
     ctx.scale(s, s);
+};
+
+export const transform = (ctx: CanvasRenderingContext2D, t: Transform2): void => {
+    if (t.type === TransformType.Translate) translate(ctx, t.value);
+    if (t.type === TransformType.Scale) scale(ctx, t.value);
+    if (t.type === TransformType.Composite)
+        [...t.value].reverse().forEach(tt => {
+            transform(ctx, tt);
+        });
 };
 
 export const context = (ctx: CanvasRenderingContext2D, func: () => void) => {
