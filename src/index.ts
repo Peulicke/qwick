@@ -136,8 +136,6 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     const areas = grid.map(gridData, char => charToAreaType[char]);
 
-    const getAreaType = (pos: vec2.Vec2) => grid.getNearestCell(areas, pos);
-
     const units = levelData.ownUnitTypes.map(
         (type, i): Unit =>
             createUnit(0, type, [
@@ -153,11 +151,24 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         if (c === "b") units.push(createUnit(1, "bow", pos));
     });
 
+    const smell = teamColors.map(() => grid.create(vec2.scale(vec2.sizeOfGrid(areas), smellResolution), 0));
+
+    const boardToScreen = transform2.compose([
+        transform2.translate(vec2.scale(vec2.sub(vec2.sizeOfGrid(areas), [1, 1]), -0.5)),
+        transform2.scale((1 - border) / areas[0].length)
+    ]);
+
+    const selectedUnit: { index: number; offset: vec2.Vec2 } = { index: -1, offset: [0, 0] };
+
+    const startButton = createButton(qwick.getMousePos, [0, 0.45], [0.1, 0.04], "Start");
+
+    let started = false;
+
+    const getAreaType = (pos: vec2.Vec2) => grid.getNearestCell(areas, pos);
+
     const getEnemies = (unit: Unit) => units.filter(u => u.team !== unit.team);
 
     const getNearestEnemy = (unit: Unit) => vec2.getNearestObject(unit, getEnemies(unit), u => u.pos);
-
-    const smell = teamColors.map(() => grid.create(vec2.scale(vec2.sizeOfGrid(areas), smellResolution), 0));
 
     const updateSmell = () => {
         units.forEach(unit => {
@@ -172,15 +183,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         }
     };
 
-    const boardToScreen = transform2.compose([
-        transform2.translate(vec2.scale(vec2.sub(vec2.sizeOfGrid(areas), [1, 1]), -0.5)),
-        transform2.scale((1 - border) / areas[0].length)
-    ]);
-
     const getMousePos = () => transform2.apply(transform2.inverse(boardToScreen), qwick.getMousePos());
-    const selectedUnit: { index: number; offset: vec2.Vec2 } = { index: -1, offset: [0, 0] };
-
-    const startButton = createButton(qwick.getMousePos, [0, 0.45], [0.1, 0.04], "Start");
 
     const allUnitsPlaced = () => units.filter(u => u.team === 0).every(u => getAreaType(u.pos) === "placable");
 
@@ -259,8 +262,6 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         wallCollisions();
         unitCollisions();
     };
-
-    let started = false;
 
     return {
         input: (type: InputType, down: boolean) => {
