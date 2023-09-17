@@ -177,9 +177,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     const getMousePos = () => vec2.sub(vec2.scale(qwick.getMousePos(), 1 / boardScale), boardTranslate);
     const selectedUnit: { index: number; offset: vec2.Vec2 } = { index: -1, offset: [0, 0] };
 
-    const startButtonPos: vec2.Vec2 = [0, 0.45];
-    const startButtonSize: vec2.Vec2 = [0.1, 0.04];
-    const startButton = createButton(qwick.getMousePos, startButtonPos, startButtonSize, "Start");
+    const startButton = createButton(qwick.getMousePos, [0, 0.45], [0.1, 0.04], "Start");
 
     const allUnitsPlaced = () => units.filter(u => u.team === 0).every(u => getAreaType(u.pos) === "placable");
 
