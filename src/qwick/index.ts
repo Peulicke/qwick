@@ -1,5 +1,5 @@
 import { createButton } from "./button";
-import createGraphics, { Graphics } from "./graphics";
+import { createGraphics, Graphics } from "./graphics";
 import "./index.css";
 
 export { default as random } from "./random";
@@ -52,7 +52,7 @@ const setLevelCompleted = (levelNum: number): void =>
         JSON.stringify([...new Set([...getCompletedLevels(), levelNum])])
     );
 
-export default <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
+export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     const canvas = document.createElement("canvas");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;

@@ -8,7 +8,7 @@ export * as utils from "./utils";
 export * as transform from "./transform";
 export * as draw from "./draw";
 
-const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: string) => ({
+export const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: string) => ({
     getAspectRatio: (): number => ctx.canvas.width / ctx.canvas.height,
     begin: (): void => utils.begin(ctx, backgroundColor),
     end: (): void => utils.end(ctx),
@@ -36,5 +36,3 @@ const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: string) 
 });
 
 export type Graphics = ReturnType<typeof createGraphics>;
-
-export default createGraphics;

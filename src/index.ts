@@ -1,4 +1,5 @@
-import createQwick, {
+import {
+    createQwick,
     Qwick,
     InputType,
     Graphics,
