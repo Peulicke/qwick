@@ -1,8 +1,12 @@
 import * as vec2 from "../vec2";
+import { Transform2 } from "../transform2";
 import * as utils from "./utils";
 import * as transform from "./transform";
 import * as draw from "./draw";
-import { Transform2 } from "../transform2";
+
+export * as utils from "./utils";
+export * as transform from "./transform";
+export * as draw from "./draw";
 
 const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: string) => ({
     getAspectRatio: (): number => ctx.canvas.width / ctx.canvas.height,

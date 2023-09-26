@@ -1,7 +1,16 @@
-import createQwick, { Qwick, InputType, Graphics, vec2, vec3, matrix, grid, transform2 } from "./qwick";
-import { forEachPair, mean, spliceWhere } from "./qwick/utils";
-import { createButton } from "./qwick/button";
-import { hsv2rgb, rgb2hsv } from "./qwick/graphics/utils";
+import createQwick, {
+    Qwick,
+    InputType,
+    Graphics,
+    vec2,
+    vec3,
+    matrix,
+    grid,
+    transform2,
+    utils,
+    button,
+    graphics
+} from "./qwick";
 
 const smellResolution = 2;
 const border = 0.25;
@@ -150,7 +159,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     const selectedUnit: { index: number; offset: vec2.Vec2 } = { index: -1, offset: [0, 0] };
 
-    const startButton = createButton(qwick.getMousePos, [0, 0.45], [0.1, 0.04], "Start");
+    const startButton = button.createButton(qwick.getMousePos, [0, 0.45], [0.1, 0.04], "Start");
 
     let started = false;
 
@@ -167,8 +176,8 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         for (let team = 0; team < smell.length; ++team) {
             smell[team] = grid.map(smell[team], (value, pos) => {
                 if (getAreaType(vec2.floor(vec2.scale(pos, 1 / smellResolution))) === "wall") return 0;
-                const neighborMean = mean(vec2.gridEdges(pos).map(({ p }) => matrix.getValue(smell[team], p)));
-                return mean([value, neighborMean]) * 0.999;
+                const neighborMean = utils.mean(vec2.gridEdges(pos).map(({ p }) => matrix.getValue(smell[team], p)));
+                return utils.mean([value, neighborMean]) * 0.999;
             });
         }
     };
@@ -200,12 +209,12 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
             if (!enemy) return;
             if (unit.chargeTime >= unitTypeToSpecs[unit.type].rechargeTime) unitAttack(unit, enemy);
         });
-        spliceWhere(units, unit => unit.hpLost >= unitTypeToSpecs[unit.type].hp);
+        utils.spliceWhere(units, unit => unit.hpLost >= unitTypeToSpecs[unit.type].hp);
     };
 
     const updateAttacks = () => {
         const attackSpeed = 0.1;
-        const hits = spliceWhere(attacks, attack => vec2.dist(attack.pos, attack.target.pos) < attackSpeed);
+        const hits = utils.spliceWhere(attacks, attack => vec2.dist(attack.pos, attack.target.pos) < attackSpeed);
         hits.forEach(attack => {
             attack.target.hpLost += unitTypeToSpecs[attack.unitType].damage;
         });
@@ -231,7 +240,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     };
 
     const unitCollisions = () => {
-        forEachPair(units, (a, b) => {
+        utils.forEachPair(units, (a, b) => {
             const c = vec2.lerp(a.pos, b.pos, 0.5);
             a.pos = vec2.resolveCollision(a.pos, c, unitRadius);
             b.pos = vec2.resolveCollision(b.pos, c, unitRadius);
@@ -274,39 +283,43 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         },
         hasWon: () => units.every(u => u.team === 0),
         hasLost: () => units.every(u => u.team !== 0),
-        draw: (graphics: Graphics) => {
-            graphics.context(() => {
-                graphics.transform(boardToScreen);
+        draw: (g: Graphics) => {
+            g.context(() => {
+                g.transform(boardToScreen);
                 grid.map(areas, (type, pos) => {
-                    graphics.color("#555555");
-                    if (type === "wall") graphics.color("#000000");
-                    if (type === "placable" && !started) graphics.color("#888888");
-                    graphics.icon(pos, 1, "square", true);
+                    g.color("#555555");
+                    if (type === "wall") g.color("#000000");
+                    if (type === "placable" && !started) g.color("#888888");
+                    g.icon(pos, 1, "square", true);
                 });
                 units.forEach(unit => {
-                    graphics.context(() => {
-                        graphics.color(teamColors[unit.team]);
-                        graphics.translate(unit.pos);
-                        graphics.icon([0, 0], unitRadius, "o");
-                        graphics.text(unit.type, 0.25);
+                    g.context(() => {
+                        g.color(teamColors[unit.team]);
+                        g.translate(unit.pos);
+                        g.icon([0, 0], unitRadius, "o");
+                        g.text(unit.type, 0.25);
                         const totalHp = unitTypeToSpecs[unit.type].hp;
                         const hp = totalHp - unit.hpLost;
                         const frac = hp / totalHp;
-                        graphics.color(hsv2rgb(vec3.lerp(rgb2hsv([1, 0, 0]), rgb2hsv([0, 1, 0]), frac)));
-                        graphics.rect([-0.5, -0.5], [frac - 0.5, -0.4], true);
+                        g.color(
+                            graphics.utils.hsv2rgb(
+                                vec3.lerp(graphics.utils.rgb2hsv([1, 0, 0]), graphics.utils.rgb2hsv([0, 1, 0]), frac)
+                            )
+                        );
+                        g.rect([-0.5, -0.5], [frac - 0.5, -0.4], true);
                     });
                 });
                 attacks.forEach(attack => {
-                    graphics.context(() => {
-                        graphics.color(teamColors[attack.team]);
-                        graphics.translate(attack.pos);
-                        graphics.orient(vec2.sub(attack.target.pos, attack.pos));
-                        if (attack.unitType === "sword") graphics.icon([0, 0], 1, "sword", true);
-                        if (attack.unitType === "bow") graphics.icon([0, 0], 0.5, "arrow", true);
+                    g.context(() => {
+                        g.color(teamColors[attack.team]);
+                        g.translate(attack.pos);
+                        g.orient(vec2.sub(attack.target.pos, attack.pos));
+                        if (attack.unitType === "sword") g.icon([0, 0], 1, "sword", true);
+                        if (attack.unitType === "bow") g.icon([0, 0], 0.5, "arrow", true);
                     });
                 });
             });
-            if (!started) startButton.draw(graphics);
+            if (!started) startButton.draw(g);
         }
     };
 };

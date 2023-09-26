@@ -9,6 +9,9 @@ export * as vec3 from "./vec3";
 export * as matrix from "./matrix";
 export * as grid from "./grid";
 export * as transform2 from "./transform2";
+export * as button from "./button";
+export * as graphics from "./graphics";
+export * as utils from "./utils";
 
 export type InputType = "lmb" | "rmb";
 
