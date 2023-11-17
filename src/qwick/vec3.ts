@@ -4,6 +4,8 @@ export type Vec3 = [number, number, number];
 
 export const clone = (v: Vec3): Vec3 => [...v];
 
+export const negate = (v: Vec3): Vec3 => [-v[0], -v[1], -v[2]];
+
 export const add = (a: Vec3, b: Vec3): Vec3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 
 export const sub = (a: Vec3, b: Vec3): Vec3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
@@ -11,6 +13,8 @@ export const sub = (a: Vec3, b: Vec3): Vec3 => [a[0] - b[0], a[1] - b[1], a[2] -
 export const scale = (v: Vec3, n: number): Vec3 => [v[0] * n, v[1] * n, v[2] * n];
 
 export const multiply = (a: Vec3, b: Vec3): Vec3 => [a[0] * b[0], a[1] * b[1], a[2] * b[2]];
+
+export const divide = (a: Vec3, b: Vec3): Vec3 => [a[0] / b[0], a[1] / b[1], a[2] / b[2]];
 
 export const lerp = (a: Vec3, b: Vec3, w: number): Vec3 => add(scale(a, 1 - w), scale(b, w));
 
