@@ -21,6 +21,7 @@ export type Level = {
     hasLost: () => boolean;
     draw: (graphics: Graphics) => void;
     input: (type: InputType, down: boolean) => void;
+    resize?: () => void;
 };
 
 export type Game<LevelData> = {
@@ -121,7 +122,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         canvas.height = innerHeight;
         qwick.width = innerWidth;
         qwick.height = innerHeight;
-        if (level && game.resize) game.resize();
+        if (game.resize) game.resize();
+        if (level?.resize) level.resize();
     };
     window.addEventListener("resize", resize, true);
 
