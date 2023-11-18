@@ -121,7 +121,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         canvas.height = innerHeight;
         qwick.width = innerWidth;
         qwick.height = innerHeight;
-        if (game.resize) game.resize();
+        if (level && game.resize) game.resize();
     };
     window.addEventListener("resize", resize, true);
 
