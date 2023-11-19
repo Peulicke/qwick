@@ -49,3 +49,21 @@ export const normalize = (v: Vec3): Vec3 => {
 };
 
 export const rand = (amount: number): Vec3 => scale([random() - 0.5, random() - 0.5, random() - 0.5], amount * 2);
+
+export const rotateX = (v: Vec3, angle: number): Vec3 => {
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    return [v[0], c * v[1] - s * v[2], s * v[1] + s * v[2]];
+};
+
+export const rotateY = (v: Vec3, angle: number): Vec3 => {
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    return [s * v[2] + s * v[0], v[1], c * v[2] - s * v[0]];
+};
+
+export const rotateZ = (v: Vec3, angle: number): Vec3 => {
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    return [c * v[0] - s * v[1], s * v[0] + s * v[1], v[2]];
+};
