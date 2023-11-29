@@ -30,6 +30,7 @@ export type Game<LevelData> = {
     loadLevel: (ld: LevelData) => Level;
     resize?: () => void;
     backgroundColor: string;
+    useNormalizedCoordinates?: boolean;
 };
 
 export type Qwick = {
@@ -88,7 +89,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
 
     const game = loadGame(qwick);
 
-    const graphics = createGraphics(ctx, game.backgroundColor);
+    const graphics = createGraphics(ctx, game.backgroundColor, game.useNormalizedCoordinates ?? true);
 
     const menuButton = createButton(
         qwick.getMousePos,

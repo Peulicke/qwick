@@ -8,9 +8,13 @@ export * as utils from "./utils";
 export * as transform from "./transform";
 export * as draw from "./draw";
 
-export const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: string) => ({
+export const createGraphics = (
+    ctx: CanvasRenderingContext2D,
+    backgroundColor: string,
+    useNormalizedCoordinates: boolean
+) => ({
     getAspectRatio: (): number => ctx.canvas.width / ctx.canvas.height,
-    begin: (): void => utils.begin(ctx, backgroundColor),
+    begin: (): void => utils.begin(ctx, backgroundColor, useNormalizedCoordinates),
     end: (): void => utils.end(ctx),
     color: (color: utils.Color): void => utils.setColor(ctx, color),
     push: (): void => transform.push(ctx),

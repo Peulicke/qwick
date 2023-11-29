@@ -1,15 +1,19 @@
 import { Vec3 } from "../vec3";
 
-export const begin = (ctx: CanvasRenderingContext2D, backgroundColor: string): void => {
-    const aspectRatio = ctx.canvas.width / ctx.canvas.height;
+export const begin = (
+    ctx: CanvasRenderingContext2D,
+    backgroundColor: string,
+    useNormalizedCoordinates: boolean
+): void => {
     ctx.save();
-    ctx.scale(ctx.canvas.height, ctx.canvas.height);
     ctx.fillStyle = backgroundColor;
-    ctx.fillRect(0, 0, aspectRatio, 1);
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.lineWidth = 3;
     ctx.fillStyle = "white";
     ctx.strokeStyle = "white";
-    ctx.translate(aspectRatio / 2, 1 / 2);
+    if (!useNormalizedCoordinates) return;
+    ctx.scale(ctx.canvas.height, ctx.canvas.height);
+    ctx.translate(0.5 * (ctx.canvas.width / ctx.canvas.height), 0.5);
 };
 
 export const end = (ctx: CanvasRenderingContext2D): void => {
