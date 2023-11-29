@@ -1,19 +1,12 @@
 import { Vec3 } from "../vec3";
 
-export const begin = (
-    ctx: CanvasRenderingContext2D,
-    backgroundColor: string,
-    useNormalizedCoordinates: boolean
-): void => {
+export const begin = (ctx: CanvasRenderingContext2D, backgroundColor: string): void => {
     ctx.save();
     ctx.fillStyle = backgroundColor;
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.lineWidth = 3;
     ctx.fillStyle = "white";
     ctx.strokeStyle = "white";
-    if (!useNormalizedCoordinates) return;
-    ctx.scale(ctx.canvas.height, ctx.canvas.height);
-    ctx.translate(0.5 * (ctx.canvas.width / ctx.canvas.height), 0.5);
 };
 
 export const end = (ctx: CanvasRenderingContext2D): void => {

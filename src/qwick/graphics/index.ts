@@ -10,12 +10,13 @@ export * as draw from "./draw";
 
 export const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: string) => ({
     getAspectRatio: (): number => ctx.canvas.width / ctx.canvas.height,
-    begin: (useNormalizedCoordinates: boolean): void => utils.begin(ctx, backgroundColor, useNormalizedCoordinates),
+    begin: (): void => utils.begin(ctx, backgroundColor),
     end: (): void => utils.end(ctx),
     color: (color: utils.Color): void => utils.setColor(ctx, color),
     push: (): void => transform.push(ctx),
     pop: (): void => transform.pop(ctx),
     context: (func: () => void): void => transform.context(ctx, func),
+    normalize: (): void => transform.normalize(ctx),
     translate: (v: vec2.Vec2): void => transform.translate(ctx, v),
     rotate: (v: number): void => transform.rotate(ctx, v),
     orient: (v: vec2.Vec2): void => transform.orient(ctx, v),

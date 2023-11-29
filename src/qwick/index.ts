@@ -199,7 +199,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
     window.addEventListener("mouseup", mouseup, true);
 
     const updateMenu = () => {
-        graphics.begin(true);
+        graphics.begin();
+        graphics.normalize();
         graphics.context(() => {
             graphics.color("gray");
             graphics.translate([0, -0.35]);
@@ -222,8 +223,12 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
                 setLevelCompleted(levelNum);
             } else if (l.hasLost()) levelFail = true;
         }
-        graphics.begin(game.useNormalizedCoordinates ?? true);
-        l.draw(graphics);
+        graphics.begin();
+        graphics.context(() => {
+            if (game.useNormalizedCoordinates ?? true) graphics.normalize();
+            l.draw(graphics);
+        });
+        graphics.normalize();
         graphics.context(() => {
             graphics.color("black");
             graphics.translate([0.5 * graphics.getAspectRatio() - 0.1, -0.5 + 0.05]);
