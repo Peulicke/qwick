@@ -30,6 +30,10 @@ export const getAngle = (a: Vec2): number => Math.atan2(a[1], a[0]);
 
 export const averageDirection = (a: Vec2, b: Vec2): Vec2 => normalize(add(normalize(a), normalize(b)));
 
+export const multiply = (a: Vec2, b: Vec2): Vec2 => [a[0] * b[0], a[1] * b[1]];
+
+export const divide = (a: Vec2, b: Vec2): Vec2 => [a[0] / b[0], a[1] / b[1]];
+
 export const lerp = (a: Vec2, b: Vec2, w: number): Vec2 => add(scale(a, 1 - w), scale(b, w));
 
 export const negate = (a: Vec2): Vec2 => [-a[0], -a[1]];
