@@ -155,30 +155,36 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
 
     const onInput = (type: InputType, down: boolean) => {
         if (level) {
-            if (menuButton.clicked(type, down)) {
+            menuButton.input(type, down);
+            if (menuButton.clicked) {
                 level = null;
                 return;
             }
-            if (restartButton.clicked(type, down)) {
+            restartButton.input(type, down);
+            if (restartButton.clicked) {
                 loadLevel();
                 return;
             }
             if (levelSuccess) {
-                if (successButton.clicked(type, down)) {
+                successButton.input(type, down);
+                if (successButton.clicked) {
                     ++levelNum;
                     if (levelNum >= game.levels.length) level = null;
                     else loadLevel();
                 }
             } else if (levelFail) {
-                if (failButton.clicked(type, down)) loadLevel();
+                failButton.input(type, down);
+                if (failButton.clicked) loadLevel();
             } else level.input(type, down);
         } else {
-            if (startButton.clicked(type, down)) {
+            startButton.input(type, down);
+            if (startButton.clicked) {
                 levelNum = 0;
                 loadLevel();
             }
             for (let i = 0; i < levelButtons.length; ++i) {
-                if (levelButtons[i].clicked(type, down)) {
+                levelButtons[i].input(type, down);
+                if (levelButtons[i].clicked) {
                     levelNum = i;
                     loadLevel();
                 }

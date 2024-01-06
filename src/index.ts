@@ -263,7 +263,8 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     return {
         input: (type: InputType, down: boolean) => {
-            if (!started && startButton.clicked(type, down) && allUnitsPlaced()) started = true;
+            startButton.input(type, down);
+            if (!started && startButton.clicked && allUnitsPlaced()) started = true;
             if (type !== "lmb") return;
             if (started) return;
             if (down) {

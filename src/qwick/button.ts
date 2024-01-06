@@ -4,7 +4,9 @@ import { Color } from "./graphics/utils";
 import * as vec2 from "./vec2";
 
 export type Button = {
-    clicked: (type: InputType, down: boolean) => boolean;
+    holding: boolean;
+    clicked: boolean;
+    input: (type: InputType, down: boolean) => void;
     draw: (graphics: Graphics, fillColor?: Color, borderColor?: Color) => void;
 };
 
@@ -23,23 +25,27 @@ export const createButton = (
     text: string
 ): Button => {
     const getPos = typeof pos === "function" ? pos : () => pos;
-    let mouseDown = false;
-    return {
-        clicked: (type: InputType, down: boolean) => {
-            if (type !== "lmb") return false;
+    const button: Button = {
+        holding: false,
+        clicked: false,
+        input: (type: InputType, down: boolean) => {
+            if (type !== "lmb") return;
             if (!insideButton(getMousePos, getPos(), size)) {
-                mouseDown = false;
-                return false;
+                button.holding = false;
+                button.clicked = false;
+                return;
             }
             if (down) {
-                mouseDown = true;
-                return false;
+                button.holding = true;
+                button.clicked = false;
+                return;
             }
-            if (mouseDown) {
-                mouseDown = false;
-                return true;
+            if (button.holding) {
+                button.holding = false;
+                button.clicked = true;
+                return;
             }
-            return false;
+            button.clicked = false;
         },
         draw: (graphics: Graphics, fillColor: Color = "rgba(0,0,0,0)", borderColor: Color = "black") => {
             graphics.context(() => {
@@ -52,4 +58,5 @@ export const createButton = (
             });
         }
     };
+    return button;
 };
