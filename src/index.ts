@@ -160,7 +160,12 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     const selectedUnit: { index: number; offset: vec2.Vec2 } = { index: -1, offset: [0, 0] };
 
-    const startButton = button.createButton(qwick.getMousePos, [0, 0.45], [0.1, 0.04], "Start");
+    const startButton = button.createButton(
+        qwick.getMousePos,
+        vec2.add(qwick.getPos("bottom"), [0, -0.05]),
+        [0.1, 0.04],
+        "Start"
+    );
 
     let started = false;
 

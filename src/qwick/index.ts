@@ -1,6 +1,7 @@
 import { createButton } from "./button";
 import { createGraphics, Graphics } from "./graphics";
 import "./index.css";
+import * as vec2 from "./vec2";
 
 export { default as random } from "./random";
 export type { Graphics } from "./graphics";
@@ -33,12 +34,40 @@ export type Game<LevelData> = {
     useNormalizedCoordinates?: boolean;
 };
 
+export type Position =
+    | "center"
+    | "left"
+    | "right"
+    | "top"
+    | "bottom"
+    | "top-left"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-right";
+
+const positionToUnitCoords: Record<Position, vec2.Vec2> = {
+    "top-left": [-1, -1],
+    left: [-1, 0],
+    "bottom-left": [-1, 1],
+    top: [0, -1],
+    center: [0, 0],
+    bottom: [0, 1],
+    "top-right": [1, -1],
+    right: [1, 0],
+    "bottom-right": [1, 1]
+};
+
+const getPos = (pos: Position, aspectRatio: number): vec2.Vec2 =>
+    vec2.multiply(positionToUnitCoords[pos], [0.5 * aspectRatio, 0.5]);
+
 export type Qwick = {
     width: number;
     height: number;
-    drawImage: (image: HTMLImageElement, pos: [number, number]) => void;
-    getMousePos: () => [number, number];
-    getMousePosPixels: () => [number, number];
+    getAspectRatio: () => number;
+    drawImage: (image: HTMLImageElement, pos: vec2.Vec2) => void;
+    getMousePos: () => vec2.Vec2;
+    getMousePosPixels: () => vec2.Vec2;
+    getPos: (pos: Position) => vec2.Vec2;
 };
 
 enum LocalStorage {
@@ -62,7 +91,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    const mousePos: [number, number] = [0, 0];
+    const mousePos: vec2.Vec2 = [0, 0];
     let levelNum = 0;
     let level: Level | null = null;
     let levelSuccess = false;
@@ -71,12 +100,14 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
     const qwick: Qwick = {
         width: innerWidth,
         height: innerHeight,
+        getAspectRatio: () => qwick.width / qwick.height,
         drawImage: () => {},
         getMousePos: () => [0, 0],
-        getMousePosPixels: () => [0, 0]
+        getMousePosPixels: () => [0, 0],
+        getPos: (pos: Position) => getPos(pos, qwick.getAspectRatio())
     };
 
-    qwick.drawImage = (image: HTMLImageElement, pos: [number, number]) => {
+    qwick.drawImage = (image: HTMLImageElement, pos: vec2.Vec2) => {
         ctx.drawImage(image, pos[0], pos[1]);
     };
 
@@ -93,13 +124,13 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
 
     const menuButton = createButton(
         qwick.getMousePos,
-        () => [-0.5 * graphics.getAspectRatio() + 0.11, -0.5 + 0.05],
+        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.05]),
         [0.1, 0.04],
         "Menu"
     );
     const restartButton = createButton(
         qwick.getMousePos,
-        () => [-0.5 * graphics.getAspectRatio() + 0.11, -0.5 + 0.15],
+        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.15]),
         [0.1, 0.04],
         "Restart"
     );
@@ -237,7 +268,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         graphics.normalize();
         graphics.context(() => {
             graphics.color("black");
-            graphics.translate([0.5 * graphics.getAspectRatio() - 0.1, -0.5 + 0.05]);
+            graphics.translate(vec2.add(qwick.getPos("top-right"), [-0.1, 0.05]));
             graphics.text(`Level ${levelNum + 1}`, 0.05);
         });
         menuButton.draw(graphics);
