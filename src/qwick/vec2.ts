@@ -100,3 +100,16 @@ export const gridNeighbors = (pos: Vec2 = [0, 0]) => [
 ];
 
 export const sizeOfGrid = <T>(grid: Grid<T>): Vec2 => [grid.length, grid[0].length];
+
+export const unique = (vList: Vec2[]): Vec2[] => {
+    const result: Vec2[] = [];
+    const exists: Map<number, Set<number>> = new Map();
+    vList.forEach(v => {
+        const [x, y] = v;
+        if (!exists.has(x)) exists.set(x, new Set());
+        if (exists.get(x)?.has(y)) return;
+        exists.get(x)?.add(y);
+        result.push([x, y]);
+    });
+    return result;
+};
