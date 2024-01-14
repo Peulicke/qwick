@@ -113,3 +113,7 @@ export const unique = (vList: Vec2[]): Vec2[] => {
     });
     return result;
 };
+
+export const sum = (vList: Vec2[]): Vec2 => vList.reduce((s, v) => add(s, v), [0, 0]);
+
+export const mean = (vList: Vec2[]): Vec2 => scale(sum(vList), 1 / vList.length);
