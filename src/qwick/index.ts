@@ -258,7 +258,11 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
             if (l.hasWon()) {
                 levelSuccess = true;
                 setLevelCompleted(levelNum);
-            } else if (l.hasLost()) levelFail = true;
+                window.parent.postMessage("hasWon", "*");
+            } else if (l.hasLost()) {
+                levelFail = true;
+                window.parent.postMessage("hasLost", "*");
+            }
         }
         graphics.begin();
         graphics.context(() => {
