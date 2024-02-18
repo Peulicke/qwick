@@ -1,4 +1,5 @@
 import { createButton } from "./button";
+import { emit, EventType } from "./event";
 import { createGraphics, Graphics } from "./graphics";
 import "./index.css";
 import * as vec2 from "./vec2";
@@ -182,6 +183,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         levelSuccess = false;
         levelFail = false;
         level = game.loadLevel(game.levels[levelNum]);
+        emit({ type: EventType.LEVEL_START, levelNum });
     };
 
     const onInput = (type: InputType, down: boolean) => {
@@ -189,6 +191,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
             menuButton.input(type, down);
             if (menuButton.clicked) {
                 level = null;
+                emit({ type: EventType.LEVEL_EXIT, levelNum });
                 return;
             }
             restartButton.input(type, down);
@@ -258,10 +261,10 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
             if (l.hasWon()) {
                 levelSuccess = true;
                 setLevelCompleted(levelNum);
-                window.parent.postMessage("hasWon", "*");
+                emit({ type: EventType.LEVEL_WON, levelNum });
             } else if (l.hasLost()) {
                 levelFail = true;
-                window.parent.postMessage("hasLost", "*");
+                emit({ type: EventType.LEVEL_LOST, levelNum });
             }
         }
         graphics.begin();
