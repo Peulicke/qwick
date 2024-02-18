@@ -14,6 +14,7 @@ export * as transform2 from "./transform2";
 export * as button from "./button";
 export * as graphics from "./graphics";
 export * as utils from "./utils";
+export * as event from "./event";
 
 export type InputType = "lmb" | "rmb";
 
