@@ -72,18 +72,10 @@ export type Qwick = {
     getPos: (pos: Position) => vec2.Vec2;
 };
 
-enum LocalStorage {
-    CompletedLevels = "completedLevels"
-}
-
-const getCompletedLevels = (): Set<number> =>
-    new Set(JSON.parse(localStorage.getItem(LocalStorage.CompletedLevels) ?? "[]"));
+const getCompletedLevels = (): Set<number> => new Set(JSON.parse(localStorage.getItem(location.pathname) ?? "[]"));
 
 const setLevelCompleted = (levelNum: number): void =>
-    localStorage.setItem(
-        LocalStorage.CompletedLevels,
-        JSON.stringify([...new Set([...getCompletedLevels(), levelNum])])
-    );
+    localStorage.setItem(location.pathname, JSON.stringify([...new Set([...getCompletedLevels(), levelNum])]));
 
 export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
     const canvas = document.createElement("canvas");
