@@ -19,6 +19,11 @@ const insideRect = (pos: vec2.Vec2, rectPos: vec2.Vec2, rectSize: vec2.Vec2) => 
 const insideButton = (getMousePos: () => vec2.Vec2, pos: vec2.Vec2, size: vec2.Vec2) =>
     insideRect(getMousePos(), pos, size);
 
+const drawRect = (graphics: Graphics, size: vec2.Vec2, color: Color, fill: boolean): void => {
+    graphics.color(color);
+    graphics.rect(vec2.negate(size), size, fill);
+};
+
 export const createButton = (
     getMousePos: () => vec2.Vec2,
     pos: vec2.Vec2 | (() => vec2.Vec2),
@@ -53,11 +58,10 @@ export const createButton = (
             graphics.context(() => {
                 const s = getSize();
                 graphics.translate(getPos());
-                graphics.color(fillColor);
-                graphics.rect(vec2.negate(s), s, true);
-                graphics.color(borderColor);
-                graphics.rect(vec2.negate(s), s, false);
+                drawRect(graphics, s, fillColor, true);
+                drawRect(graphics, s, borderColor, false);
                 graphics.text(text, 0.05);
+                if (button.holding) drawRect(graphics, s, "rgba(0,0,0,0.5)", true);
             });
         },
         drawWithBorder: (
@@ -70,12 +74,11 @@ export const createButton = (
                 const s = getSize();
                 const innerSize: vec2.Vec2 = [s[0] - borderWidth, s[1] - borderWidth];
                 graphics.translate(getPos());
-                graphics.color(borderColor);
-                graphics.rect(vec2.negate(s), s, true);
-                graphics.color(fillColor);
-                graphics.rect(vec2.negate(innerSize), innerSize, true);
+                drawRect(graphics, s, borderColor, true);
+                drawRect(graphics, innerSize, fillColor, true);
                 graphics.color(borderColor);
                 graphics.text(text, 0.05);
+                if (button.holding) drawRect(graphics, s, "rgba(0,0,0,0.5)", true);
             });
         }
     };
