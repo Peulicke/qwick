@@ -134,9 +134,14 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         [0.1, 0.04],
         "▶▶10⨯"
     );
-    const startButton = createButton(qwick.getMousePos, [0, -0.2], [0.1, 0.04], "Start");
-    const successButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Next level");
-    const failButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Retry");
+    const startButton = createButton(qwick.getMousePos, [0, -0.2], () => [graphics.getAspectRatio(), 0.04], "Start");
+    const successButton = createButton(
+        qwick.getMousePos,
+        [0, 0],
+        () => [graphics.getAspectRatio(), 0.08],
+        "Next level"
+    );
+    const failButton = createButton(qwick.getMousePos, [0, 0], () => [graphics.getAspectRatio(), 0.08], "Retry");
 
     const buttonGridWidth = Math.ceil(Math.sqrt(game.levels.length));
     const levelButtons = game.levels.map((_, i) => {
@@ -282,8 +287,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         menuButton.draw(graphics);
         restartButton.draw(graphics);
         fastForwardButton.draw(graphics);
-        if (levelSuccess) successButton.draw(graphics);
-        if (levelFail) failButton.draw(graphics);
+        if (levelSuccess) successButton.drawWithBorder(graphics, "white", "black", 0.03);
+        if (levelFail) failButton.drawWithBorder(graphics, "white", "black", 0.03);
         graphics.end();
     };
 
