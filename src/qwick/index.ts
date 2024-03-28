@@ -200,6 +200,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
             }
             restartButton.input(type, down);
             if (restartButton.clicked) {
+                emit({ type: EventType.LEVEL_RESTART, levelNum });
                 loadLevel();
                 return;
             }

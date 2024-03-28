@@ -2,7 +2,8 @@ export enum EventType {
     LEVEL_START = "levelStart",
     LEVEL_WON = "levelWon",
     LEVEL_LOST = "levelLost",
-    LEVEL_EXIT = "levelExit"
+    LEVEL_EXIT = "levelExit",
+    LEVEL_RESTART = "levelRestart"
 }
 
 export type Event = {
