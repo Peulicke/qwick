@@ -128,6 +128,12 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         [0.1, 0.04],
         "Restart"
     );
+    const fastForwardButton = createButton(
+        qwick.getMousePos,
+        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.25]),
+        [0.1, 0.04],
+        "▶▶10⨯"
+    );
     const startButton = createButton(qwick.getMousePos, [0, -0.2], [0.1, 0.04], "Start");
     const successButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Next level");
     const failButton = createButton(qwick.getMousePos, [0, 0], [0.15, 0.04], "Retry");
@@ -192,6 +198,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
                 loadLevel();
                 return;
             }
+            fastForwardButton.input(type, down);
+            fastForward = fastForwardButton.holding;
             if (levelSuccess) {
                 successButton.input(type, down);
                 if (successButton.clicked) {
@@ -273,6 +281,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         });
         menuButton.draw(graphics);
         restartButton.draw(graphics);
+        fastForwardButton.draw(graphics);
         if (levelSuccess) successButton.draw(graphics);
         if (levelFail) failButton.draw(graphics);
         graphics.end();
