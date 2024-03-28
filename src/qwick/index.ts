@@ -134,7 +134,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         [0.1, 0.04],
         "▶▶10⨯"
     );
-    const startButton = createButton(qwick.getMousePos, [0, -0.2], () => [graphics.getAspectRatio(), 0.04], "Start");
+    const startButton = createButton(qwick.getMousePos, [0, -0.2], [0.1, 0.04], "Start");
     const successButton = createButton(
         qwick.getMousePos,
         [0, 0],
