@@ -1,5 +1,7 @@
 import { vec2 } from ".";
-import { mean, sum } from "./vec2";
+import { Vec2, dist, mean, rotate, sum } from "./vec2";
+
+const epsilon = 1e-10;
 
 describe("unique", () => {
     it("returns empty array", () => {
@@ -63,5 +65,18 @@ describe("mean", () => {
                 [5, 6]
             ])
         ).toStrictEqual([3, 4]);
+    });
+});
+
+describe("rotation", () => {
+    it("rotates 0", () => {
+        expect(rotate([1, 1], 0)).toStrictEqual([1, 1]);
+    });
+    it("rotates pi/2", () => {
+        const v: Vec2 = [1, 1];
+        const rotated = rotate(v, Math.PI / 2);
+        const expected: Vec2 = [-1, 1];
+        const error = dist(rotated, expected);
+        expect(error).toBeLessThan(epsilon);
     });
 });

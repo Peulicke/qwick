@@ -119,3 +119,9 @@ export const unique = (vList: Vec2[]): Vec2[] => {
 export const sum = (vList: Vec2[]): Vec2 => vList.reduce((s, v) => add(s, v), [0, 0]);
 
 export const mean = (vList: Vec2[]): Vec2 => scale(sum(vList), 1 / vList.length);
+
+export const rotate = (v: Vec2, angle: number): Vec2 => {
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    return [c * v[0] - s * v[1], s * v[0] + c * v[1]];
+};
