@@ -70,6 +70,7 @@ export type Qwick = {
     getMousePos: () => vec2.Vec2;
     getMousePosPixels: () => vec2.Vec2;
     getPos: (pos: Position) => vec2.Vec2;
+    isKeyDown: (key: string) => boolean;
 };
 
 const getCompletedLevels = (): Set<number> => new Set(JSON.parse(localStorage.getItem(location.pathname) ?? "[]"));
@@ -91,6 +92,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
     let levelSuccess = false;
     let levelFail = false;
 
+    const keysDown = new Set<string>();
+
     const qwick: Qwick = {
         width: innerWidth,
         height: innerHeight,
@@ -98,7 +101,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         drawImage: () => {},
         getMousePos: () => [0, 0],
         getMousePosPixels: () => [0, 0],
-        getPos: (pos: Position) => getPos(pos, qwick.getAspectRatio())
+        getPos: (pos: Position) => getPos(pos, qwick.getAspectRatio()),
+        isKeyDown: (key: string) => keysDown.has(key)
     };
 
     qwick.drawImage = (image: HTMLImageElement, pos: vec2.Vec2) => {
@@ -169,11 +173,13 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
 
     const keydown = (e: KeyboardEvent) => {
         if (e.code === "Space") fastForward = true;
+        keysDown.add(e.code);
     };
     window.addEventListener("keydown", keydown, true);
 
     const keyup = (e: KeyboardEvent) => {
         if (e.code === "Space") fastForward = false;
+        keysDown.delete(e.code);
     };
     window.addEventListener("keyup", keyup, true);
 
@@ -191,6 +197,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
     };
 
     const onInput = (type: InputType, down: boolean) => {
+        if (down) keysDown.add(type);
+        else keysDown.delete(type);
         if (level) {
             menuButton.input(type, down);
             if (menuButton.clicked) {
