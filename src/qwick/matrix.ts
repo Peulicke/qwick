@@ -4,6 +4,13 @@ import * as vec2 from "./vec2";
 const lerp2 = (v00: number, v10: number, v01: number, v11: number, w: vec2.Vec2) =>
     lerp(lerp(v00, v10, w[0]), lerp(v01, v11, w[0]), w[1]);
 
+export const get = <T>(matrix: T[][], pos: vec2.Vec2, defaultValue: T): T =>
+    (matrix[pos[0]] ?? [])[pos[1]] ?? defaultValue;
+
+export const set = <T>(matrix: T[][], pos: vec2.Vec2, value: T): void => {
+    matrix[pos[0]][pos[1]] = value;
+};
+
 export const getValue = (matrix: number[][], pos: vec2.Vec2, defaultValue = 0): number => {
     const i = Math.floor(pos[0]);
     const j = Math.floor(pos[1]);
