@@ -97,7 +97,7 @@ export const rect = (ctx: CanvasRenderingContext2D, a: vec2.Vec2, b: vec2.Vec2, 
     stroke(ctx, false);
 };
 
-export const circle = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number): void => {
+export const circle = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number, fill: boolean): void => {
     ctx.beginPath();
     transform.push(ctx);
     transform.translate(ctx, [v[0], v[1]]);
@@ -105,7 +105,7 @@ export const circle = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number): 
     ctx.moveTo(1, 0);
     ctx.arc(0, 0, 1, 0, 2 * Math.PI);
     transform.pop(ctx);
-    stroke(ctx, false);
+    stroke(ctx, fill);
 };
 
 export const s = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number): void => {
@@ -133,7 +133,7 @@ export const icon = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number, typ
     transform.context(ctx, () => {
         transform.translate(ctx, v);
         transform.scale(ctx, r);
-        if (type === "o") return circle(ctx, [0, 0], 1);
+        if (type === "o") return circle(ctx, [0, 0], 1, filled);
         if (type === "+")
             return lineStrips(ctx, [
                 [
