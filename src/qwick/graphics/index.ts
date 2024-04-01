@@ -26,7 +26,8 @@ export const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: s
     lineStrip: (a: vec2.Vec2[]): void => draw.lineStrip(ctx, a),
     lineLoop: (a: vec2.Vec2[], fill: boolean): void => draw.lineLoop(ctx, a, fill),
     lineStrips: (a: vec2.Vec2[][]): void => draw.lineStrips(ctx, a),
-    circle: (v: vec2.Vec2, r: number, fill = false): void => draw.circle(ctx, v, r, fill),
+    circle: (v: vec2.Vec2, r: number, fill = false, angleFrom = 0, angleTo = 2 * Math.PI): void =>
+        draw.circle(ctx, v, r, fill, angleFrom, angleTo),
     s: (v: vec2.Vec2, r: number): void => draw.s(ctx, v, r),
     text: (text: string, size: number): void => draw.text(ctx, text, size),
     arrow: (a: vec2.Vec2, r: vec2.Vec2): void => draw.arrow(ctx, a, r),
