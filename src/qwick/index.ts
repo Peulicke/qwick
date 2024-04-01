@@ -24,16 +24,45 @@ export type Level = {
     hasLost: () => boolean;
     draw: (graphics: Graphics) => void;
     input: (type: InputType, down: boolean) => void;
-    resize?: () => void;
+    resize: () => void;
 };
+
+const defaultLevel = (): Level => ({
+    update: () => {},
+    hasWon: () => false,
+    hasLost: () => false,
+    draw: () => {},
+    input: () => {},
+    resize: () => {}
+});
+
+export type ShowOptions = {
+    menu: boolean;
+    restart: boolean;
+    fastForward: boolean;
+    level: boolean;
+};
+
+const defaultShowOptions = (): ShowOptions => ({
+    menu: true,
+    restart: true,
+    fastForward: true,
+    level: true
+});
 
 export type Game<LevelData> = {
     name: string;
     levels: LevelData[];
     loadLevel: (ld: LevelData) => Level;
-    resize?: () => void;
+    resize: () => void;
     backgroundColor: string;
-    useNormalizedCoordinates?: boolean;
+    useNormalizedCoordinates: boolean;
+    show: ShowOptions;
+};
+
+export type PartialGame<LevelData> = Partial<Omit<Game<LevelData>, "loadLevel" | "show">> & {
+    loadLevel?: (ld: LevelData) => Partial<Level>;
+    show?: Partial<ShowOptions>;
 };
 
 export type Position =
@@ -78,7 +107,26 @@ const getCompletedLevels = (): Set<number> => new Set(JSON.parse(localStorage.ge
 const setLevelCompleted = (levelNum: number): void =>
     localStorage.setItem(location.pathname, JSON.stringify([...new Set([...getCompletedLevels(), levelNum])]));
 
-export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelData>) => {
+const fromPartialGame = <LevelData>(partialGame: PartialGame<LevelData>): Game<LevelData> => ({
+    name: "Name of the game",
+    levels: [],
+    resize: () => {},
+    backgroundColor: "#60b1c7",
+    useNormalizedCoordinates: true,
+    ...partialGame,
+    loadLevel: (ld: LevelData): Level => {
+        if (partialGame.loadLevel === undefined) return defaultLevel();
+        const level = partialGame.loadLevel(ld);
+        if (level === undefined) return defaultLevel();
+        return { ...defaultLevel(), ...level };
+    },
+    show: {
+        ...defaultShowOptions(),
+        ...partialGame.show
+    }
+});
+
+export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<LevelData>) => {
     const canvas = document.createElement("canvas");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -116,7 +164,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
 
     qwick.getMousePosPixels = () => mousePos;
 
-    const game = loadGame(qwick);
+    const game = fromPartialGame(loadGame(qwick));
 
     const graphics = createGraphics(ctx, game.backgroundColor);
 
@@ -201,13 +249,13 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         else keysDown.delete(type);
         if (level) {
             menuButton.input(type, down);
-            if (menuButton.clicked) {
+            if (game.show.menu && menuButton.clicked) {
                 level = null;
                 emit({ type: EventType.LEVEL_EXIT, levelNum });
                 return;
             }
             restartButton.input(type, down);
-            if (restartButton.clicked) {
+            if (game.show.restart && restartButton.clicked) {
                 emit({ type: EventType.LEVEL_RESTART, levelNum });
                 loadLevel();
                 return;
@@ -271,7 +319,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
     };
 
     const updateLevel = (l: Level) => {
-        for (let i = 0; i < (fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
+        for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
             l.update();
             if (l.hasWon()) {
                 levelSuccess = true;
@@ -291,11 +339,11 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => Game<LevelDat
         graphics.context(() => {
             graphics.color("black");
             graphics.translate(vec2.add(qwick.getPos("top-right"), [-0.1, 0.05]));
-            graphics.text(`Level ${levelNum + 1}`, 0.05);
+            if (game.show.level) graphics.text(`Level ${levelNum + 1}`, 0.05);
         });
-        menuButton.draw(graphics);
-        restartButton.draw(graphics);
-        fastForwardButton.draw(graphics);
+        if (game.show.menu) menuButton.draw(graphics);
+        if (game.show.restart) restartButton.draw(graphics);
+        if (game.show.fastForward) fastForwardButton.draw(graphics);
         if (levelSuccess) successButton.drawWithBorder(graphics, "white", "black", 0.03);
         if (levelFail) failButton.drawWithBorder(graphics, "white", "black", 0.03);
         graphics.end();

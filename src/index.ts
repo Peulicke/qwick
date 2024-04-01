@@ -334,6 +334,5 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 createQwick((qwick: Qwick) => ({
     name: "Battle game test",
     levels,
-    loadLevel: loadLevel(qwick),
-    backgroundColor: "#60b1c7"
+    loadLevel: loadLevel(qwick)
 }));
