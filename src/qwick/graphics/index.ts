@@ -34,7 +34,8 @@ export const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: s
     fork: (a: vec2.Vec2, r: vec2.Vec2): void => draw.fork(ctx, a, r),
     square: (fill: boolean): void => draw.square(ctx, fill),
     rect: (a: vec2.Vec2, b: vec2.Vec2, fill: boolean): void => draw.rect(ctx, a, b, fill),
-    icon: (v: vec2.Vec2, r: number, type: draw.IconType, filled = false): void => draw.icon(ctx, v, r, type, filled)
+    icon: (v: vec2.Vec2, r: number, type: draw.IconType, filled = false): void => draw.icon(ctx, v, r, type, filled),
+    image: (img: HTMLImageElement): void => draw.image(ctx, img)
 });
 
 export type Graphics = ReturnType<typeof createGraphics>;

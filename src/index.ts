@@ -266,6 +266,9 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         unitCollisions();
     };
 
+    const img = new Image();
+    img.src = "example.png";
+
     return {
         input: (type: InputType, down: boolean) => {
             startButton.input(type, down);
@@ -293,6 +296,10 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         draw: (g: Graphics) => {
             g.context(() => {
                 g.transform(boardToScreen);
+                g.context(() => {
+                    g.translate([-1, -1]);
+                    g.image(img);
+                });
                 grid.map(areas, (type, pos) => {
                     g.color("#555555");
                     if (type === "wall") g.color("#000000");

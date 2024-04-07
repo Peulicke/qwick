@@ -170,3 +170,11 @@ export const icon = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number, typ
         }
     });
 };
+
+export const image = (ctx: CanvasRenderingContext2D, img: HTMLImageElement): void => {
+    const aspectRatio = img.width / img.height;
+    transform.context(ctx, () => {
+        transform.translate(ctx, [-aspectRatio / 2, -0.5]);
+        ctx.drawImage(img, 0, 0, aspectRatio, 1);
+    });
+};
