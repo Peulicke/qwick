@@ -36,6 +36,7 @@ export const createButton = (
         holding: false,
         clicked: false,
         input: (type: InputType, down: boolean) => {
+            if (down) button.clicked = false;
             if (type !== "lmb") return;
             if (!insideButton(getMousePos, getPos(), getSize())) {
                 button.holding = false;
