@@ -8,6 +8,10 @@ export const create = <T>(size: vec2.Vec2, value: T): Grid<T> =>
 export const map = <T1, T2>(grid: Grid<T1>, func: (value: T1, pos: vec2.Vec2) => T2): Grid<T2> =>
     grid.map((row, i) => row.map((value, j) => func(value, [i, j])));
 
+export const setCell = <T>(grid: Grid<T>, pos: vec2.Vec2, value: T): void => {
+    (grid[pos[0]] ?? [])[pos[1]] = value;
+};
+
 export const getCell = <T>(grid: Grid<T>, pos: vec2.Vec2): T | undefined => (grid[pos[0]] ?? [])[pos[1]];
 
 export const getNearestCell = <T>(grid: Grid<T>, pos: vec2.Vec2): T | undefined => getCell(grid, vec2.round(pos));
