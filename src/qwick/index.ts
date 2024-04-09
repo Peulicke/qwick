@@ -100,6 +100,8 @@ export type Qwick = {
     getMousePosPixels: () => vec2.Vec2;
     getPos: (pos: Position) => vec2.Vec2;
     isKeyDown: (key: string) => boolean;
+    wasKeyPressed: (key: string) => boolean;
+    wasKeyReleased: (key: string) => boolean;
 };
 
 const getCompletedLevels = (): Set<number> => new Set(JSON.parse(localStorage.getItem(location.pathname) ?? "[]"));
@@ -141,6 +143,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     let levelFail = false;
 
     const keysDown = new Set<string>();
+    const keysPressed = new Set<string>();
+    const keysReleased = new Set<string>();
 
     const qwick: Qwick = {
         width: innerWidth,
@@ -150,7 +154,9 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         getMousePos: () => [0, 0],
         getMousePosPixels: () => [0, 0],
         getPos: (pos: Position) => getPos(pos, qwick.getAspectRatio()),
-        isKeyDown: (key: string) => keysDown.has(key)
+        isKeyDown: (key: string) => keysDown.has(key),
+        wasKeyPressed: (key: string) => keysPressed.has(key),
+        wasKeyReleased: (key: string) => keysReleased.has(key)
     };
 
     qwick.drawImage = (image: HTMLImageElement, pos: vec2.Vec2) => {
@@ -222,12 +228,14 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     const keydown = (e: KeyboardEvent) => {
         if (e.code === "Space") fastForward = true;
         keysDown.add(e.code);
+        keysPressed.add(e.code);
     };
     window.addEventListener("keydown", keydown, true);
 
     const keyup = (e: KeyboardEvent) => {
         if (e.code === "Space") fastForward = false;
         keysDown.delete(e.code);
+        keysReleased.add(e.code);
     };
     window.addEventListener("keyup", keyup, true);
 
@@ -321,6 +329,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     const updateLevel = (l: Level) => {
         for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
             l.update();
+            keysPressed.clear();
+            keysReleased.clear();
             if (l.hasWon()) {
                 levelSuccess = true;
                 setLevelCompleted(levelNum);
