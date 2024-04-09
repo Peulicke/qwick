@@ -227,15 +227,16 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
 
     const keydown = (e: KeyboardEvent) => {
         if (e.code === "Space") fastForward = true;
+        if (!keysDown.has(e.code)) keysPressed.add(e.code);
         keysDown.add(e.code);
-        keysPressed.add(e.code);
+        console.log([...keysPressed]);
     };
     window.addEventListener("keydown", keydown, true);
 
     const keyup = (e: KeyboardEvent) => {
         if (e.code === "Space") fastForward = false;
-        keysDown.delete(e.code);
         keysReleased.add(e.code);
+        keysDown.delete(e.code);
     };
     window.addEventListener("keyup", keyup, true);
 
@@ -329,8 +330,6 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     const updateLevel = (l: Level) => {
         for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
             l.update();
-            keysPressed.clear();
-            keysReleased.clear();
             if (l.hasWon()) {
                 levelSuccess = true;
                 setLevelCompleted(levelNum);
@@ -362,6 +361,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     const t = setInterval(() => {
         if (level) updateLevel(level);
         else updateMenu();
+        keysPressed.clear();
+        keysReleased.clear();
     }, 1000 / 60);
 
     return () => {
