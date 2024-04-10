@@ -4,6 +4,8 @@ export type Vec2 = [number, number];
 
 export const clone = (v: Vec2): Vec2 => [...v];
 
+export const isVec2 = (v: unknown): v is Vec2 => Array.isArray(v) && v.length === 2;
+
 export const equals = (a: Vec2, b: Vec2): boolean => a[0] === b[0] && a[1] === b[1];
 
 export const add = (a: Vec2, b: Vec2): Vec2 => [a[0] + b[0], a[1] + b[1]];
@@ -56,12 +58,13 @@ export const floor = (v: Vec2): Vec2 => [Math.floor(v[0]), Math.floor(v[1])];
 
 export const round = (v: Vec2): Vec2 => [Math.round(v[0]), Math.round(v[1])];
 
-export const getNearestObject = <T>(obj: T, allObjs: T[], pos: (t: T) => Vec2): T | undefined => {
+export const getNearestObject = <T>(obj: T | Vec2, allObjs: T[], pos: (t: T) => Vec2): T | undefined => {
+    const objPos = isVec2(obj) ? obj : pos(obj);
     let result: T | undefined = undefined;
     let minDist = Infinity;
     for (const o of allObjs) {
         if (o === obj) continue;
-        const d = dist(pos(obj), pos(o));
+        const d = dist(objPos, pos(o));
         if (d > minDist) continue;
         minDist = d;
         result = o;
