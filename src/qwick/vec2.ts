@@ -58,6 +58,12 @@ export const floor = (v: Vec2): Vec2 => [Math.floor(v[0]), Math.floor(v[1])];
 
 export const round = (v: Vec2): Vec2 => [Math.round(v[0]), Math.round(v[1])];
 
+export const abs = (v: Vec2): Vec2 => [Math.abs(v[0]), Math.abs(v[1])];
+
+export const min = (v: Vec2): number => Math.min(v[0], v[1]);
+
+export const max = (v: Vec2): number => Math.max(v[0], v[1]);
+
 export const getNearestObject = <T>(obj: T | Vec2, allObjs: T[], pos: (t: T) => Vec2): T | undefined => {
     const objPos = isVec2(obj) ? obj : pos(obj);
     let result: T | undefined = undefined;
