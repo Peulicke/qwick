@@ -229,7 +229,6 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         if (e.code === "Space") fastForward = true;
         if (!keysDown.has(e.code)) keysPressed.add(e.code);
         keysDown.add(e.code);
-        console.log([...keysPressed]);
     };
     window.addEventListener("keydown", keydown, true);
 
