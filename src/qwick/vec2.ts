@@ -134,3 +134,5 @@ export const rotate = (v: Vec2, angle: number): Vec2 => {
     const s = Math.sin(angle);
     return [c * v[0] - s * v[1], s * v[0] + c * v[1]];
 };
+
+export const getDir = (angle: number): Vec2 => [Math.cos(angle), Math.sin(angle)];
