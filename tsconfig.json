@@ -18,8 +18,7 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "outDir": "dist",
-        "declaration": true,
-        "jsx": "react"
+        "declaration": true
     },
     "include": [
         "src/qwick"
