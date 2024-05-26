@@ -4,6 +4,7 @@ import "./index.css";
 import { createInput, InputType } from "./input";
 import { createLevelRunner } from "./levelRunner";
 import { createMenu } from "./menu";
+import { Position, getPos } from "./position";
 import * as vec2 from "./vec2";
 
 export { default as random } from "./random";
@@ -17,32 +18,6 @@ export * as button from "./button";
 export * as graphics from "./graphics";
 export * as utils from "./utils";
 export * as event from "./event";
-
-export type Position =
-    | "center"
-    | "left"
-    | "right"
-    | "top"
-    | "bottom"
-    | "top-left"
-    | "top-right"
-    | "bottom-left"
-    | "bottom-right";
-
-const positionToUnitCoords: Record<Position, vec2.Vec2> = {
-    "top-left": [-1, -1],
-    left: [-1, 0],
-    "bottom-left": [-1, 1],
-    top: [0, -1],
-    center: [0, 0],
-    bottom: [0, 1],
-    "top-right": [1, -1],
-    right: [1, 0],
-    "bottom-right": [1, 1]
-};
-
-const getPos = (pos: Position, aspectRatio: number): vec2.Vec2 =>
-    vec2.multiply(positionToUnitCoords[pos], [0.5 * aspectRatio, 0.5]);
 
 export type Qwick = {
     width: number;
