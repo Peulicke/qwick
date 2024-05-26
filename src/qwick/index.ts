@@ -3,6 +3,7 @@ import { emit, EventType } from "./event";
 import { createGraphics, Graphics } from "./graphics";
 import "./index.css";
 import { createInput, InputType } from "./input";
+import { createMenu } from "./menu";
 import * as vec2 from "./vec2";
 
 export { default as random } from "./random";
@@ -170,6 +171,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
 
     const graphics = createGraphics(ctx, game.backgroundColor);
 
+    const menu = createMenu(qwick, graphics, game);
+
     const menuButton = createButton(
         qwick.getMousePos,
         () => vec2.add(qwick.getPos("top-left"), [0.11, 0.05]),
@@ -188,7 +191,6 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         [0.1, 0.04],
         "▶▶10⨯"
     );
-    const startButton = createButton(qwick.getMousePos, [0, -0.2], [0.1, 0.04], "Start");
     const successButton = createButton(
         qwick.getMousePos,
         [0, 0],
@@ -196,15 +198,6 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         "Next level"
     );
     const failButton = createButton(qwick.getMousePos, [0, 0], () => [graphics.getAspectRatio(), 0.08], "Retry");
-
-    const buttonGridWidth = Math.ceil(Math.sqrt(game.levels.length));
-    const levelButtons = game.levels.map((_, i) => {
-        const xIndex = i % buttonGridWidth;
-        const yIndex = Math.floor(i / buttonGridWidth);
-        const x = (xIndex - (buttonGridWidth - 1) / 2) * 0.22;
-        const y = yIndex * 0.1 - 0.05;
-        return createButton(qwick.getMousePos, [x, y], [0.1, 0.04], `${i + 1}`);
-    });
 
     input.listeners.resize = () => {
         canvas.width = innerWidth;
@@ -249,36 +242,12 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
                 if (failButton.clicked) loadLevel();
             } else level.input(type, down);
         } else {
-            startButton.input(type, down);
-            if (startButton.clicked) {
-                levelNum = 0;
+            const levelPressed = menu.input(type, down);
+            if (levelPressed !== undefined) {
+                levelNum = levelPressed;
                 loadLevel();
             }
-            for (let i = 0; i < levelButtons.length; ++i) {
-                levelButtons[i].input(type, down);
-                if (levelButtons[i].clicked) {
-                    levelNum = i;
-                    loadLevel();
-                }
-            }
         }
-    };
-
-    const updateMenu = () => {
-        graphics.begin();
-        graphics.normalize();
-        graphics.context(() => {
-            graphics.color("gray");
-            graphics.translate([0, -0.35]);
-            graphics.scale(2);
-            graphics.text(game.name, 0.05);
-        });
-        startButton.draw(graphics);
-        const completedLevels = getCompletedLevels();
-        levelButtons.forEach((b, i) => {
-            b.draw(graphics, completedLevels.has(i) ? "green" : "gray");
-        });
-        graphics.end();
     };
 
     const updateLevel = (l: Level) => {
@@ -315,7 +284,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
 
     const t = setInterval(() => {
         if (level) updateLevel(level);
-        else updateMenu();
+        else menu.update(getCompletedLevels());
         input.clear();
     }, 1000 / 60);
 
