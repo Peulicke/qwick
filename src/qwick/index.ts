@@ -1,8 +1,7 @@
-import { Game, PartialGame } from "./game";
+import { PartialGame, fromPartialGame } from "./game";
 import { createGraphics } from "./graphics";
 import "./index.css";
 import { createInput, InputType } from "./input";
-import { defaultLevel, Level } from "./level";
 import { createLevelRunner } from "./levelRunner";
 import { createMenu } from "./menu";
 import * as vec2 from "./vec2";
@@ -18,20 +17,6 @@ export * as button from "./button";
 export * as graphics from "./graphics";
 export * as utils from "./utils";
 export * as event from "./event";
-
-export type ShowOptions = {
-    menu: boolean;
-    restart: boolean;
-    fastForward: boolean;
-    level: boolean;
-};
-
-const defaultShowOptions = (): ShowOptions => ({
-    menu: true,
-    restart: true,
-    fastForward: true,
-    level: true
-});
 
 export type Position =
     | "center"
@@ -76,25 +61,6 @@ const getCompletedLevels = (): Set<number> => new Set(JSON.parse(localStorage.ge
 
 const setLevelCompleted = (levelNum: number): void =>
     localStorage.setItem(location.pathname, JSON.stringify([...new Set([...getCompletedLevels(), levelNum])]));
-
-const fromPartialGame = <LevelData>(partialGame: PartialGame<LevelData>): Game<LevelData> => ({
-    name: "Name of the game",
-    levels: [],
-    resize: () => {},
-    backgroundColor: "#60b1c7",
-    useNormalizedCoordinates: true,
-    ...partialGame,
-    loadLevel: (ld: LevelData): Level => {
-        if (partialGame.loadLevel === undefined) return defaultLevel();
-        const level = partialGame.loadLevel(ld);
-        if (level === undefined) return defaultLevel();
-        return { ...defaultLevel(), ...level };
-    },
-    show: {
-        ...defaultShowOptions(),
-        ...partialGame.show
-    }
-});
 
 export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<LevelData>) => {
     const canvas = document.createElement("canvas");
