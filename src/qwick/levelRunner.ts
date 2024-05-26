@@ -1,7 +1,8 @@
-import { Game, Graphics, Level, Qwick, vec2 } from ".";
+import { Game, Graphics, Qwick, vec2 } from ".";
 import { createButton } from "./button";
 import { EventType, emit } from "./event";
 import { InputType } from "./input";
+import { Level } from "./level";
 
 export const createLevelRunner = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
     let levelNum = 0;

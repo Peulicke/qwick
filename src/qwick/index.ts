@@ -1,6 +1,7 @@
-import { createGraphics, Graphics } from "./graphics";
+import { createGraphics } from "./graphics";
 import "./index.css";
 import { createInput, InputType } from "./input";
+import { defaultLevel, Level } from "./level";
 import { createLevelRunner } from "./levelRunner";
 import { createMenu } from "./menu";
 import * as vec2 from "./vec2";
@@ -16,24 +17,6 @@ export * as button from "./button";
 export * as graphics from "./graphics";
 export * as utils from "./utils";
 export * as event from "./event";
-
-export type Level = {
-    update: () => void;
-    hasWon: () => boolean;
-    hasLost: () => boolean;
-    draw: (graphics: Graphics) => void;
-    input: (type: InputType, down: boolean) => void;
-    resize: () => void;
-};
-
-const defaultLevel = (): Level => ({
-    update: () => {},
-    hasWon: () => false,
-    hasLost: () => false,
-    draw: () => {},
-    input: () => {},
-    resize: () => {}
-});
 
 export type ShowOptions = {
     menu: boolean;
