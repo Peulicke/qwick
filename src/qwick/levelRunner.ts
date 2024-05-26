@@ -1,6 +1,7 @@
-import { Game, Graphics, Qwick, vec2 } from ".";
+import { Graphics, Qwick, vec2 } from ".";
 import { createButton } from "./button";
 import { EventType, emit } from "./event";
+import { Game } from "./game";
 import { InputType } from "./input";
 import { Level } from "./level";
 

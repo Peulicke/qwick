@@ -1,6 +1,7 @@
 import { createButton } from "./button";
-import { Game, Graphics, Qwick } from ".";
+import { Graphics, Qwick } from ".";
 import { InputType } from "./input";
+import { Game } from "./game";
 
 export const createMenu = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
     const startButton = createButton(qwick.getMousePos, [0, -0.2], [0.1, 0.04], "Start");

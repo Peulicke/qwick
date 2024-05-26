@@ -1,3 +1,4 @@
+import { Game, PartialGame } from "./game";
 import { createGraphics } from "./graphics";
 import "./index.css";
 import { createInput, InputType } from "./input";
@@ -31,21 +32,6 @@ const defaultShowOptions = (): ShowOptions => ({
     fastForward: true,
     level: true
 });
-
-export type Game<LevelData> = {
-    name: string;
-    levels: LevelData[];
-    loadLevel: (ld: LevelData) => Level;
-    resize: () => void;
-    backgroundColor: string;
-    useNormalizedCoordinates: boolean;
-    show: ShowOptions;
-};
-
-export type PartialGame<LevelData> = Partial<Omit<Game<LevelData>, "loadLevel" | "show">> & {
-    loadLevel?: (ld: LevelData) => Partial<Level>;
-    show?: Partial<ShowOptions>;
-};
 
 export type Position =
     | "center"
