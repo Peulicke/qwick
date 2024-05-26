@@ -1,3 +1,4 @@
+import { createCanvas } from "./canvas";
 import { PartialGame, fromPartialGame } from "./game";
 import { createGraphics } from "./graphics";
 import "./index.css";
@@ -10,6 +11,7 @@ import * as vec2 from "./vec2";
 
 export { default as random } from "./random";
 export type { Graphics } from "./graphics";
+export type { InputType } from "./input";
 export * as vec2 from "./vec2";
 export * as vec3 from "./vec3";
 export * as matrix from "./matrix";
@@ -34,20 +36,13 @@ export type Qwick = {
 };
 
 export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<LevelData>) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    document.body.appendChild(canvas);
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) return;
-
+    const canvas = createCanvas();
     const storage = createStorage();
-
     const input = createInput();
 
     const qwick: Qwick = {
-        width: innerWidth,
-        height: innerHeight,
+        width: window.innerWidth,
+        height: window.innerHeight,
         getAspectRatio: () => qwick.width / qwick.height,
         drawImage: () => {},
         getMousePos: () => [0, 0],
@@ -59,7 +54,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     };
 
     qwick.drawImage = (image: HTMLImageElement, pos: vec2.Vec2) => {
-        ctx.drawImage(image, pos[0], pos[1]);
+        canvas.ctx.drawImage(image, pos[0], pos[1]);
     };
 
     qwick.getMousePos = () => [
@@ -71,18 +66,17 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
 
     const game = fromPartialGame(loadGame(qwick));
 
-    const graphics = createGraphics(ctx, game.backgroundColor);
+    const graphics = createGraphics(canvas.ctx, game.backgroundColor);
 
     const menu = createMenu(qwick, graphics, game);
 
     const levelRunner = createLevelRunner(qwick, graphics, game);
 
     input.listeners.resize = () => {
-        canvas.width = innerWidth;
-        canvas.height = innerHeight;
-        qwick.width = innerWidth;
-        qwick.height = innerHeight;
-        if (game.resize) game.resize();
+        canvas.resize();
+        qwick.width = window.innerWidth;
+        qwick.height = window.innerHeight;
+        game.resize();
         levelRunner.resize();
     };
 
@@ -102,7 +96,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     }, 1000 / 60);
 
     return () => {
-        document.body.removeChild(canvas);
+        canvas.destroy();
         input.destroy();
         clearInterval(t);
     };
