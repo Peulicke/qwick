@@ -40,29 +40,25 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     const storage = createStorage();
     const input = createInput();
 
+    const getAspectRatio = () => canvas.canvas.width / canvas.canvas.height;
+
     const qwick: Qwick = {
         width: window.innerWidth,
         height: window.innerHeight,
-        getAspectRatio: () => qwick.width / qwick.height,
-        drawImage: () => {},
-        getMousePos: () => [0, 0],
-        getMousePosPixels: () => [0, 0],
-        getPos: (pos: Position) => getPos(pos, qwick.getAspectRatio()),
+        getAspectRatio,
+        drawImage: (image: HTMLImageElement, pos: vec2.Vec2) => {
+            canvas.ctx.drawImage(image, pos[0], pos[1]);
+        },
+        getMousePos: (): vec2.Vec2 => [
+            (input.mousePos[0] - 0.5 * canvas.canvas.width) / canvas.canvas.height,
+            (input.mousePos[1] - 0.5 * canvas.canvas.height) / canvas.canvas.height
+        ],
+        getMousePosPixels: () => input.mousePos,
+        getPos: (pos: Position) => getPos(pos, getAspectRatio()),
         isKeyDown: (key: string) => input.keysDown.has(key),
         wasKeyPressed: (key: string) => input.keysPressed.has(key),
         wasKeyReleased: (key: string) => input.keysReleased.has(key)
     };
-
-    qwick.drawImage = (image: HTMLImageElement, pos: vec2.Vec2) => {
-        canvas.ctx.drawImage(image, pos[0], pos[1]);
-    };
-
-    qwick.getMousePos = () => [
-        (input.mousePos[0] - 0.5 * qwick.width) / qwick.height,
-        (input.mousePos[1] - 0.5 * qwick.height) / qwick.height
-    ];
-
-    qwick.getMousePosPixels = () => input.mousePos;
 
     const game = fromPartialGame(loadGame(qwick));
 
