@@ -2,6 +2,7 @@ import { createButton } from "./button";
 import { emit, EventType } from "./event";
 import { createGraphics, Graphics } from "./graphics";
 import "./index.css";
+import { createInput, InputType } from "./input";
 import * as vec2 from "./vec2";
 
 export { default as random } from "./random";
@@ -15,8 +16,6 @@ export * as button from "./button";
 export * as graphics from "./graphics";
 export * as utils from "./utils";
 export * as event from "./event";
-
-export type InputType = "lmb" | "rmb";
 
 export type Level = {
     update: () => void;
@@ -136,15 +135,12 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    const mousePos: vec2.Vec2 = [0, 0];
+    const input = createInput();
+
     let levelNum = 0;
     let level: Level | null = null;
     let levelSuccess = false;
     let levelFail = false;
-
-    const keysDown = new Set<string>();
-    const keysPressed = new Set<string>();
-    const keysReleased = new Set<string>();
 
     const qwick: Qwick = {
         width: innerWidth,
@@ -154,9 +150,9 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         getMousePos: () => [0, 0],
         getMousePosPixels: () => [0, 0],
         getPos: (pos: Position) => getPos(pos, qwick.getAspectRatio()),
-        isKeyDown: (key: string) => keysDown.has(key),
-        wasKeyPressed: (key: string) => keysPressed.has(key),
-        wasKeyReleased: (key: string) => keysReleased.has(key)
+        isKeyDown: (key: string) => input.keysDown.has(key),
+        wasKeyPressed: (key: string) => input.keysPressed.has(key),
+        wasKeyReleased: (key: string) => input.keysReleased.has(key)
     };
 
     qwick.drawImage = (image: HTMLImageElement, pos: vec2.Vec2) => {
@@ -164,11 +160,11 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     };
 
     qwick.getMousePos = () => [
-        (mousePos[0] - 0.5 * qwick.width) / qwick.height,
-        (mousePos[1] - 0.5 * qwick.height) / qwick.height
+        (input.mousePos[0] - 0.5 * qwick.width) / qwick.height,
+        (input.mousePos[1] - 0.5 * qwick.height) / qwick.height
     ];
 
-    qwick.getMousePosPixels = () => mousePos;
+    qwick.getMousePosPixels = () => input.mousePos;
 
     const game = fromPartialGame(loadGame(qwick));
 
@@ -210,7 +206,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         return createButton(qwick.getMousePos, [x, y], [0.1, 0.04], `${i + 1}`);
     });
 
-    const resize = () => {
+    input.listeners.resize = () => {
         canvas.width = innerWidth;
         canvas.height = innerHeight;
         qwick.width = innerWidth;
@@ -218,28 +214,6 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         if (game.resize) game.resize();
         if (level?.resize) level.resize();
     };
-    window.addEventListener("resize", resize, true);
-
-    const contextmenu = (e: MouseEvent) => e.preventDefault();
-    window.addEventListener("contextmenu", contextmenu, true);
-
-    const keydown = (e: KeyboardEvent) => {
-        if (!keysDown.has(e.code)) keysPressed.add(e.code);
-        keysDown.add(e.code);
-    };
-    window.addEventListener("keydown", keydown, true);
-
-    const keyup = (e: KeyboardEvent) => {
-        keysReleased.add(e.code);
-        keysDown.delete(e.code);
-    };
-    window.addEventListener("keyup", keyup, true);
-
-    const mousemove = (e: MouseEvent) => {
-        mousePos[0] = e.x;
-        mousePos[1] = e.y;
-    };
-    window.addEventListener("mousemove", mousemove, true);
 
     const loadLevel = () => {
         levelSuccess = false;
@@ -248,9 +222,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         emit({ type: EventType.LEVEL_START, levelNum });
     };
 
-    const onInput = (type: InputType, down: boolean) => {
-        if (down) keysDown.add(type);
-        else keysDown.delete(type);
+    input.listeners.input = (type: InputType, down: boolean) => {
         if (level) {
             menuButton.input(type, down);
             if (game.show.menu && menuButton.clicked) {
@@ -292,18 +264,6 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         }
     };
 
-    const mousedown = (e: MouseEvent) => {
-        if (e.button === 0) onInput("lmb", true);
-        if (e.button === 2) onInput("rmb", true);
-    };
-    window.addEventListener("mousedown", mousedown, true);
-
-    const mouseup = (e: MouseEvent) => {
-        if (e.button === 0) onInput("lmb", false);
-        if (e.button === 2) onInput("rmb", false);
-    };
-    window.addEventListener("mouseup", mouseup, true);
-
     const updateMenu = () => {
         graphics.begin();
         graphics.normalize();
@@ -322,7 +282,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     };
 
     const updateLevel = (l: Level) => {
-        const fastForward = fastForwardButton.holding || keysDown.has("Space");
+        const fastForward = fastForwardButton.holding || input.keysDown.has("Space");
         for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
             l.update();
             if (l.hasWon()) {
@@ -356,18 +316,12 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     const t = setInterval(() => {
         if (level) updateLevel(level);
         else updateMenu();
-        keysPressed.clear();
-        keysReleased.clear();
+        input.clear();
     }, 1000 / 60);
 
     return () => {
         document.body.removeChild(canvas);
-        window.removeEventListener("contextmenu", contextmenu, true);
-        window.removeEventListener("mousemove", mousemove, true);
-        window.removeEventListener("mousedown", mousedown, true);
-        window.removeEventListener("keydown", keydown, true);
-        window.removeEventListener("keyup", keyup, true);
-        window.removeEventListener("resize", resize, true);
+        input.destroy();
         clearInterval(t);
     };
 };

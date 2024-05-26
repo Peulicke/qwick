@@ -1,6 +1,6 @@
-import { InputType } from ".";
 import { Graphics } from "./graphics";
 import { Color } from "./graphics/utils";
+import { InputType } from "./input";
 import * as vec2 from "./vec2";
 
 export type Button = {
