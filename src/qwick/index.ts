@@ -210,8 +210,6 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         return createButton(qwick.getMousePos, [x, y], [0.1, 0.04], `${i + 1}`);
     });
 
-    let fastForward = false;
-
     const resize = () => {
         canvas.width = innerWidth;
         canvas.height = innerHeight;
@@ -226,14 +224,12 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     window.addEventListener("contextmenu", contextmenu, true);
 
     const keydown = (e: KeyboardEvent) => {
-        if (e.code === "Space") fastForward = true;
         if (!keysDown.has(e.code)) keysPressed.add(e.code);
         keysDown.add(e.code);
     };
     window.addEventListener("keydown", keydown, true);
 
     const keyup = (e: KeyboardEvent) => {
-        if (e.code === "Space") fastForward = false;
         keysReleased.add(e.code);
         keysDown.delete(e.code);
     };
@@ -269,7 +265,6 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
                 return;
             }
             fastForwardButton.input(type, down);
-            fastForward = fastForwardButton.holding;
             if (levelSuccess) {
                 successButton.input(type, down);
                 if (successButton.clicked) {
@@ -327,6 +322,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     };
 
     const updateLevel = (l: Level) => {
+        const fastForward = fastForwardButton.holding || keysDown.has("Space");
         for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
             l.update();
             if (l.hasWon()) {
