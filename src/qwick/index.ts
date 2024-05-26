@@ -1,8 +1,7 @@
-import { createButton } from "./button";
-import { emit, EventType } from "./event";
 import { createGraphics, Graphics } from "./graphics";
 import "./index.css";
 import { createInput, InputType } from "./input";
+import { createLevelRunner } from "./levelRunner";
 import { createMenu } from "./menu";
 import * as vec2 from "./vec2";
 
@@ -138,11 +137,6 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
 
     const input = createInput();
 
-    let levelNum = 0;
-    let level: Level | null = null;
-    let levelSuccess = false;
-    let levelFail = false;
-
     const qwick: Qwick = {
         width: innerWidth,
         height: innerHeight,
@@ -173,31 +167,7 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
 
     const menu = createMenu(qwick, graphics, game);
 
-    const menuButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.05]),
-        [0.1, 0.04],
-        "Menu"
-    );
-    const restartButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.15]),
-        [0.1, 0.04],
-        "Restart"
-    );
-    const fastForwardButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.25]),
-        [0.1, 0.04],
-        "▶▶10⨯"
-    );
-    const successButton = createButton(
-        qwick.getMousePos,
-        [0, 0],
-        () => [graphics.getAspectRatio(), 0.08],
-        "Next level"
-    );
-    const failButton = createButton(qwick.getMousePos, [0, 0], () => [graphics.getAspectRatio(), 0.08], "Retry");
+    const levelRunner = createLevelRunner(qwick, graphics, game);
 
     input.listeners.resize = () => {
         canvas.width = innerWidth;
@@ -205,85 +175,20 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
         qwick.width = innerWidth;
         qwick.height = innerHeight;
         if (game.resize) game.resize();
-        if (level?.resize) level.resize();
-    };
-
-    const loadLevel = () => {
-        levelSuccess = false;
-        levelFail = false;
-        level = game.loadLevel(game.levels[levelNum]);
-        emit({ type: EventType.LEVEL_START, levelNum });
+        levelRunner.resize();
     };
 
     input.listeners.input = (type: InputType, down: boolean) => {
-        if (level) {
-            menuButton.input(type, down);
-            if (game.show.menu && menuButton.clicked) {
-                level = null;
-                emit({ type: EventType.LEVEL_EXIT, levelNum });
-                return;
-            }
-            restartButton.input(type, down);
-            if (game.show.restart && restartButton.clicked) {
-                emit({ type: EventType.LEVEL_RESTART, levelNum });
-                loadLevel();
-                return;
-            }
-            fastForwardButton.input(type, down);
-            if (levelSuccess) {
-                successButton.input(type, down);
-                if (successButton.clicked) {
-                    ++levelNum;
-                    if (levelNum >= game.levels.length) level = null;
-                    else loadLevel();
-                }
-            } else if (levelFail) {
-                failButton.input(type, down);
-                if (failButton.clicked) loadLevel();
-            } else level.input(type, down);
-        } else {
-            const levelPressed = menu.input(type, down);
-            if (levelPressed !== undefined) {
-                levelNum = levelPressed;
-                loadLevel();
-            }
+        if (levelRunner.isRunning()) {
+            levelRunner.input(type, down);
+            return;
         }
-    };
-
-    const updateLevel = (l: Level) => {
-        const fastForward = fastForwardButton.holding || input.keysDown.has("Space");
-        for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
-            l.update();
-            if (l.hasWon()) {
-                levelSuccess = true;
-                setLevelCompleted(levelNum);
-                emit({ type: EventType.LEVEL_WON, levelNum });
-            } else if (l.hasLost()) {
-                levelFail = true;
-                emit({ type: EventType.LEVEL_LOST, levelNum });
-            }
-        }
-        graphics.begin();
-        graphics.context(() => {
-            if (game.useNormalizedCoordinates ?? true) graphics.normalize();
-            l.draw(graphics);
-        });
-        graphics.normalize();
-        graphics.context(() => {
-            graphics.color("black");
-            graphics.translate(vec2.add(qwick.getPos("top-right"), [-0.1, 0.05]));
-            if (game.show.level) graphics.text(`Level ${levelNum + 1}`, 0.05);
-        });
-        if (game.show.menu) menuButton.draw(graphics);
-        if (game.show.restart) restartButton.draw(graphics);
-        if (game.show.fastForward) fastForwardButton.draw(graphics);
-        if (levelSuccess) successButton.drawWithBorder(graphics, "white", "black", 0.03);
-        if (levelFail) failButton.drawWithBorder(graphics, "white", "black", 0.03);
-        graphics.end();
+        const levelPressed = menu.input(type, down);
+        if (levelPressed !== undefined) levelRunner.startLevel(levelPressed);
     };
 
     const t = setInterval(() => {
-        if (level) updateLevel(level);
+        if (levelRunner.isRunning()) levelRunner.update(setLevelCompleted);
         else menu.update(getCompletedLevels());
         input.clear();
     }, 1000 / 60);
