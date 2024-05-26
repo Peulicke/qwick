@@ -2,6 +2,7 @@ import { createButton } from "./button";
 import { Graphics, Qwick } from ".";
 import { InputType } from "./input";
 import { Game } from "./game";
+import { Storage } from "./storage";
 
 export const createMenu = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
     const startButton = createButton(qwick.getMousePos, [0, -0.2], [0.1, 0.04], "Start");
@@ -25,7 +26,7 @@ export const createMenu = <LevelData>(qwick: Qwick, graphics: Graphics, game: Ga
         return undefined;
     };
 
-    const update = (completedLevels: Set<number>) => {
+    const update = (storage: Storage) => {
         graphics.begin();
         graphics.normalize();
         graphics.context(() => {
@@ -36,7 +37,7 @@ export const createMenu = <LevelData>(qwick: Qwick, graphics: Graphics, game: Ga
         });
         startButton.draw(graphics);
         levelButtons.forEach((b, i) => {
-            b.draw(graphics, completedLevels.has(i) ? "green" : "gray");
+            b.draw(graphics, storage.getCompletedLevels().has(i) ? "green" : "gray");
         });
         graphics.end();
     };

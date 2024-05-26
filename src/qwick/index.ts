@@ -5,6 +5,7 @@ import { createInput, InputType } from "./input";
 import { createLevelRunner } from "./levelRunner";
 import { createMenu } from "./menu";
 import { Position, getPos } from "./position";
+import { createStorage } from "./storage";
 import * as vec2 from "./vec2";
 
 export { default as random } from "./random";
@@ -32,11 +33,6 @@ export type Qwick = {
     wasKeyReleased: (key: string) => boolean;
 };
 
-const getCompletedLevels = (): Set<number> => new Set(JSON.parse(localStorage.getItem(location.pathname) ?? "[]"));
-
-const setLevelCompleted = (levelNum: number): void =>
-    localStorage.setItem(location.pathname, JSON.stringify([...new Set([...getCompletedLevels(), levelNum])]));
-
 export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<LevelData>) => {
     const canvas = document.createElement("canvas");
     canvas.width = window.innerWidth;
@@ -44,6 +40,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     document.body.appendChild(canvas);
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
+
+    const storage = createStorage();
 
     const input = createInput();
 
@@ -98,8 +96,8 @@ export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<L
     };
 
     const t = setInterval(() => {
-        if (levelRunner.isRunning()) levelRunner.update(setLevelCompleted);
-        else menu.update(getCompletedLevels());
+        if (levelRunner.isRunning()) levelRunner.update(storage);
+        else menu.update(storage);
         input.clear();
     }, 1000 / 60);
 

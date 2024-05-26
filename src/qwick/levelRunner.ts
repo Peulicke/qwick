@@ -4,6 +4,7 @@ import { EventType, emit } from "./event";
 import { Game } from "./game";
 import { InputType } from "./input";
 import { Level } from "./level";
+import { Storage } from "./storage";
 
 export const createLevelRunner = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
     let levelNum = 0;
@@ -117,8 +118,8 @@ export const createLevelRunner = <LevelData>(qwick: Qwick, graphics: Graphics, g
 
     return {
         input,
-        update: (setLevelCompleted: (n: number) => void) => {
-            if (level !== null) update(level, setLevelCompleted);
+        update: (storage: Storage) => {
+            if (level !== null) update(level, storage.setLevelCompleted);
         },
         resize,
         isRunning,
