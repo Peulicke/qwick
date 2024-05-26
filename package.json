@@ -6,9 +6,11 @@
         "build": "tsc -p tsconfig.json && cp ./src/qwick/index.css ./dist",
         "deploy": "npm run build && npm publish",
         "start": "react-scripts start",
-        "test": "react-scripts test"
+        "test": "react-scripts test",
+        "qtest": "craco start"
     },
     "dependencies": {
+        "@craco/craco": "^7.1.0",
         "random-seed": "^0.3.0"
     },
     "devDependencies": {
