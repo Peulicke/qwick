@@ -9,7 +9,7 @@ export type QwickTest = {
     draw: (graphics: Graphics) => void;
 };
 
-export const createTest = (qwickTest: Partial<QwickTest>) => {
+export const runTest = (qwickTest: Partial<QwickTest>) => {
     const canvas = createCanvas();
     const input = createInput();
     const graphics = createGraphics(canvas.ctx, "black");
@@ -34,3 +34,24 @@ export const createTest = (qwickTest: Partial<QwickTest>) => {
         clearInterval(t);
     };
 };
+
+export const createTestSuite = (locationPath: string[]) => {
+    const path: string[] = [];
+
+    const context = (name: string, func: () => void) => {
+        path.push(name);
+        func();
+        path.pop();
+    };
+
+    const test = (qwickTest: Partial<QwickTest>) => {
+        if (locationPath.join("/") === path.join("/")) runTest(qwickTest);
+    };
+
+    return {
+        context,
+        test
+    };
+};
+
+export type TestSuite = ReturnType<typeof createTestSuite>;

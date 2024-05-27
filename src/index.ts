@@ -1,3 +1,4 @@
+import { test } from "./test";
 import {
     createQwick,
     Qwick,
@@ -338,8 +339,11 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     };
 };
 
-createQwick((qwick: Qwick) => ({
-    name: "Battle game test",
-    levels,
-    loadLevel: loadLevel(qwick)
-}));
+createQwick(
+    (qwick: Qwick) => ({
+        name: "Battle game test",
+        levels,
+        loadLevel: loadLevel(qwick)
+    }),
+    test
+);

@@ -6,6 +6,7 @@ import { createInput, InputType } from "./input";
 import { createLevelRunner } from "./levelRunner";
 import { createMenu } from "./menu";
 import { Position, getPos } from "./position";
+import { TestSuite, createTestSuite } from "./qwickTest";
 import { createStorage } from "./storage";
 import * as vec2 from "./vec2";
 
@@ -35,7 +36,16 @@ export type Qwick = {
     wasKeyReleased: (key: string) => boolean;
 };
 
-export const createQwick = <LevelData>(loadGame: (qwick: Qwick) => PartialGame<LevelData>) => {
+export const createQwick = <LevelData>(
+    loadGame: (qwick: Qwick) => PartialGame<LevelData>,
+    loadTest?: (qwickTest: TestSuite) => void
+) => {
+    const path = window.location.pathname.split("/").filter(x => x !== "");
+    if (path.length > 0) {
+        const qwickTest = createTestSuite(path);
+        if (loadTest) loadTest(qwickTest);
+        return;
+    }
     const canvas = createCanvas();
     const storage = createStorage();
     const input = createInput();
