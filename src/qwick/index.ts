@@ -40,7 +40,10 @@ export const createQwick = <LevelData>(
     loadGame: (qwick: Qwick) => PartialGame<LevelData>,
     loadTest?: (qwickTest: TestSuite) => void
 ) => {
-    const path = window.location.pathname.split("/").filter(x => x !== "");
+    const path = window.location.pathname
+        .split("/")
+        .filter(x => x !== "")
+        .map(decodeURIComponent);
     if (path.length > 0) {
         const qwickTest = createTestSuite(path);
         if (loadTest) loadTest(qwickTest);
@@ -59,10 +62,7 @@ export const createQwick = <LevelData>(
         drawImage: (image: HTMLImageElement, pos: vec2.Vec2) => {
             canvas.ctx.drawImage(image, pos[0], pos[1]);
         },
-        getMousePos: (): vec2.Vec2 => [
-            (input.mousePos[0] - 0.5 * canvas.canvas.width) / canvas.canvas.height,
-            (input.mousePos[1] - 0.5 * canvas.canvas.height) / canvas.canvas.height
-        ],
+        getMousePos: input.getMousePos,
         getMousePosPixels: () => input.mousePos,
         getPos: (pos: Position) => getPos(pos, getAspectRatio()),
         isKeyDown: (key: string) => input.keysDown.has(key),

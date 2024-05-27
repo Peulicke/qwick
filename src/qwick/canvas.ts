@@ -22,3 +22,5 @@ export const createCanvas = () => {
         destroy
     };
 };
+
+export type Canvas = ReturnType<typeof createCanvas>;

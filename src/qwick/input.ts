@@ -74,10 +74,16 @@ export const createInput = () => {
         input.keysReleased.clear();
     };
 
+    const getMousePos = (): vec2.Vec2 => [
+        (input.mousePos[0] - 0.5 * window.innerWidth) / window.innerHeight,
+        (input.mousePos[1] - 0.5 * window.innerHeight) / window.innerHeight
+    ];
+
     return {
         ...input,
         listeners,
         clear,
+        getMousePos,
         destroy: () => {
             window.removeEventListener("contextmenu", contextmenu, true);
             window.removeEventListener("mousemove", mousemove, true);
