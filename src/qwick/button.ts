@@ -28,10 +28,13 @@ export const createButton = (
     getMousePos: () => vec2.Vec2,
     pos: vec2.Vec2 | (() => vec2.Vec2),
     size: vec2.Vec2 | (() => vec2.Vec2),
-    text: string
+    text: string,
+    textSize?: number | (() => number)
 ): Button => {
     const getPos = typeof pos === "function" ? pos : () => pos;
     const getSize = typeof size === "function" ? size : () => size;
+    const getTextSize = typeof textSize === "function" ? textSize : () => textSize ?? getSize()[1];
+
     const button: Button = {
         holding: false,
         clicked: false,
@@ -61,7 +64,7 @@ export const createButton = (
                 graphics.translate(getPos());
                 drawRect(graphics, s, fillColor, true);
                 drawRect(graphics, s, borderColor, false);
-                graphics.text(text, 0.05);
+                graphics.text(text, getTextSize());
                 if (button.holding) drawRect(graphics, s, "rgba(0,0,0,0.5)", true);
             });
         },
@@ -78,7 +81,7 @@ export const createButton = (
                 drawRect(graphics, s, borderColor, true);
                 drawRect(graphics, innerSize, fillColor, true);
                 graphics.color(borderColor);
-                graphics.text(text, 0.05);
+                graphics.text(text, getTextSize());
                 if (button.holding) drawRect(graphics, s, "rgba(0,0,0,0.5)", true);
             });
         }

@@ -3,6 +3,10 @@ import { createCanvas } from "./canvas";
 import { Graphics, createGraphics } from "./graphics";
 import { Input, InputType, createInput } from "./input";
 import { createButton } from "./button";
+import { vec2 } from ".";
+
+const buttonHeight = 0.03;
+const charWidth = 0.3;
 
 export type QwickTest = {
     input?: (type: InputType, down: boolean) => void;
@@ -18,7 +22,12 @@ export const runTestMenu = (testNames: string[]) => {
     const graphics = createGraphics(canvas.ctx, "gray");
 
     const buttons = testNames.map((name, i) =>
-        createButton(input.getMousePos, [0, 0.07 * (i - (testNames.length - 1) / 2)], [0.3, 0.03], name)
+        createButton(
+            input.getMousePos,
+            [0, 0.07 * (i - (testNames.length - 1) / 2)],
+            vec2.scale([name.length * charWidth, 1], buttonHeight),
+            name
+        )
     );
     input.listeners.resize = () => canvas.resize();
     input.listeners.input = (type, down) => {
