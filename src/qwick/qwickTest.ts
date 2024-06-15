@@ -1,7 +1,7 @@
 import "./index.css";
 import { createCanvas } from "./canvas";
 import { Graphics, createGraphics } from "./graphics";
-import { InputType, createInput } from "./input";
+import { Input, InputType, createInput } from "./input";
 import { createButton } from "./button";
 
 export type QwickTest = {
@@ -9,6 +9,8 @@ export type QwickTest = {
     update?: () => void;
     draw?: (graphics: Graphics) => void;
 };
+
+export type CreateQwickTest = ({ input }: { input: Input }) => QwickTest;
 
 export const runTestMenu = (testNames: string[]) => {
     const canvas = createCanvas();
@@ -45,10 +47,12 @@ export const runTestMenu = (testNames: string[]) => {
     };
 };
 
-export const runTest = (qwickTest: QwickTest) => {
+export const runTest = (createQwickTest: CreateQwickTest) => {
     const canvas = createCanvas();
     const input = createInput();
     const graphics = createGraphics(canvas.ctx, "gray");
+
+    const qwickTest = createQwickTest({ input });
 
     input.listeners.resize = () => canvas.resize();
     input.listeners.input = qwickTest.input;
@@ -92,10 +96,10 @@ export const createTestSuite = (locationPath: string[]) => {
         path.pop();
     };
 
-    const test = (name: string, qwickTest: QwickTest) => {
+    const test = (name: string, createQwickTest: CreateQwickTest) => {
         path.push(name);
         pushToNames(name);
-        if (isSamePath(locationPath, path)) runTest(qwickTest);
+        if (isSamePath(locationPath, path)) runTest(createQwickTest);
         path.pop();
     };
 

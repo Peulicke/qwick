@@ -1,18 +1,27 @@
 import { Graphics } from "./qwick/graphics";
-import { TestSuite } from "./qwick/qwickTest";
+import { CreateQwickTest, TestSuite } from "./qwick/qwickTest";
 
-export const testA = (t: TestSuite) => {
-    let x = 0;
-    const draw = (graphics: Graphics) => {
-        x += 0.001;
-        graphics.color("white");
-        graphics.circle([x, 0], 0.25);
+const testA: CreateQwickTest = ({ input }) => {
+    let pos = input.getMousePos();
+
+    const update = () => {
+        pos = input.getMousePos();
     };
-    t.test("white circle", { draw });
+
+    const draw = (graphics: Graphics) => {
+        graphics.color("white");
+        graphics.circle(pos, 0.25);
+    };
+
+    return {
+        update,
+        draw
+    };
 };
 
-export const testB = (t: TestSuite) => {
+export const testB: CreateQwickTest = () => {
     let x = 0;
+
     const draw = (graphics: Graphics) => {
         x += 0.001;
         graphics.color("black");
@@ -21,12 +30,13 @@ export const testB = (t: TestSuite) => {
         graphics.scale(0.5);
         graphics.square(false);
     };
-    t.test("rotating black square", { draw });
+
+    return { draw };
 };
 
 export const test = (t: TestSuite) => {
     t.context("test", () => {
-        testA(t);
-        testB(t);
+        t.test("white circle", testA);
+        t.test("rotating black square", testB);
     });
 };

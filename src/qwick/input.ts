@@ -7,17 +7,15 @@ export type Listeners = {
     input: (type: InputType, down: boolean) => void;
 };
 
-export type Input = {
-    mousePos: vec2.Vec2;
-    keysDown: Set<string>;
-    keysPressed: Set<string>;
-    keysReleased: Set<string>;
-};
-
 export const createInput = () => {
     const listeners: Partial<Listeners> = {};
 
-    const input: Input = {
+    const input: {
+        mousePos: vec2.Vec2;
+        keysDown: Set<string>;
+        keysPressed: Set<string>;
+        keysReleased: Set<string>;
+    } = {
         mousePos: [0, 0],
         keysDown: new Set(),
         keysPressed: new Set(),
@@ -94,3 +92,5 @@ export const createInput = () => {
         }
     };
 };
+
+export type Input = ReturnType<typeof createInput>;
