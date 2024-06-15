@@ -77,11 +77,18 @@ export const createInput = () => {
         (input.mousePos[1] - 0.5 * window.innerHeight) / window.innerHeight
     ];
 
+    const getArrowInput = (): vec2.Vec2 =>
+        vec2.normalize([
+            (input.keysDown.has("ArrowRight") ? 1 : 0) - (input.keysDown.has("ArrowLeft") ? 1 : 0),
+            (input.keysDown.has("ArrowDown") ? 1 : 0) - (input.keysDown.has("ArrowUp") ? 1 : 0)
+        ]);
+
     return {
         ...input,
         listeners,
         clear,
         getMousePos,
+        getArrowInput,
         destroy: () => {
             window.removeEventListener("contextmenu", contextmenu, true);
             window.removeEventListener("mousemove", mousemove, true);
