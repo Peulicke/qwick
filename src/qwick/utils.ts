@@ -19,3 +19,15 @@ export const sum = (array: number[]): number => array.reduce((s, v) => s + v, 0)
 export const mean = (array: number[]): number => sum(array) / array.length;
 
 export const lerp = (a: number, b: number, w: number) => a * (1 - w) + b * w;
+
+export const getMinObj = <T>(objects: T[], getValue: (t: T) => number) => {
+    let minValue = Infinity;
+    let result: T | undefined = undefined;
+    objects.forEach(object => {
+        const value = getValue(object);
+        if (value > minValue) return;
+        minValue = value;
+        result = object;
+    });
+    return result;
+};
