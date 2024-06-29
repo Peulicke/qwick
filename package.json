@@ -12,12 +12,12 @@
         "random-seed": "^0.3.0"
     },
     "devDependencies": {
-        "@types/jest": "^29.5.11",
-        "@types/random-seed": "^0.3.3",
-        "@types/three": "^0.143.1",
-        "eslint-plugin-only-warn": "^1.0.3",
+        "@types/jest": "^29.5.12",
+        "@types/random-seed": "^0.3.5",
+        "@types/three": "^0.166.0",
+        "eslint-plugin-only-warn": "^1.1.0",
         "react-scripts": "^5.0.1",
-        "typescript": "^4.7.4"
+        "typescript": "^5.5.2"
     },
     "browserslist": {
         "production": [
