@@ -1,4 +1,4 @@
-import { getMinObj, swap } from "./utils";
+import { getMinObj, shuffle, swap } from "./utils";
 
 it("gets the smallest value", () => {
     expect(getMinObj([2, 1, 3], v => v)).toBe(1);
@@ -13,4 +13,10 @@ it("swaps", () => {
     const array = [1, 2];
     swap(array, 0, 1);
     expect(array).toStrictEqual([2, 1]);
+});
+
+it("shuffles", () => {
+    const array = [1, 2, 3, 4];
+    shuffle(array);
+    expect(array.length).toBe(4);
 });

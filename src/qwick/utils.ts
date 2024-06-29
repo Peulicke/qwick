@@ -41,6 +41,6 @@ export const swap = <T>(objects: T[], i: number, j: number) => {
 
 export const shuffle = <T>(objects: T[]) => {
     for (let i = 0; i < objects.length; ++i) {
-        swap(objects, i, randInt(i + 1, objects.length));
+        swap(objects, i, randInt(i + 1, objects.length - 1));
     }
 };
