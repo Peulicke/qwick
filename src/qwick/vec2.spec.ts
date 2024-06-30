@@ -79,3 +79,8 @@ describe("rotation", () => {
         expect(error).toBeLessThan(epsilon);
     });
 });
+
+it("clamps", () => {
+    expect(vec2.clamp([10, 3], [0, 0], [5, 5])).toStrictEqual([5, 3]);
+    expect(vec2.clamp([-3, -30], [-5, -5], [5, 5])).toStrictEqual([-3, -5]);
+});

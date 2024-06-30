@@ -65,6 +65,11 @@ export const min = (v: Vec2): number => Math.min(v[0], v[1]);
 
 export const max = (v: Vec2): number => Math.max(v[0], v[1]);
 
+export const clamp = (v: Vec2, from: Vec2, to: Vec2): Vec2 => [
+    Math.min(Math.max(v[0], from[0]), to[0]),
+    Math.min(Math.max(v[1], from[1]), to[1])
+];
+
 export const getNearestObject = <T>(obj: T | Vec2, allObjs: T[], pos: (t: T) => Vec2): T | undefined => {
     const objPos = isVec2(obj) ? obj : pos(obj);
     let result: T | undefined = undefined;
