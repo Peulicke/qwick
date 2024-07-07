@@ -105,7 +105,7 @@ export const createLevelRunner = <LevelData>(qwick: Qwick, graphics: Graphics, g
         }
         graphics.begin();
         graphics.context(() => {
-            if (game.useNormalizedCoordinates ?? true) graphics.normalize();
+            graphics.normalize();
             l.draw(graphics);
         });
         graphics.normalize();

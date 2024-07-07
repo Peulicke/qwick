@@ -7,7 +7,6 @@ export type Game<LevelData> = {
     loadLevel: (ld: LevelData) => Level;
     resize: () => void;
     backgroundColor: string;
-    useNormalizedCoordinates: boolean;
     show: ShowOptions;
 };
 
@@ -21,7 +20,6 @@ export const fromPartialGame = <LevelData>(partialGame: PartialGame<LevelData>):
     levels: [],
     resize: () => {},
     backgroundColor: "#60b1c7",
-    useNormalizedCoordinates: true,
     ...partialGame,
     loadLevel: (ld: LevelData): Level => {
         if (partialGame.loadLevel === undefined) return defaultLevel();
