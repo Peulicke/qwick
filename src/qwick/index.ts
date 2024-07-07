@@ -4,6 +4,7 @@ import { createGraphics } from "./graphics";
 import "./index.css";
 import { createInput, InputType } from "./input";
 import { createLevelRunner } from "./level";
+import { createLevelEditorRunner } from "./levelEditor";
 import { createMenu } from "./menu";
 import { Position, getPos } from "./position";
 import { TestSuite, createTestSuite } from "./qwickTest";
@@ -77,6 +78,7 @@ export const createQwick = <LevelData>(
     const menu = createMenu(qwick, graphics, game);
 
     const levelRunner = createLevelRunner(qwick, graphics, game);
+    const levelEditorRunner = createLevelEditorRunner(qwick, graphics, game);
 
     input.listeners.resize = () => {
         canvas.resize();
@@ -91,12 +93,19 @@ export const createQwick = <LevelData>(
             levelRunner.input(type, down);
             return;
         }
+        if (levelEditorRunner.isRunning()) {
+            levelEditorRunner.input(type, down);
+            return;
+        }
         const levelPressed = menu.input(type, down);
-        if (levelPressed !== undefined) levelRunner.startLevel(levelPressed);
+        if (levelPressed === undefined) return;
+        if (levelPressed === -1) return levelEditorRunner.start();
+        levelRunner.startLevel(levelPressed);
     };
 
     const t = setInterval(() => {
         if (levelRunner.isRunning()) levelRunner.update(storage);
+        else if (levelEditorRunner.isRunning()) levelEditorRunner.update(storage);
         else menu.update(storage);
         input.clear();
     }, 1000 / 60);

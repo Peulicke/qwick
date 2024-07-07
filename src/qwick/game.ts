@@ -1,17 +1,20 @@
 import { Level, defaultLevel } from "./level";
+import { LevelEditor } from "./levelEditor";
 import { ShowOptions, defaultShowOptions } from "./showOptions";
 
 export type Game<LevelData> = {
     name: string;
     levels: LevelData[];
     loadLevel: (ld: LevelData) => Level;
+    loadLevelEditor?: () => LevelEditor<LevelData>;
     resize: () => void;
     backgroundColor: string;
     show: ShowOptions;
 };
 
-export type PartialGame<LevelData> = Partial<Omit<Game<LevelData>, "loadLevel" | "show">> & {
+export type PartialGame<LevelData> = Partial<Omit<Game<LevelData>, "loadLevel" | "loadLevelEditor" | "show">> & {
     loadLevel?: (ld: LevelData) => Partial<Level>;
+    loadLevelEditor?: () => LevelEditor<LevelData>;
     show?: Partial<ShowOptions>;
 };
 
