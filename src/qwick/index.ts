@@ -3,7 +3,7 @@ import { PartialGame, fromPartialGame } from "./game";
 import { createGraphics } from "./graphics";
 import "./index.css";
 import { createInput, InputType } from "./input";
-import { createLevelRunner } from "./levelRunner";
+import { createLevelRunner } from "./level";
 import { createMenu } from "./menu";
 import { Position, getPos } from "./position";
 import { TestSuite, createTestSuite } from "./qwickTest";
