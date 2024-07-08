@@ -33,7 +33,9 @@ const charToAreaType: Record<string, AreaType> = {
     b: "none"
 };
 
-type UnitType = "sword" | "bow";
+const unitTypes = ["sword", "bow"] as const;
+
+type UnitType = (typeof unitTypes)[number];
 
 type Unit = {
     team: number;
@@ -166,6 +168,19 @@ const drawArea = (g: Graphics, type: AreaType, levelState: LevelState) => {
     g.icon([0, 0], 1, "square", true);
 };
 
+const drawUnit = (g: Graphics, unit: Unit) => {
+    g.color(teamColors[unit.team]);
+    g.icon([0, 0], unitRadius, "o");
+    g.text(unit.type, 0.25);
+    const totalHp = unitTypeToSpecs[unit.type].hp;
+    const hp = totalHp - unit.hpLost;
+    const frac = hp / totalHp;
+    g.color(
+        graphics.utils.hsv2rgb(vec3.lerp(graphics.utils.rgb2hsv([1, 0, 0]), graphics.utils.rgb2hsv([0, 1, 0]), frac))
+    );
+    g.rect([-0.5, -0.5], [frac - 0.5, -0.4], true);
+};
+
 const drawWorld = (g: Graphics, levelState: LevelState) => {
     g.context(() => {
         g.transform(getBoardToScreen(levelState.areas));
@@ -177,19 +192,8 @@ const drawWorld = (g: Graphics, levelState: LevelState) => {
         });
         levelState.units.forEach(unit => {
             g.context(() => {
-                g.color(teamColors[unit.team]);
                 g.translate(unit.pos);
-                g.icon([0, 0], unitRadius, "o");
-                g.text(unit.type, 0.25);
-                const totalHp = unitTypeToSpecs[unit.type].hp;
-                const hp = totalHp - unit.hpLost;
-                const frac = hp / totalHp;
-                g.color(
-                    graphics.utils.hsv2rgb(
-                        vec3.lerp(graphics.utils.rgb2hsv([1, 0, 0]), graphics.utils.rgb2hsv([0, 1, 0]), frac)
-                    )
-                );
-                g.rect([-0.5, -0.5], [frac - 0.5, -0.4], true);
+                drawUnit(g, unit);
             });
         });
         levelState.attacks.forEach(attack => {
@@ -416,10 +420,13 @@ const loadLevelEditor = (_: Qwick) => (): LevelEditor<LevelData> => {
 
     return {
         levelData: level1,
-        menuItems: areaTypes.map(type => ({
-            id: type,
-            draw: g => drawArea(g, type, levelDataToState(levelData))
-        })),
+        menuItems: [
+            ...areaTypes.map(type => ({
+                id: type,
+                draw: (g: Graphics) => drawArea(g, type, levelDataToState(levelData))
+            })),
+            ...unitTypes.map(type => ({ id: type, draw: (g: Graphics) => drawUnit(g, createUnit(0, type, [0, 0])) }))
+        ],
         draw
     };
 };
