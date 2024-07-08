@@ -22,3 +22,26 @@ export const loadFile = async (): Promise<string> => {
         input.click();
     });
 };
+
+export const saveFile = async (content: string, filename: string): Promise<void> => {
+    return new Promise(resolve => {
+        const blob = new Blob([content], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+
+        const clickHandler = () => {
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+                a.removeEventListener("click", clickHandler);
+                resolve();
+            }, 150);
+        };
+        a.addEventListener("click", clickHandler, false);
+
+        const event = new MouseEvent("click");
+        a.dispatchEvent(event);
+    });
+};

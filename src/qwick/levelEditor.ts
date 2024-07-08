@@ -2,7 +2,7 @@ import { Graphics, Qwick, vec2 } from ".";
 import { createButton } from "./button";
 import { Game } from "./game";
 import { InputType } from "./input";
-import { loadFile } from "./io";
+import { loadFile, saveFile } from "./io";
 import { Storage } from "./storage";
 
 const menuItemSize = 0.1;
@@ -70,7 +70,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
             return;
         }
         if (saveButton.clicked) {
-            navigator.clipboard.writeText(JSON.stringify(levelEditor.getLevelData(), null, 4));
+            saveFile(JSON.stringify(levelEditor.getLevelData(), null, 4), "level.json");
             return;
         }
         if (type === "lmb" && down) {
