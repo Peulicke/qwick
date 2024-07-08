@@ -4,7 +4,7 @@ import { InputType } from "./input";
 import { Game } from "./game";
 import { Storage } from "./storage";
 
-export const createMenu = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
+export const createMenu = <LevelDatas>(qwick: Qwick, graphics: Graphics, game: Game<LevelDatas>) => {
     const hasLevelEditor = game.loadLevelEditor !== undefined;
     const startButton = createButton(qwick.getMousePos, [hasLevelEditor ? -0.15 : 0, -0.2], [0.12, 0.04], "Start");
     const editorButton = createButton(qwick.getMousePos, [0.15, -0.2], [0.12, 0.04], "Level Editor");

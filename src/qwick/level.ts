@@ -23,7 +23,7 @@ export const defaultLevel = (): Level => ({
     resize: () => {}
 });
 
-export const createLevelRunner = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
+export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, game: Game<LevelDatas>) => {
     let levelNum = 0;
     let level: Level | null = null;
     let levelSuccess = false;

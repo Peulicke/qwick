@@ -4,8 +4,16 @@ import { Game } from "./game";
 import { InputType } from "./input";
 import { Storage } from "./storage";
 
+const menuItemSize = 0.1;
+
+export type MenuItem = {
+    id: string;
+    draw: (g: Graphics) => void;
+};
+
 export type LevelEditor<LevelData> = {
     levelData: LevelData;
+    menuItems: MenuItem[];
     draw: (graphics: Graphics) => void;
 };
 
@@ -34,14 +42,24 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
 
     const update = (l: LevelEditor<LevelData>) => {
         graphics.begin();
-        graphics.context(() => {
-            graphics.normalize();
-            l.draw(graphics);
-        });
         graphics.normalize();
         graphics.context(() => {
+            l.draw(graphics);
+        });
+        graphics.context(() => {
+            l.menuItems.forEach((item, i) => {
+                graphics.context(() => {
+                    graphics.translate(qwick.getPos("top-right"));
+                    graphics.scale(menuItemSize);
+                    graphics.translate([-0.5, 0.5]);
+                    graphics.translate([0, i]);
+                    item.draw(graphics);
+                });
+            });
+        });
+        graphics.context(() => {
             graphics.color("black");
-            graphics.translate(vec2.add(qwick.getPos("top-right"), [-0.15, 0.05]));
+            graphics.translate(vec2.add(qwick.getPos("top"), [0, 0.05]));
             graphics.text("Level Editor", 0.05);
         });
         menuButton.draw(graphics);

@@ -13,6 +13,7 @@ import {
     button,
     graphics
 } from "./qwick";
+import { LevelEditor } from "./qwick/levelEditor";
 
 const smellResolution = 2;
 const border = 0.25;
@@ -20,7 +21,9 @@ const unitRadius = 0.45;
 
 const teamColors = ["#008000", "#800000"];
 
-type AreaType = "none" | "wall" | "placable";
+const areaTypes = ["none", "wall", "placable"] as const;
+
+type AreaType = (typeof areaTypes)[number];
 
 const charToAreaType: Record<string, AreaType> = {
     ".": "none",
@@ -150,14 +153,27 @@ const getBoardToScreen = (areas: grid.Grid<AreaType>) =>
         transform2.scale((1 - border) / areas[0].length)
     ]);
 
+const colors: Record<AreaType, string> = {
+    none: "#555555",
+    wall: "#000000",
+    placable: "#888888"
+};
+
+const drawArea = (g: Graphics, type: AreaType, levelState: LevelState) => {
+    g.color(colors.none);
+    if (type === "wall") g.color(colors.wall);
+    if (type === "placable" && !levelState.started) g.color(colors.placable);
+    g.icon([0, 0], 1, "square", true);
+};
+
 const drawWorld = (g: Graphics, levelState: LevelState) => {
     g.context(() => {
         g.transform(getBoardToScreen(levelState.areas));
         grid.map(levelState.areas, (type, pos) => {
-            g.color("#555555");
-            if (type === "wall") g.color("#000000");
-            if (type === "placable" && !levelState.started) g.color("#888888");
-            g.icon(pos, 1, "square", true);
+            g.context(() => {
+                g.translate(pos);
+                drawArea(g, type, levelState);
+            });
         });
         levelState.units.forEach(unit => {
             g.context(() => {
@@ -391,7 +407,7 @@ const getEmptyLevelData = (): LevelData => ({
     ownUnitTypes: ["sword", "sword", "bow", "bow", "bow", "bow"]
 });
 
-const loadLevelEditor = (_: Qwick) => () => {
+const loadLevelEditor = (_: Qwick) => (): LevelEditor<LevelData> => {
     const levelData = getEmptyLevelData();
 
     const draw = (g: Graphics) => {
@@ -400,6 +416,10 @@ const loadLevelEditor = (_: Qwick) => () => {
 
     return {
         levelData: level1,
+        menuItems: areaTypes.map(type => ({
+            id: type,
+            draw: g => drawArea(g, type, levelDataToState(levelData))
+        })),
         draw
     };
 };
