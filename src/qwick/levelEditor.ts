@@ -2,6 +2,7 @@ import { Graphics, Qwick, vec2 } from ".";
 import { createButton } from "./button";
 import { Game } from "./game";
 import { InputType } from "./input";
+import { loadFile } from "./io";
 import { Storage } from "./storage";
 
 const menuItemSize = 0.1;
@@ -13,7 +14,8 @@ export type MenuItem = {
 };
 
 export type LevelEditor<LevelData> = {
-    levelData: LevelData;
+    getLevelData: () => LevelData;
+    setLevelData: (levelData: LevelData) => void;
     menuItems: MenuItem[];
     draw: (graphics: Graphics) => void;
 };
@@ -34,6 +36,20 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         "Menu"
     );
 
+    const loadButton = createButton(
+        qwick.getMousePos,
+        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.15]),
+        [0.1, 0.04],
+        "Load"
+    );
+
+    const saveButton = createButton(
+        qwick.getMousePos,
+        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.25]),
+        [0.1, 0.04],
+        "Save"
+    );
+
     const start = () => {
         if (game.loadLevelEditor !== undefined) levelEditor = game.loadLevelEditor();
     };
@@ -41,8 +57,20 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
     const input = (type: InputType, down: boolean, l: LevelEditor<LevelData>) => {
         if (levelEditor === null) return;
         menuButton.input(type, down);
+        loadButton.input(type, down);
+        saveButton.input(type, down);
         if (menuButton.clicked) {
             levelEditor = null;
+            return;
+        }
+        if (loadButton.clicked) {
+            loadFile().then(data => {
+                if (levelEditor !== null) levelEditor.setLevelData(JSON.parse(data));
+            });
+            return;
+        }
+        if (saveButton.clicked) {
+            navigator.clipboard.writeText(JSON.stringify(levelEditor.getLevelData(), null, 4));
             return;
         }
         if (type === "lmb" && down) {
@@ -81,6 +109,8 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
             graphics.text("Level Editor", 0.05);
         });
         menuButton.draw(graphics);
+        loadButton.draw(graphics);
+        saveButton.draw(graphics);
         graphics.end();
     };
 

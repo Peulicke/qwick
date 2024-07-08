@@ -447,7 +447,7 @@ const getEmptyLevelData = (): LevelData => ({
 });
 
 const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
-    const levelState = levelDataToState(getEmptyLevelData());
+    let levelState = levelDataToState(getEmptyLevelData());
 
     const getPos = () => vec2.round(transform2.apply(getScreenToBoard(levelState.areas), qwick.getMousePos()));
 
@@ -478,7 +478,10 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
     });
 
     return {
-        levelData: level1,
+        getLevelData: () => levelStateToData(levelState),
+        setLevelData: (levelData: LevelData) => {
+            levelState = levelDataToState(levelData);
+        },
         menuItems: [
             ...areaTypes.map(createAreaMenuItem),
             ...teams.flatMap(team => unitTypes.map(type => createUnitMenuItem(team, type)))
