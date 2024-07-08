@@ -8,6 +8,7 @@ const menuItemSize = 0.1;
 
 export type MenuItem = {
     id: string;
+    update: () => void;
     draw: (g: Graphics) => void;
 };
 
@@ -54,6 +55,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
     };
 
     const update = (l: LevelEditor<LevelData>) => {
+        l.menuItems[selectedMenuItemIndex].update();
         graphics.begin();
         graphics.normalize();
         graphics.context(() => {

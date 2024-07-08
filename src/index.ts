@@ -19,7 +19,9 @@ const smellResolution = 2;
 const border = 0.25;
 const unitRadius = 0.45;
 
-const teams = [0, 1];
+const teams = [0, 1] as const;
+
+type Team = (typeof teams)[number];
 
 const teamColors = ["#008000", "#800000"];
 
@@ -33,6 +35,12 @@ const charToAreaType: Record<string, AreaType> = {
     "0": "placable",
     s: "none",
     b: "none"
+};
+
+const areaTypeToChar: Record<AreaType, string> = {
+    none: ".",
+    wall: "#",
+    placable: "0"
 };
 
 const unitTypes = ["sword", "bow"] as const;
@@ -157,6 +165,8 @@ const getBoardToScreen = (areas: grid.Grid<AreaType>) =>
         transform2.scale((1 - border) / areas[0].length)
     ]);
 
+const getScreenToBoard = (areas: grid.Grid<AreaType>) => transform2.inverse(getBoardToScreen(areas));
+
 const colors: Record<AreaType, string> = {
     none: "#555555",
     wall: "#000000",
@@ -238,6 +248,29 @@ const levelDataToState = (levelData: LevelData): LevelState => {
         smell,
         selectedUnit,
         started: false
+    };
+};
+
+const levelStateToData = (levelState: LevelState): LevelData => {
+    const areas = grid.map(levelState.areas, char => areaTypeToChar[char]);
+
+    const ownUnitTypes = levelState.units
+        .filter(u => u.team === 0)
+        .map(u => u.type)
+        .sort();
+
+    levelState.units
+        .filter(u => u.team !== 0)
+        .forEach(u => {
+            if (u.type === "sword") grid.setCell(areas, u.pos, "s");
+            if (u.type === "bow") grid.setCell(areas, u.pos, "b");
+        });
+
+    const gridData = grid.gridToString(areas);
+
+    return {
+        areas: gridData,
+        ownUnitTypes
     };
 };
 
@@ -413,28 +446,44 @@ const getEmptyLevelData = (): LevelData => ({
     ownUnitTypes: ["sword", "sword", "bow", "bow", "bow", "bow"]
 });
 
-const loadLevelEditor = (_: Qwick) => (): LevelEditor<LevelData> => {
-    const levelData = getEmptyLevelData();
+const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
+    const levelState = levelDataToState(getEmptyLevelData());
 
-    const draw = (g: Graphics) => {
-        drawWorld(g, levelDataToState(levelData));
-    };
+    const getPos = () => vec2.round(transform2.apply(getScreenToBoard(levelState.areas), qwick.getMousePos()));
+
+    const createAreaMenuItem = (type: AreaType) => ({
+        id: type,
+        update: () => {
+            if (!qwick.isKeyDown("lmb")) return;
+            grid.setCell(levelState.areas, getPos(), type);
+        },
+        draw: (g: Graphics) => drawArea(g, type, levelState)
+    });
+
+    const createUnitMenuItem = (team: Team, type: UnitType) => ({
+        id: type,
+        update: () => {
+            const pos = getPos();
+            if (!vec2.insideBoundingBox(pos, grid.getBoundingBox(levelState.areas))) return;
+            if (qwick.isKeyDown("lmb")) {
+                grid.setCell(levelState.areas, getPos(), team === 0 ? "placable" : "none");
+                levelState.units.push(createUnit(team, type, pos));
+            }
+            if (qwick.isKeyDown("rmb")) {
+                const index = levelState.units.findIndex(u => vec2.equals(u.pos, pos));
+                if (index !== -1) levelState.units.splice(index, 1);
+            }
+        },
+        draw: (g: Graphics) => drawUnit(g, createUnit(team, type, [0, 0]))
+    });
 
     return {
         levelData: level1,
         menuItems: [
-            ...areaTypes.map(type => ({
-                id: type,
-                draw: (g: Graphics) => drawArea(g, type, levelDataToState(levelData))
-            })),
-            ...teams.flatMap(team =>
-                unitTypes.map(type => ({
-                    id: type,
-                    draw: (g: Graphics) => drawUnit(g, createUnit(team, type, [0, 0]))
-                }))
-            )
+            ...areaTypes.map(createAreaMenuItem),
+            ...teams.flatMap(team => unitTypes.map(type => createUnitMenuItem(team, type)))
         ],
-        draw
+        draw: g => drawWorld(g, levelState)
     };
 };
 
