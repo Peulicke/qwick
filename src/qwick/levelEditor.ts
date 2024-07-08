@@ -17,8 +17,14 @@ export type LevelEditor<LevelData> = {
     draw: (graphics: Graphics) => void;
 };
 
+const getMenuItemPos = (qwick: Qwick, index: number) =>
+    vec2.add(qwick.getPos("top-right"), vec2.scale([-0.5, 0.5 + index], menuItemSize));
+
+const getMenuItemR = (): vec2.Vec2 => [menuItemSize / 2, menuItemSize / 2];
+
 export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
     let levelEditor: LevelEditor<LevelData> | null = null;
+    let selectedMenuItemIndex = 0;
 
     const menuButton = createButton(
         qwick.getMousePos,
@@ -31,12 +37,19 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         if (game.loadLevelEditor !== undefined) levelEditor = game.loadLevelEditor();
     };
 
-    const input = (type: InputType, down: boolean) => {
+    const input = (type: InputType, down: boolean, l: LevelEditor<LevelData>) => {
         if (levelEditor === null) return;
         menuButton.input(type, down);
         if (menuButton.clicked) {
             levelEditor = null;
             return;
+        }
+        if (type === "lmb" && down) {
+            l.menuItems.forEach((_, i) => {
+                const bb = vec2.createBoundingBox(getMenuItemPos(qwick, i), getMenuItemR());
+                if (!vec2.insideBoundingBox(qwick.getMousePos(), bb)) return;
+                selectedMenuItemIndex = i;
+            });
         }
     };
 
@@ -49,10 +62,13 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         graphics.context(() => {
             l.menuItems.forEach((item, i) => {
                 graphics.context(() => {
-                    graphics.translate(qwick.getPos("top-right"));
+                    graphics.translate(getMenuItemPos(qwick, i));
                     graphics.scale(menuItemSize);
-                    graphics.translate([-0.5, 0.5]);
-                    graphics.translate([0, i]);
+                    if (i === selectedMenuItemIndex) {
+                        graphics.color("black");
+                        graphics.square(false);
+                    }
+                    graphics.scale(0.9);
                     item.draw(graphics);
                 });
             });
@@ -70,7 +86,9 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
 
     return {
         start,
-        input,
+        input: (type: InputType, down: boolean) => {
+            if (levelEditor !== null) input(type, down, levelEditor);
+        },
         update: (_: Storage) => {
             if (levelEditor !== null) update(levelEditor);
         },

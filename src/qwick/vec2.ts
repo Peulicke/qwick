@@ -148,3 +148,10 @@ export const randSize = (size: Vec2): Vec2 => multiply([random(), random()], siz
 export const randNumber = (size: number): Vec2 => randSize([size, size]);
 
 export const randFromTo = (from: Vec2, to: Vec2): Vec2 => add(randSize(sub(to, from)), from);
+
+export type BoundingBox = [Vec2, Vec2];
+
+export const createBoundingBox = (center: Vec2, r: Vec2): BoundingBox => [sub(center, r), add(center, r)];
+
+export const insideBoundingBox = (v: Vec2, bb: BoundingBox): boolean =>
+    v[0] > bb[0][0] && v[1] > bb[0][1] && v[0] < bb[1][0] && v[1] < bb[1][1];
