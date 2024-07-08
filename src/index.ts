@@ -19,6 +19,8 @@ const smellResolution = 2;
 const border = 0.25;
 const unitRadius = 0.45;
 
+const teams = [0, 1];
+
 const teamColors = ["#008000", "#800000"];
 
 const areaTypes = ["none", "wall", "placable"] as const;
@@ -425,7 +427,12 @@ const loadLevelEditor = (_: Qwick) => (): LevelEditor<LevelData> => {
                 id: type,
                 draw: (g: Graphics) => drawArea(g, type, levelDataToState(levelData))
             })),
-            ...unitTypes.map(type => ({ id: type, draw: (g: Graphics) => drawUnit(g, createUnit(0, type, [0, 0])) }))
+            ...teams.flatMap(team =>
+                unitTypes.map(type => ({
+                    id: type,
+                    draw: (g: Graphics) => drawUnit(g, createUnit(team, type, [0, 0]))
+                }))
+            )
         ],
         draw
     };
