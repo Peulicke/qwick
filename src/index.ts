@@ -490,7 +490,7 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
         },
         menuItems: [
             ...areaTypes.map(createAreaMenuItem),
-            ...teams.flatMap(team => unitTypes.map(type => createUnitMenuItem(team, type)))
+            ...teams.filter(t => t !== 0).flatMap(team => unitTypes.map(type => createUnitMenuItem(team, type)))
         ],
         menuInputs: [
             {
@@ -502,7 +502,21 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
                 label: "Height",
                 getValue: () => levelState.areas[0].length.toString(),
                 setValue: height => resizeAreas([levelState.areas.length, parseInt(height)])
-            }
+            },
+            ...unitTypes.map(type => ({
+                label: type,
+                getValue: () => levelState.units.filter(u => u.team === 0 && u.type === type).length.toString(),
+                setValue: swordCount => {
+                    const levelData = levelStateToData(levelState);
+                    levelData.ownUnitTypes = levelData.ownUnitTypes.filter(t => t !== type);
+                    levelData.ownUnitTypes.push(...[...Array(parseInt(swordCount))].map((): UnitType => type));
+                    levelData.ownUnitTypes.sort(
+                        (a, b) => unitTypes.findIndex(x => x === a) - unitTypes.findIndex(x => x === b)
+                    );
+                    console.log(levelData.ownUnitTypes);
+                    levelState = levelDataToState(levelData);
+                }
+            }))
         ],
         draw: g => drawWorld(g, levelState)
     };
