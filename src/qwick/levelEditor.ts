@@ -6,23 +6,66 @@ import { loadFile, saveFile } from "./io";
 import { Storage } from "./storage";
 
 const menuItemSize = 0.1;
+const menuInputTextSize = 0.2;
 
 export type MenuItem = {
     update: () => void;
     draw: (g: Graphics) => void;
 };
 
+export type MenuInput = {
+    label: string;
+    getValue: () => string;
+    setValue: (value: string) => void;
+};
+
 export type LevelEditor<LevelData> = {
     getLevelData: () => LevelData;
     setLevelData: (levelData: LevelData) => void;
     menuItems: MenuItem[];
+    menuInputs: MenuInput[];
     draw: (graphics: Graphics) => void;
 };
 
-const getMenuItemPos = (qwick: Qwick, index: number) =>
-    vec2.add(qwick.getPos("top-right"), vec2.scale([-0.5, 0.5 + index], menuItemSize));
+const getMenuItemPos = (graphics: Graphics, index: number) =>
+    vec2.add([graphics.getAspectRatio() * 0.5, -0.5], vec2.scale([-0.5, 0.5 + index], menuItemSize));
+
+const getMenuInputPos = (graphics: Graphics, index: number) =>
+    vec2.add(getMenuItemPos(graphics, index), [-menuItemSize, 0]);
 
 const getMenuItemR = (): vec2.Vec2 => [menuItemSize / 2, menuItemSize / 2];
+
+const drawMenuItems = (graphics: Graphics, menuItems: MenuItem[], selectedMenuItemIndex: number) => {
+    graphics.context(() => {
+        menuItems.forEach((item, i) => {
+            graphics.context(() => {
+                graphics.translate(getMenuItemPos(graphics, i));
+                graphics.scale(menuItemSize);
+                if (i === selectedMenuItemIndex) {
+                    graphics.color("black");
+                    graphics.square(false);
+                }
+                graphics.scale(0.9);
+                item.draw(graphics);
+            });
+        });
+    });
+};
+
+const drawMenuInputs = (graphics: Graphics, menuInputs: MenuInput[]) => {
+    graphics.context(() => {
+        menuInputs.forEach((input, i) => {
+            graphics.context(() => {
+                graphics.translate(getMenuInputPos(graphics, i));
+                graphics.scale(menuItemSize);
+                graphics.color("gray");
+                graphics.square(true);
+                graphics.color("white");
+                graphics.text(input.label + "\n" + input.getValue(), menuInputTextSize);
+            });
+        });
+    });
+};
 
 export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
     let levelEditor: LevelEditor<LevelData> | null = null;
@@ -74,9 +117,16 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         }
         if (type === "lmb" && down) {
             l.menuItems.forEach((_, i) => {
-                const bb = vec2.createBoundingBox(getMenuItemPos(qwick, i), getMenuItemR());
+                const bb = vec2.createBoundingBox(getMenuItemPos(graphics, i), getMenuItemR());
                 if (!vec2.insideBoundingBox(qwick.getMousePos(), bb)) return;
                 selectedMenuItemIndex = i;
+            });
+            l.menuInputs.forEach((menuInput, i) => {
+                const bb = vec2.createBoundingBox(getMenuInputPos(graphics, i), getMenuItemR());
+                if (!vec2.insideBoundingBox(qwick.getMousePos(), bb)) return;
+                const newValue = window.prompt(menuInput.label, menuInput.getValue());
+                if (newValue === null) return;
+                menuInput.setValue(newValue);
             });
         }
     };
@@ -88,20 +138,8 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         graphics.context(() => {
             l.draw(graphics);
         });
-        graphics.context(() => {
-            l.menuItems.forEach((item, i) => {
-                graphics.context(() => {
-                    graphics.translate(getMenuItemPos(qwick, i));
-                    graphics.scale(menuItemSize);
-                    if (i === selectedMenuItemIndex) {
-                        graphics.color("black");
-                        graphics.square(false);
-                    }
-                    graphics.scale(0.9);
-                    item.draw(graphics);
-                });
-            });
-        });
+        drawMenuItems(graphics, l.menuItems, selectedMenuItemIndex);
+        drawMenuInputs(graphics, l.menuInputs);
         graphics.context(() => {
             graphics.color("black");
             graphics.translate(vec2.add(qwick.getPos("top"), [0, 0.05]));

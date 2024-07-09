@@ -475,6 +475,14 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
         draw: (g: Graphics) => drawUnit(g, createUnit(team, type, [0, 0]))
     });
 
+    const resizeAreas = (size: vec2.Vec2) => {
+        if (size[0] < 1) return;
+        if (size[1] < 1) return;
+        levelState.areas = [...Array(size[0])].map((_, i) =>
+            [...Array(size[1])].map((_, j) => grid.getCell(levelState.areas, [i, j]) ?? "none")
+        );
+    };
+
     return {
         getLevelData: () => levelStateToData(levelState),
         setLevelData: (levelData: LevelData) => {
@@ -483,6 +491,18 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
         menuItems: [
             ...areaTypes.map(createAreaMenuItem),
             ...teams.flatMap(team => unitTypes.map(type => createUnitMenuItem(team, type)))
+        ],
+        menuInputs: [
+            {
+                label: "Width",
+                getValue: () => levelState.areas.length.toString(),
+                setValue: width => resizeAreas([parseInt(width), levelState.areas[0].length])
+            },
+            {
+                label: "Height",
+                getValue: () => levelState.areas[0].length.toString(),
+                setValue: height => resizeAreas([levelState.areas.length, parseInt(height)])
+            }
         ],
         draw: g => drawWorld(g, levelState)
     };
