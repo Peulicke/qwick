@@ -130,7 +130,12 @@ export const text = (ctx: CanvasRenderingContext2D, t: string, size: number): vo
     ctx.textAlign = "center";
     transform.scale(ctx, 0.01 * size);
     transform.translate(ctx, [0, 25]);
-    ctx.fillText(t, 0, 0);
+    const lines = t.split("\n");
+    transform.translate(ctx, [0, -0.5 * 100 * (lines.length - 1)]);
+    lines.forEach(l => {
+        ctx.fillText(l, 0, 0);
+        transform.translate(ctx, [0, 100]);
+    });
     transform.pop(ctx);
 };
 
