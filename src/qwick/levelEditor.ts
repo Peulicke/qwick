@@ -8,7 +8,6 @@ import { Storage } from "./storage";
 const menuItemSize = 0.1;
 
 export type MenuItem = {
-    id: string;
     update: () => void;
     draw: (g: Graphics) => void;
 };

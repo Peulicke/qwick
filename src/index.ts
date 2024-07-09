@@ -452,7 +452,6 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
     const getPos = () => vec2.round(transform2.apply(getScreenToBoard(levelState.areas), qwick.getMousePos()));
 
     const createAreaMenuItem = (type: AreaType) => ({
-        id: type,
         update: () => {
             if (!qwick.isKeyDown("lmb")) return;
             grid.setCell(levelState.areas, getPos(), type);
@@ -461,7 +460,6 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
     });
 
     const createUnitMenuItem = (team: Team, type: UnitType) => ({
-        id: type,
         update: () => {
             const pos = getPos();
             if (!vec2.insideBoundingBox(pos, grid.getBoundingBox(levelState.areas))) return;
