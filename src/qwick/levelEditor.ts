@@ -3,6 +3,7 @@ import { createButton } from "./button";
 import { Game } from "./game";
 import { InputType } from "./input";
 import { loadFile, saveFile } from "./io";
+import { Level } from "./level";
 import { Storage } from "./storage";
 
 const menuItemSize = 0.1;
@@ -69,6 +70,7 @@ const drawMenuInputs = (graphics: Graphics, menuInputs: MenuInput[]) => {
 
 export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
     let levelEditor: LevelEditor<LevelData> | null = null;
+    let level: Level | null = null;
     let selectedMenuItemIndex = 0;
 
     const menuButton = createButton(
@@ -92,15 +94,47 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         "Save"
     );
 
+    const playButton = createButton(
+        qwick.getMousePos,
+        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.35]),
+        [0.1, 0.04],
+        "Play"
+    );
+
+    const fastForwardButton = createButton(
+        qwick.getMousePos,
+        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.25]),
+        [0.1, 0.04],
+        "▶▶10⨯"
+    );
+
+    const stopButton = createButton(
+        qwick.getMousePos,
+        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.35]),
+        [0.1, 0.04],
+        "Stop"
+    );
+
     const start = () => {
         if (game.loadLevelEditor !== undefined) levelEditor = game.loadLevelEditor();
     };
 
     const input = (type: InputType, down: boolean, l: LevelEditor<LevelData>) => {
+        if (level !== null) {
+            fastForwardButton.input(type, down);
+            stopButton.input(type, down);
+            if (stopButton.clicked) {
+                level = null;
+                return;
+            }
+            level.input(type, down);
+            return;
+        }
         if (levelEditor === null) return;
         menuButton.input(type, down);
         loadButton.input(type, down);
         saveButton.input(type, down);
+        playButton.input(type, down);
         if (menuButton.clicked) {
             levelEditor = null;
             return;
@@ -113,6 +147,10 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         }
         if (saveButton.clicked) {
             saveFile(JSON.stringify(levelEditor.getLevelData(), null, 4), "level.json");
+            return;
+        }
+        if (playButton.clicked) {
+            level = game.loadLevel(levelEditor.getLevelData());
             return;
         }
         if (type === "lmb" && down) {
@@ -131,10 +169,17 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         }
     };
 
-    const update = (l: LevelEditor<LevelData>) => {
-        l.menuItems[selectedMenuItemIndex].update();
-        graphics.begin();
-        graphics.normalize();
+    const drawPlaying = (l: Level) => {
+        if (game.show.fastForward) fastForwardButton.draw(graphics);
+        stopButton.draw(graphics);
+        graphics.context(() => {
+            l.draw(graphics);
+        });
+        if (l.hasWon()) graphics.text("Win", 0.1);
+        if (l.hasLost()) graphics.text("Lose", 0.1);
+    };
+
+    const drawNotPlaying = (l: LevelEditor<LevelData>) => {
         graphics.context(() => {
             l.draw(graphics);
         });
@@ -148,7 +193,26 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         menuButton.draw(graphics);
         loadButton.draw(graphics);
         saveButton.draw(graphics);
+        playButton.draw(graphics);
+    };
+
+    const draw = (l: LevelEditor<LevelData>) => {
+        graphics.begin();
+        graphics.normalize();
+        if (level === null) drawNotPlaying(l);
+        else drawPlaying(level);
         graphics.end();
+    };
+
+    const update = (l: LevelEditor<LevelData>) => {
+        if (level === null) l.menuItems[selectedMenuItemIndex].update();
+        else {
+            const fastForward = fastForwardButton.holding || qwick.isKeyDown("Space");
+            for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1); ++i) {
+                level.update();
+            }
+        }
+        draw(l);
     };
 
     const isRunning = () => levelEditor !== null;
