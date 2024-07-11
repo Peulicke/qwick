@@ -1,5 +1,5 @@
 import { Graphics, Qwick, vec2 } from ".";
-import { createButton } from "./button";
+import { Button, createButton } from "./button";
 import { Game } from "./game";
 import { InputType } from "./input";
 import { loadFile, saveFile } from "./io";
@@ -7,7 +7,6 @@ import { Level } from "./level";
 import { Storage } from "./storage";
 
 const menuItemSize = 0.1;
-const menuInputTextSize = 0.2;
 
 export type MenuItem = {
     update: () => void;
@@ -53,25 +52,11 @@ const drawMenuItems = (graphics: Graphics, menuItems: MenuItem[], selectedMenuIt
     });
 };
 
-const drawMenuInputs = (graphics: Graphics, menuInputs: MenuInput[]) => {
-    graphics.context(() => {
-        menuInputs.forEach((input, i) => {
-            graphics.context(() => {
-                graphics.translate(getMenuInputPos(graphics, i));
-                graphics.scale(menuItemSize);
-                graphics.color("gray");
-                graphics.square(true);
-                graphics.color("white");
-                graphics.text(input.label + "\n" + input.getValue(), menuInputTextSize);
-            });
-        });
-    });
-};
-
 export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
     let levelEditor: LevelEditor<LevelData> | null = null;
     let level: Level | null = null;
     let selectedMenuItemIndex = 0;
+    let menuInputButtons: Button[] = [];
 
     const menuButton = createButton(
         qwick.getMousePos,
@@ -116,7 +101,17 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
     );
 
     const start = () => {
-        if (game.loadLevelEditor !== undefined) levelEditor = game.loadLevelEditor();
+        if (game.loadLevelEditor === undefined) return;
+        levelEditor = game.loadLevelEditor();
+        menuInputButtons = levelEditor.menuInputs.map((menuInput, i) =>
+            createButton(
+                qwick.getMousePos,
+                () => getMenuInputPos(graphics, i),
+                getMenuItemR,
+                () => menuInput.label + "\n" + menuInput.getValue(),
+                () => 0.5 * getMenuItemR()[1]
+            )
+        );
     };
 
     const input = (type: InputType, down: boolean, l: LevelEditor<LevelData>) => {
@@ -135,6 +130,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         loadButton.input(type, down);
         saveButton.input(type, down);
         playButton.input(type, down);
+        menuInputButtons.forEach(b => b.input(type, down));
         if (menuButton.clicked) {
             levelEditor = null;
             return;
@@ -153,18 +149,17 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
             level = game.loadLevel(levelEditor.getLevelData());
             return;
         }
+        l.menuInputs.forEach((menuInput, i) => {
+            if (!menuInputButtons[i].clicked) return;
+            const newValue = window.prompt(menuInput.label, menuInput.getValue());
+            if (newValue === null) return;
+            menuInput.setValue(newValue);
+        });
         if (type === "lmb" && down) {
             l.menuItems.forEach((_, i) => {
                 const bb = vec2.createBoundingBox(getMenuItemPos(graphics, i), getMenuItemR());
                 if (!vec2.insideBoundingBox(qwick.getMousePos(), bb)) return;
                 selectedMenuItemIndex = i;
-            });
-            l.menuInputs.forEach((menuInput, i) => {
-                const bb = vec2.createBoundingBox(getMenuInputPos(graphics, i), getMenuItemR());
-                if (!vec2.insideBoundingBox(qwick.getMousePos(), bb)) return;
-                const newValue = window.prompt(menuInput.label, menuInput.getValue());
-                if (newValue === null) return;
-                menuInput.setValue(newValue);
             });
         }
     };
@@ -184,7 +179,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
             l.draw(graphics);
         });
         drawMenuItems(graphics, l.menuItems, selectedMenuItemIndex);
-        drawMenuInputs(graphics, l.menuInputs);
+        menuInputButtons.forEach(b => b.draw(graphics));
         graphics.context(() => {
             graphics.color("black");
             graphics.translate(vec2.add(qwick.getPos("top"), [0, 0.05]));
