@@ -23,25 +23,25 @@ export const loadFile = async (): Promise<string> => {
     });
 };
 
-export const saveFile = async (content: string, filename: string): Promise<void> => {
-    return new Promise(resolve => {
-        const blob = new Blob([content], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
+type WritableStream = {
+    createWritable: () => Promise<WritableStream>;
+    write: (data: string) => Promise<void>;
+    close: () => Promise<void>;
+};
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
+declare global {
+    interface Window {
+        showSaveFilePicker: (input: { suggestedName: string }) => Promise<WritableStream>;
+    }
+}
 
-        const clickHandler = () => {
-            setTimeout(() => {
-                URL.revokeObjectURL(url);
-                a.removeEventListener("click", clickHandler);
-                resolve();
-            }, 150);
-        };
-        a.addEventListener("click", clickHandler, false);
-
-        const event = new MouseEvent("click");
-        a.dispatchEvent(event);
-    });
+export const saveFile = async (data: string, suggestedName: string): Promise<void> => {
+    try {
+        const fileHandle = await window.showSaveFilePicker({ suggestedName });
+        const writableStream = await fileHandle.createWritable();
+        await writableStream.write(data);
+        await writableStream.close();
+    } catch (err) {
+        console.log(err);
+    }
 };
