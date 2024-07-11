@@ -31,6 +31,7 @@ export type QwickInput = {
     isKeyDown: (key: string) => boolean;
     wasKeyPressed: (key: string) => boolean;
     wasKeyReleased: (key: string) => boolean;
+    getArrowInput: () => vec2.Vec2;
 };
 
 export type QwickCanvas = {
@@ -72,7 +73,8 @@ export const createQwick = <LevelData>(
         getMousePosPixels: () => input.mousePos,
         isKeyDown: (key: string) => input.keysDown.has(key),
         wasKeyPressed: (key: string) => input.keysPressed.has(key),
-        wasKeyReleased: (key: string) => input.keysReleased.has(key)
+        wasKeyReleased: (key: string) => input.keysReleased.has(key),
+        getArrowInput: input.getArrowInput
     };
 
     const getAspectRatio = () => canvas.canvas.width / canvas.canvas.height;
