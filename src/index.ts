@@ -472,9 +472,7 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
     const resizeAreas = (size: vec2.Vec2) => {
         if (size[0] < 1) return;
         if (size[1] < 1) return;
-        levelState.areas = [...Array(size[0])].map((_, i) =>
-            [...Array(size[1])].map((_, j) => grid.getCell(levelState.areas, [i, j]) ?? "none")
-        );
+        levelState.areas = grid.resize(levelState.areas, size, "none");
     };
 
     return {
