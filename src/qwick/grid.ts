@@ -37,5 +37,5 @@ export const getSize = <T>(grid: Grid<T>): vec2.Vec2 => [grid.length, grid[0]?.l
 
 export const getBoundingBox = <T>(grid: Grid<T>): vec2.BoundingBox => [[0, 0], getSize(grid)];
 
-export const resize = <T>(grid: Grid<T>, size: vec2.Vec2, defaultValue: T): Grid<T> =>
-    create(size, pos => getCell(grid, pos) ?? defaultValue);
+export const resize = <T>(grid: Grid<T>, size: vec2.Vec2, getDefaultValue: (pos: vec2.Vec2) => T): Grid<T> =>
+    create(size, pos => getCell(grid, pos) ?? getDefaultValue(pos));
