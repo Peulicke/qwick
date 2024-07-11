@@ -200,8 +200,9 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
     };
 
     const update = (l: LevelEditor<LevelData>) => {
-        if (level === null) l.menuItems[selectedMenuItemIndex].update();
-        else {
+        if (level === null) {
+            if (l.menuItems.length > 0) l.menuItems[selectedMenuItemIndex].update();
+        } else {
             const fastForward = fastForwardButton.holding || qwick.isKeyDown("Space");
             for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1); ++i) {
                 level.update();
