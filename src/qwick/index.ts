@@ -37,7 +37,6 @@ export type Qwick = {
     width: number;
     height: number;
     getAspectRatio: () => number;
-    drawImage: (image: HTMLImageElement, pos: vec2.Vec2) => void;
     input: QwickInput;
 };
 
@@ -73,9 +72,6 @@ export const createQwick = <LevelData>(
         width: window.innerWidth,
         height: window.innerHeight,
         getAspectRatio,
-        drawImage: (image: HTMLImageElement, pos: vec2.Vec2) => {
-            canvas.ctx.drawImage(image, pos[0], pos[1]);
-        },
         input: qwickInput
     };
 
