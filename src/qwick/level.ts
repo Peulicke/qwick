@@ -1,5 +1,4 @@
 import { Graphics, Qwick, vec2 } from ".";
-import { createButton } from "./button";
 import { EventType, emit } from "./event";
 import { Game } from "./game";
 import { InputType } from "./input";
@@ -29,31 +28,23 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
     let levelSuccess = false;
     let levelFail = false;
 
-    const menuButton = createButton(
-        qwick.input.getMousePos,
+    const menuButton = qwick.createButton(
         () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.05]),
         [0.1, 0.04],
         "Menu"
     );
-    const restartButton = createButton(
-        qwick.input.getMousePos,
+    const restartButton = qwick.createButton(
         () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.15]),
         [0.1, 0.04],
         "Restart"
     );
-    const fastForwardButton = createButton(
-        qwick.input.getMousePos,
+    const fastForwardButton = qwick.createButton(
         () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.25]),
         [0.1, 0.04],
         "▶▶10⨯"
     );
-    const successButton = createButton(
-        qwick.input.getMousePos,
-        [0, 0],
-        () => [graphics.getAspectRatio(), 0.08],
-        "Next level"
-    );
-    const failButton = createButton(qwick.input.getMousePos, [0, 0], () => [graphics.getAspectRatio(), 0.08], "Retry");
+    const successButton = qwick.createButton([0, 0], () => [graphics.getAspectRatio(), 0.08], "Next level");
+    const failButton = qwick.createButton([0, 0], () => [graphics.getAspectRatio(), 0.08], "Retry");
 
     const loadLevel = () => {
         levelSuccess = false;

@@ -10,7 +10,6 @@ import {
     grid,
     transform2,
     utils,
-    button,
     graphics
 } from "./qwick";
 import { LevelEditor } from "./qwick/levelEditor";
@@ -275,12 +274,7 @@ const levelStateToData = (levelState: LevelState): LevelData => {
 };
 
 const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
-    const startButton = button.createButton(
-        qwick.input.getMousePos,
-        vec2.add(qwick.canvas.getPos("bottom"), [0, -0.05]),
-        [0.1, 0.04],
-        "Start"
-    );
+    const startButton = qwick.createButton(vec2.add(qwick.canvas.getPos("bottom"), [0, -0.05]), [0.1, 0.04], "Start");
 
     const levelState = levelDataToState(levelData);
 

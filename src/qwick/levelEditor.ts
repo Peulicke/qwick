@@ -1,5 +1,5 @@
 import { Graphics, Qwick, vec2 } from ".";
-import { Button, createButton } from "./button";
+import { Button } from "./button";
 import { Game } from "./game";
 import { InputType } from "./input";
 import { loadFile, saveFile } from "./io";
@@ -58,43 +58,37 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
     let selectedMenuItemIndex = 0;
     let menuInputButtons: Button[] = [];
 
-    const menuButton = createButton(
-        qwick.input.getMousePos,
+    const menuButton = qwick.createButton(
         () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.05]),
         [0.1, 0.04],
         "Menu"
     );
 
-    const loadButton = createButton(
-        qwick.input.getMousePos,
+    const loadButton = qwick.createButton(
         () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.15]),
         [0.1, 0.04],
         "Load"
     );
 
-    const saveButton = createButton(
-        qwick.input.getMousePos,
+    const saveButton = qwick.createButton(
         () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.25]),
         [0.1, 0.04],
         "Save"
     );
 
-    const playButton = createButton(
-        qwick.input.getMousePos,
+    const playButton = qwick.createButton(
         () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.35]),
         [0.1, 0.04],
         "Play"
     );
 
-    const fastForwardButton = createButton(
-        qwick.input.getMousePos,
+    const fastForwardButton = qwick.createButton(
         () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.25]),
         [0.1, 0.04],
         "▶▶10⨯"
     );
 
-    const stopButton = createButton(
-        qwick.input.getMousePos,
+    const stopButton = qwick.createButton(
         () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.35]),
         [0.1, 0.04],
         "Stop"
@@ -104,8 +98,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         if (game.loadLevelEditor === undefined) return;
         levelEditor = game.loadLevelEditor();
         menuInputButtons = levelEditor.menuInputs.map((menuInput, i) =>
-            createButton(
-                qwick.input.getMousePos,
+            qwick.createButton(
                 () => getMenuInputPos(graphics, i),
                 getMenuItemR,
                 () => menuInput.label + "\n" + menuInput.getValue(),

@@ -1,3 +1,4 @@
+import { Button, createButton } from "./button";
 import { createCanvas } from "./canvas";
 import { PartialGame, fromPartialGame } from "./game";
 import { createGraphics } from "./graphics";
@@ -41,6 +42,12 @@ export type QwickCanvas = {
 export type Qwick = {
     canvas: QwickCanvas;
     input: QwickInput;
+    createButton: (
+        pos: vec2.Vec2 | (() => vec2.Vec2),
+        size: vec2.Vec2 | (() => vec2.Vec2),
+        text: string | (() => string),
+        textSize?: number | (() => number)
+    ) => Button;
 };
 
 export const createQwick = <LevelData>(
@@ -78,7 +85,8 @@ export const createQwick = <LevelData>(
 
     const qwick: Qwick = {
         input: qwickInput,
-        canvas: qwickCanvas
+        canvas: qwickCanvas,
+        createButton: (pos, size, text, textSize) => createButton(input.getMousePos, pos, size, text, textSize)
     };
 
     const game = fromPartialGame(loadGame(qwick));
