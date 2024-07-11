@@ -24,17 +24,21 @@ export * as graphics from "./graphics";
 export * as utils from "./utils";
 export * as event from "./event";
 
-export type Qwick = {
-    width: number;
-    height: number;
-    getAspectRatio: () => number;
-    drawImage: (image: HTMLImageElement, pos: vec2.Vec2) => void;
+export type QwickInput = {
     getMousePos: () => vec2.Vec2;
     getMousePosPixels: () => vec2.Vec2;
     getPos: (pos: Position) => vec2.Vec2;
     isKeyDown: (key: string) => boolean;
     wasKeyPressed: (key: string) => boolean;
     wasKeyReleased: (key: string) => boolean;
+};
+
+export type Qwick = {
+    width: number;
+    height: number;
+    getAspectRatio: () => number;
+    drawImage: (image: HTMLImageElement, pos: vec2.Vec2) => void;
+    input: QwickInput;
 };
 
 export const createQwick = <LevelData>(
@@ -56,6 +60,15 @@ export const createQwick = <LevelData>(
 
     const getAspectRatio = () => canvas.canvas.width / canvas.canvas.height;
 
+    const qwickInput: QwickInput = {
+        getMousePos: input.getMousePos,
+        getMousePosPixels: () => input.mousePos,
+        getPos: (pos: Position) => getPos(pos, getAspectRatio()),
+        isKeyDown: (key: string) => input.keysDown.has(key),
+        wasKeyPressed: (key: string) => input.keysPressed.has(key),
+        wasKeyReleased: (key: string) => input.keysReleased.has(key)
+    };
+
     const qwick: Qwick = {
         width: window.innerWidth,
         height: window.innerHeight,
@@ -63,12 +76,7 @@ export const createQwick = <LevelData>(
         drawImage: (image: HTMLImageElement, pos: vec2.Vec2) => {
             canvas.ctx.drawImage(image, pos[0], pos[1]);
         },
-        getMousePos: input.getMousePos,
-        getMousePosPixels: () => input.mousePos,
-        getPos: (pos: Position) => getPos(pos, getAspectRatio()),
-        isKeyDown: (key: string) => input.keysDown.has(key),
-        wasKeyPressed: (key: string) => input.keysPressed.has(key),
-        wasKeyReleased: (key: string) => input.keysReleased.has(key)
+        input: qwickInput
     };
 
     const game = fromPartialGame(loadGame(qwick));

@@ -30,30 +30,30 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
     let levelFail = false;
 
     const menuButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.05]),
+        qwick.input.getMousePos,
+        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.05]),
         [0.1, 0.04],
         "Menu"
     );
     const restartButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.15]),
+        qwick.input.getMousePos,
+        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.15]),
         [0.1, 0.04],
         "Restart"
     );
     const fastForwardButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.25]),
+        qwick.input.getMousePos,
+        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.25]),
         [0.1, 0.04],
         "▶▶10⨯"
     );
     const successButton = createButton(
-        qwick.getMousePos,
+        qwick.input.getMousePos,
         [0, 0],
         () => [graphics.getAspectRatio(), 0.08],
         "Next level"
     );
-    const failButton = createButton(qwick.getMousePos, [0, 0], () => [graphics.getAspectRatio(), 0.08], "Retry");
+    const failButton = createButton(qwick.input.getMousePos, [0, 0], () => [graphics.getAspectRatio(), 0.08], "Retry");
 
     const loadLevel = () => {
         levelSuccess = false;
@@ -91,7 +91,7 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
     };
 
     const update = (l: Level, setLevelCompleted: (n: number) => void) => {
-        const fastForward = fastForwardButton.holding || qwick.isKeyDown("Space");
+        const fastForward = fastForwardButton.holding || qwick.input.isKeyDown("Space");
         for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
             l.update();
             if (l.hasWon()) {
@@ -111,7 +111,7 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
         graphics.normalize();
         graphics.context(() => {
             graphics.color("black");
-            graphics.translate(vec2.add(qwick.getPos("top-right"), [-0.1, 0.05]));
+            graphics.translate(vec2.add(qwick.input.getPos("top-right"), [-0.1, 0.05]));
             if (game.show.level) graphics.text(`Level ${levelNum + 1}`, 0.05);
         });
         if (game.show.menu) menuButton.draw(graphics);

@@ -59,43 +59,43 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
     let menuInputButtons: Button[] = [];
 
     const menuButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.05]),
+        qwick.input.getMousePos,
+        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.05]),
         [0.1, 0.04],
         "Menu"
     );
 
     const loadButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.15]),
+        qwick.input.getMousePos,
+        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.15]),
         [0.1, 0.04],
         "Load"
     );
 
     const saveButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.25]),
+        qwick.input.getMousePos,
+        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.25]),
         [0.1, 0.04],
         "Save"
     );
 
     const playButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.35]),
+        qwick.input.getMousePos,
+        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.35]),
         [0.1, 0.04],
         "Play"
     );
 
     const fastForwardButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.25]),
+        qwick.input.getMousePos,
+        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.25]),
         [0.1, 0.04],
         "▶▶10⨯"
     );
 
     const stopButton = createButton(
-        qwick.getMousePos,
-        () => vec2.add(qwick.getPos("top-left"), [0.11, 0.35]),
+        qwick.input.getMousePos,
+        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.35]),
         [0.1, 0.04],
         "Stop"
     );
@@ -105,7 +105,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         levelEditor = game.loadLevelEditor();
         menuInputButtons = levelEditor.menuInputs.map((menuInput, i) =>
             createButton(
-                qwick.getMousePos,
+                qwick.input.getMousePos,
                 () => getMenuInputPos(graphics, i),
                 getMenuItemR,
                 () => menuInput.label + "\n" + menuInput.getValue(),
@@ -158,7 +158,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         if (type === "lmb" && down) {
             l.menuItems.forEach((_, i) => {
                 const bb = vec2.createBoundingBox(getMenuItemPos(graphics, i), getMenuItemR());
-                if (!vec2.insideBoundingBox(qwick.getMousePos(), bb)) return;
+                if (!vec2.insideBoundingBox(qwick.input.getMousePos(), bb)) return;
                 selectedMenuItemIndex = i;
             });
         }
@@ -182,7 +182,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         menuInputButtons.forEach(b => b.draw(graphics));
         graphics.context(() => {
             graphics.color("black");
-            graphics.translate(vec2.add(qwick.getPos("top"), [0, 0.05]));
+            graphics.translate(vec2.add(qwick.input.getPos("top"), [0, 0.05]));
             graphics.text("Level Editor", 0.05);
         });
         menuButton.draw(graphics);
@@ -203,7 +203,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         if (level === null) {
             if (l.menuItems.length > 0) l.menuItems[selectedMenuItemIndex].update();
         } else {
-            const fastForward = fastForwardButton.holding || qwick.isKeyDown("Space");
+            const fastForward = fastForwardButton.holding || qwick.input.isKeyDown("Space");
             for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1); ++i) {
                 level.update();
             }

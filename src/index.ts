@@ -276,8 +276,8 @@ const levelStateToData = (levelState: LevelState): LevelData => {
 
 const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     const startButton = button.createButton(
-        qwick.getMousePos,
-        vec2.add(qwick.getPos("bottom"), [0, -0.05]),
+        qwick.input.getMousePos,
+        vec2.add(qwick.input.getPos("bottom"), [0, -0.05]),
         [0.1, 0.04],
         "Start"
     );
@@ -306,7 +306,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     };
 
     const getMousePos = () =>
-        transform2.apply(transform2.inverse(getBoardToScreen(levelState.areas)), qwick.getMousePos());
+        transform2.apply(transform2.inverse(getBoardToScreen(levelState.areas)), qwick.input.getMousePos());
 
     const allUnitsPlaced = () =>
         levelState.units.filter(u => u.team === 0).every(u => getAreaType(u.pos) === "placable");
@@ -449,11 +449,11 @@ const getEmptyLevelData = (): LevelData => ({
 const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
     let levelState = levelDataToState(getEmptyLevelData());
 
-    const getPos = () => vec2.round(transform2.apply(getScreenToBoard(levelState.areas), qwick.getMousePos()));
+    const getPos = () => vec2.round(transform2.apply(getScreenToBoard(levelState.areas), qwick.input.getMousePos()));
 
     const createAreaMenuItem = (type: AreaType) => ({
         update: () => {
-            if (!qwick.isKeyDown("lmb")) return;
+            if (!qwick.input.isKeyDown("lmb")) return;
             grid.setCell(levelState.areas, getPos(), type);
         },
         draw: (g: Graphics) => drawArea(g, type, levelState)
@@ -463,11 +463,11 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
         update: () => {
             const pos = getPos();
             if (!vec2.insideBoundingBox(pos, grid.getBoundingBox(levelState.areas))) return;
-            if (qwick.isKeyDown("lmb")) {
+            if (qwick.input.isKeyDown("lmb")) {
                 grid.setCell(levelState.areas, getPos(), team === 0 ? "placable" : "none");
                 levelState.units.push(createUnit(team, type, pos));
             }
-            if (qwick.isKeyDown("rmb")) {
+            if (qwick.input.isKeyDown("rmb")) {
                 const index = levelState.units.findIndex(u => vec2.equals(u.pos, pos));
                 if (index !== -1) levelState.units.splice(index, 1);
             }
