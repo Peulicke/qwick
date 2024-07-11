@@ -236,7 +236,7 @@ const levelDataToState = (levelData: LevelData): LevelState => {
         if (c === "b") units.push(createUnit(1, "bow", pos));
     });
 
-    const smell = teamColors.map(() => grid.create(vec2.scale(vec2.sizeOfGrid(areas), smellResolution), 0));
+    const smell = teamColors.map(() => grid.create(vec2.scale(vec2.sizeOfGrid(areas), smellResolution), () => 0));
 
     const selectedUnit: { index: number; offset: vec2.Vec2 } = { index: -1, offset: [0, 0] };
 
