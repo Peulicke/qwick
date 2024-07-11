@@ -33,10 +33,13 @@ export type QwickInput = {
     wasKeyReleased: (key: string) => boolean;
 };
 
-export type Qwick = {
-    width: number;
-    height: number;
+export type QwickCanvas = {
+    getSize: () => vec2.Vec2;
     getAspectRatio: () => number;
+};
+
+export type Qwick = {
+    canvas: QwickCanvas;
     input: QwickInput;
 };
 
@@ -68,11 +71,14 @@ export const createQwick = <LevelData>(
         wasKeyReleased: (key: string) => input.keysReleased.has(key)
     };
 
+    const qwickCanvas: QwickCanvas = {
+        getSize: () => [canvas.canvas.width, canvas.canvas.height],
+        getAspectRatio
+    };
+
     const qwick: Qwick = {
-        width: window.innerWidth,
-        height: window.innerHeight,
-        getAspectRatio,
-        input: qwickInput
+        input: qwickInput,
+        canvas: qwickCanvas
     };
 
     const game = fromPartialGame(loadGame(qwick));
@@ -86,8 +92,6 @@ export const createQwick = <LevelData>(
 
     input.listeners.resize = () => {
         canvas.resize();
-        qwick.width = window.innerWidth;
-        qwick.height = window.innerHeight;
         game.resize();
         levelRunner.resize();
     };
