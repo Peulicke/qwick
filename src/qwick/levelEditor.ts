@@ -60,42 +60,42 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
 
     const menuButton = createButton(
         qwick.input.getMousePos,
-        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.05]),
+        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.05]),
         [0.1, 0.04],
         "Menu"
     );
 
     const loadButton = createButton(
         qwick.input.getMousePos,
-        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.15]),
+        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.15]),
         [0.1, 0.04],
         "Load"
     );
 
     const saveButton = createButton(
         qwick.input.getMousePos,
-        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.25]),
+        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.25]),
         [0.1, 0.04],
         "Save"
     );
 
     const playButton = createButton(
         qwick.input.getMousePos,
-        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.35]),
+        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.35]),
         [0.1, 0.04],
         "Play"
     );
 
     const fastForwardButton = createButton(
         qwick.input.getMousePos,
-        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.25]),
+        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.25]),
         [0.1, 0.04],
         "▶▶10⨯"
     );
 
     const stopButton = createButton(
         qwick.input.getMousePos,
-        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.35]),
+        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.35]),
         [0.1, 0.04],
         "Stop"
     );
@@ -182,7 +182,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         menuInputButtons.forEach(b => b.draw(graphics));
         graphics.context(() => {
             graphics.color("black");
-            graphics.translate(vec2.add(qwick.input.getPos("top"), [0, 0.05]));
+            graphics.translate(vec2.add(qwick.canvas.getPos("top"), [0, 0.05]));
             graphics.text("Level Editor", 0.05);
         });
         menuButton.draw(graphics);

@@ -31,19 +31,19 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
 
     const menuButton = createButton(
         qwick.input.getMousePos,
-        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.05]),
+        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.05]),
         [0.1, 0.04],
         "Menu"
     );
     const restartButton = createButton(
         qwick.input.getMousePos,
-        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.15]),
+        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.15]),
         [0.1, 0.04],
         "Restart"
     );
     const fastForwardButton = createButton(
         qwick.input.getMousePos,
-        () => vec2.add(qwick.input.getPos("top-left"), [0.11, 0.25]),
+        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.25]),
         [0.1, 0.04],
         "▶▶10⨯"
     );
@@ -111,7 +111,7 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
         graphics.normalize();
         graphics.context(() => {
             graphics.color("black");
-            graphics.translate(vec2.add(qwick.input.getPos("top-right"), [-0.1, 0.05]));
+            graphics.translate(vec2.add(qwick.canvas.getPos("top-right"), [-0.1, 0.05]));
             if (game.show.level) graphics.text(`Level ${levelNum + 1}`, 0.05);
         });
         if (game.show.menu) menuButton.draw(graphics);

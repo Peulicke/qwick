@@ -27,7 +27,6 @@ export * as event from "./event";
 export type QwickInput = {
     getMousePos: () => vec2.Vec2;
     getMousePosPixels: () => vec2.Vec2;
-    getPos: (pos: Position) => vec2.Vec2;
     isKeyDown: (key: string) => boolean;
     wasKeyPressed: (key: string) => boolean;
     wasKeyReleased: (key: string) => boolean;
@@ -36,6 +35,7 @@ export type QwickInput = {
 export type QwickCanvas = {
     getSize: () => vec2.Vec2;
     getAspectRatio: () => number;
+    getPos: (pos: Position) => vec2.Vec2;
 };
 
 export type Qwick = {
@@ -60,20 +60,20 @@ export const createQwick = <LevelData>(
     const storage = createStorage();
     const input = createInput();
 
-    const getAspectRatio = () => canvas.canvas.width / canvas.canvas.height;
-
     const qwickInput: QwickInput = {
         getMousePos: input.getMousePos,
         getMousePosPixels: () => input.mousePos,
-        getPos: (pos: Position) => getPos(pos, getAspectRatio()),
         isKeyDown: (key: string) => input.keysDown.has(key),
         wasKeyPressed: (key: string) => input.keysPressed.has(key),
         wasKeyReleased: (key: string) => input.keysReleased.has(key)
     };
 
+    const getAspectRatio = () => canvas.canvas.width / canvas.canvas.height;
+
     const qwickCanvas: QwickCanvas = {
         getSize: () => [canvas.canvas.width, canvas.canvas.height],
-        getAspectRatio
+        getAspectRatio,
+        getPos: (pos: Position) => getPos(pos, getAspectRatio())
     };
 
     const qwick: Qwick = {
