@@ -498,14 +498,13 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
             ...unitTypes.map(type => ({
                 label: type,
                 getValue: () => levelState.units.filter(u => u.team === 0 && u.type === type).length.toString(),
-                setValue: swordCount => {
+                setValue: (swordCount: string) => {
                     const levelData = levelStateToData(levelState);
                     levelData.ownUnitTypes = levelData.ownUnitTypes.filter(t => t !== type);
                     levelData.ownUnitTypes.push(...[...Array(parseInt(swordCount))].map((): UnitType => type));
                     levelData.ownUnitTypes.sort(
                         (a, b) => unitTypes.findIndex(x => x === a) - unitTypes.findIndex(x => x === b)
                     );
-                    console.log(levelData.ownUnitTypes);
                     levelState = levelDataToState(levelData);
                 }
             }))
