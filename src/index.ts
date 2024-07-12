@@ -274,7 +274,7 @@ const levelStateToData = (levelState: LevelState): LevelData => {
 };
 
 const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
-    const startButton = qwick.createButton(vec2.add(qwick.canvas.getPos("bottom"), [0, -0.05]), [0.1, 0.04], "Start");
+    const startButton = qwick.createButton([0, 0.45], [0.1, 0.04], "Start");
 
     const levelState = levelDataToState(levelData);
 
