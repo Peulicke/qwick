@@ -26,15 +26,15 @@ const drawRect = (graphics: Graphics, size: vec2.Vec2, color: Color, fill: boole
 
 export const createButton = (
     getMousePos: () => vec2.Vec2,
-    pos: vec2.Vec2 | (() => vec2.Vec2),
-    size: vec2.Vec2 | (() => vec2.Vec2),
+    rect: vec2.Rect | (() => vec2.Rect),
     text: string | (() => string),
     textSize?: number | (() => number)
 ): Button => {
-    const getPos = typeof pos === "function" ? pos : () => pos;
-    const getSize = typeof size === "function" ? size : () => size;
+    const getRect = typeof rect === "function" ? rect : () => rect;
+    const getCenter = () => vec2.getRectCenter(getRect());
+    const getR = () => vec2.getRectR(getRect());
     const getText = typeof text === "function" ? text : () => text;
-    const getTextSize = typeof textSize === "function" ? textSize : () => textSize ?? getSize()[1];
+    const getTextSize = typeof textSize === "function" ? textSize : () => textSize ?? getR()[1];
 
     const button: Button = {
         holding: false,
@@ -42,7 +42,7 @@ export const createButton = (
         input: (type: InputType, down: boolean) => {
             if (down) button.clicked = false;
             if (type !== "lmb") return;
-            if (!insideButton(getMousePos, getPos(), getSize())) {
+            if (!insideButton(getMousePos, getCenter(), getR())) {
                 button.holding = false;
                 button.clicked = false;
                 return;
@@ -61,8 +61,8 @@ export const createButton = (
         },
         draw: (graphics: Graphics, fillColor: Color = "rgba(0,0,0,0)", borderColor: Color = "black") => {
             graphics.context(() => {
-                const s = getSize();
-                graphics.translate(getPos());
+                const s = getR();
+                graphics.translate(getCenter());
                 drawRect(graphics, s, fillColor, true);
                 drawRect(graphics, s, borderColor, false);
                 graphics.text(getText(), getTextSize());
@@ -76,9 +76,9 @@ export const createButton = (
             borderWidth = 1
         ) => {
             graphics.context(() => {
-                const s = getSize();
+                const s = getR();
                 const innerSize: vec2.Vec2 = [s[0] - borderWidth, s[1] - borderWidth];
-                graphics.translate(getPos());
+                graphics.translate(getCenter());
                 drawRect(graphics, s, borderColor, true);
                 drawRect(graphics, innerSize, fillColor, true);
                 graphics.color(borderColor);

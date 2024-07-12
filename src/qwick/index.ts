@@ -34,9 +34,16 @@ export type QwickInput = {
     getArrowInput: () => vec2.Vec2;
 };
 
+type GetSubRect = (count: vec2.Vec2, posIndex: vec2.Vec2, superMargin?: vec2.Vec2, subMargin?: vec2.Vec2) => vec2.Rect;
+
 export type QwickCanvas = {
     getSize: () => vec2.Vec2;
     getAspectRatio: () => number;
+    getRect: () => vec2.Rect;
+    getSubRect: GetSubRect;
+    getSubSquareLeft: GetSubRect;
+    getSubSquareMiddle: GetSubRect;
+    getSubSquareRight: GetSubRect;
     getPos: (pos: Position) => vec2.Vec2;
 };
 
@@ -44,8 +51,7 @@ export type Qwick = {
     canvas: QwickCanvas;
     input: QwickInput;
     createButton: (
-        pos: vec2.Vec2 | (() => vec2.Vec2),
-        size: vec2.Vec2 | (() => vec2.Vec2),
+        rect: vec2.Rect | (() => vec2.Rect),
         text: string | (() => string),
         textSize?: number | (() => number)
     ) => Button;
@@ -78,17 +84,42 @@ export const createQwick = <LevelData>(
     };
 
     const getAspectRatio = () => canvas.canvas.width / canvas.canvas.height;
+    const getNormalizedSize = (): vec2.Vec2 => [getAspectRatio(), 1];
+    const getNormalizedR = () => vec2.scale(getNormalizedSize(), 0.5);
+    const getCanvasRect = () => vec2.createRect([0, 0], getNormalizedR());
+    const getSquareLeft = (): vec2.Rect => [
+        [-getAspectRatio() / 2, -0.5],
+        [-getAspectRatio() / 2 + 1, 0.5]
+    ];
+    const getSquareMiddle = (): vec2.Rect => [
+        [-0.5, -0.5],
+        [0.5, 0.5]
+    ];
+    const getSquareRight = (): vec2.Rect => [
+        [getAspectRatio() / 2 - 1, -0.5],
+        [getAspectRatio() / 2, 0.5]
+    ];
+
+    const createGetSubRect =
+        (getRect: () => vec2.Rect): GetSubRect =>
+        (count, posIndex, superMargin = [0, 0], subMargin = [0, 0]) =>
+            vec2.getSubRect(getRect(), count, posIndex, superMargin, subMargin);
 
     const qwickCanvas: QwickCanvas = {
         getSize: () => [canvas.canvas.width, canvas.canvas.height],
         getAspectRatio,
+        getRect: getCanvasRect,
+        getSubRect: createGetSubRect(getCanvasRect),
+        getSubSquareLeft: createGetSubRect(getSquareLeft),
+        getSubSquareMiddle: createGetSubRect(getSquareMiddle),
+        getSubSquareRight: createGetSubRect(getSquareRight),
         getPos: (pos: Position) => getPos(pos, getAspectRatio())
     };
 
     const qwick: Qwick = {
         input: qwickInput,
         canvas: qwickCanvas,
-        createButton: (pos, size, text, textSize) => createButton(input.getMousePos, pos, size, text, textSize)
+        createButton: (rect, text, textSize) => createButton(input.getMousePos, rect, text, textSize)
     };
 
     const game = fromPartialGame(loadGame(qwick));

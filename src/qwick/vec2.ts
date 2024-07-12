@@ -149,9 +149,34 @@ export const randNumber = (size: number): Vec2 => randSize([size, size]);
 
 export const randFromTo = (from: Vec2, to: Vec2): Vec2 => add(randSize(sub(to, from)), from);
 
-export type BoundingBox = [Vec2, Vec2];
+export type Rect = [Vec2, Vec2];
 
-export const createBoundingBox = (center: Vec2, r: Vec2): BoundingBox => [sub(center, r), add(center, r)];
+export const createRect = (center: Vec2, r: Vec2): Rect => [sub(center, r), add(center, r)];
 
-export const insideBoundingBox = (v: Vec2, bb: BoundingBox): boolean =>
-    v[0] > bb[0][0] && v[1] > bb[0][1] && v[0] < bb[1][0] && v[1] < bb[1][1];
+export const insideRect = (v: Vec2, rect: Rect): boolean =>
+    v[0] > rect[0][0] && v[1] > rect[0][1] && v[0] < rect[1][0] && v[1] < rect[1][1];
+
+export const getRectCenter = (rect: Rect): Vec2 => lerp(rect[0], rect[1], 0.5);
+
+export const getRectSize = (rect: Rect): Vec2 => sub(rect[1], rect[0]);
+
+export const getRectR = (rect: Rect): Vec2 => scale(getRectSize(rect), 0.5);
+
+export const moveRect = (rect: Rect, pos: Vec2): Rect => [add(rect[0], pos), add(rect[1], pos)];
+
+export const growRect = (rect: Rect, amount: Vec2): Rect => [sub(rect[0], amount), add(rect[1], amount)];
+
+export const shrinkRect = (rect: Rect, amount: Vec2): Rect => growRect(rect, negate(amount));
+
+export const getSubRect = (
+    rect: Rect,
+    count: Vec2,
+    posIndex: Vec2,
+    superMargin: Vec2 = [0, 0],
+    subMargin: Vec2 = [0, 0]
+): Rect => {
+    const shrunkRect = shrinkRect(rect, superMargin);
+    const subSize = divide(getRectSize(shrunkRect), count);
+    const pos = add(shrunkRect[0], multiply(posIndex, subSize));
+    return shrinkRect(moveRect([[0, 0], subSize], pos), subMargin);
+};

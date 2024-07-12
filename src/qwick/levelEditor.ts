@@ -30,10 +30,10 @@ export type LevelEditor<LevelData> = {
 const getMenuItemPos = (graphics: Graphics, index: number) =>
     vec2.add([graphics.getAspectRatio() * 0.5, -0.5], vec2.scale([-0.5, 0.5 + index], menuItemSize));
 
-const getMenuInputPos = (graphics: Graphics, index: number) =>
-    vec2.add(getMenuItemPos(graphics, index), [-menuItemSize, 0]);
-
 const getMenuItemR = (): vec2.Vec2 => [menuItemSize / 2, menuItemSize / 2];
+
+const getMenuInputRect = (graphics: Graphics, index: number) =>
+    vec2.createRect(vec2.add(getMenuItemPos(graphics, index), [-menuItemSize, 0]), getMenuItemR());
 
 const drawMenuItems = (graphics: Graphics, menuItems: MenuItem[], selectedMenuItemIndex: number) => {
     graphics.context(() => {
@@ -58,49 +58,25 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
     let selectedMenuItemIndex = 0;
     let menuInputButtons: Button[] = [];
 
-    const menuButton = qwick.createButton(
-        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.05]),
-        [0.1, 0.04],
-        "Menu"
-    );
+    const buttonMargin: vec2.Vec2 = [0.005, 0.005];
+    const buttonGridSize: vec2.Vec2 = [6, 12];
 
-    const loadButton = qwick.createButton(
-        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.15]),
-        [0.1, 0.04],
-        "Load"
-    );
+    const getButtonRect = (index: number) =>
+        qwick.canvas.getSubSquareLeft(buttonGridSize, [0, index], buttonMargin, buttonMargin);
 
-    const saveButton = qwick.createButton(
-        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.25]),
-        [0.1, 0.04],
-        "Save"
-    );
-
-    const playButton = qwick.createButton(
-        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.35]),
-        [0.1, 0.04],
-        "Play"
-    );
-
-    const fastForwardButton = qwick.createButton(
-        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.25]),
-        [0.1, 0.04],
-        "▶▶10⨯"
-    );
-
-    const stopButton = qwick.createButton(
-        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.35]),
-        [0.1, 0.04],
-        "Stop"
-    );
+    const menuButton = qwick.createButton(() => getButtonRect(0), "Menu");
+    const loadButton = qwick.createButton(() => getButtonRect(1), "Load");
+    const saveButton = qwick.createButton(() => getButtonRect(2), "Save");
+    const playButton = qwick.createButton(() => getButtonRect(3), "Play");
+    const fastForwardButton = qwick.createButton(() => getButtonRect(2), "▶▶10⨯");
+    const stopButton = qwick.createButton(() => getButtonRect(3), "Stop");
 
     const start = () => {
         if (game.loadLevelEditor === undefined) return;
         levelEditor = game.loadLevelEditor();
         menuInputButtons = levelEditor.menuInputs.map((menuInput, i) =>
             qwick.createButton(
-                () => getMenuInputPos(graphics, i),
-                getMenuItemR,
+                () => getMenuInputRect(graphics, i),
                 () => menuInput.label + "\n" + menuInput.getValue(),
                 () => 0.5 * getMenuItemR()[1]
             )
@@ -150,8 +126,8 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         });
         if (type === "lmb" && down) {
             l.menuItems.forEach((_, i) => {
-                const bb = vec2.createBoundingBox(getMenuItemPos(graphics, i), getMenuItemR());
-                if (!vec2.insideBoundingBox(qwick.input.getMousePos(), bb)) return;
+                const rect = vec2.createRect(getMenuItemPos(graphics, i), getMenuItemR());
+                if (!vec2.insideRect(qwick.input.getMousePos(), rect)) return;
                 selectedMenuItemIndex = i;
             });
         }

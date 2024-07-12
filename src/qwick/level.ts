@@ -28,23 +28,21 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
     let levelSuccess = false;
     let levelFail = false;
 
-    const menuButton = qwick.createButton(
-        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.05]),
-        [0.1, 0.04],
-        "Menu"
-    );
-    const restartButton = qwick.createButton(
-        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.15]),
-        [0.1, 0.04],
-        "Restart"
-    );
-    const fastForwardButton = qwick.createButton(
-        () => vec2.add(qwick.canvas.getPos("top-left"), [0.11, 0.25]),
-        [0.1, 0.04],
-        "▶▶10⨯"
-    );
-    const successButton = qwick.createButton([0, 0], () => [graphics.getAspectRatio(), 0.08], "Next level");
-    const failButton = qwick.createButton([0, 0], () => [graphics.getAspectRatio(), 0.08], "Retry");
+    const buttonMargin: vec2.Vec2 = [0.005, 0.005];
+    const buttonGridSize: vec2.Vec2 = [6, 12];
+
+    const getButtonRect = (index: number): vec2.Rect =>
+        qwick.canvas.getSubSquareLeft(buttonGridSize, [0, index], buttonMargin, buttonMargin);
+
+    const menuButton = qwick.createButton(() => getButtonRect(0), "Menu");
+    const restartButton = qwick.createButton(() => getButtonRect(1), "Restart");
+    const fastForwardButton = qwick.createButton(() => getButtonRect(2), "▶▶10⨯");
+
+    const gameOverButtonHeight = 0.08;
+    const getGameOverButtonRect = () => vec2.createRect([0, 0], [graphics.getAspectRatio(), gameOverButtonHeight]);
+
+    const successButton = qwick.createButton(getGameOverButtonRect, "Next level");
+    const failButton = qwick.createButton(getGameOverButtonRect, "Retry");
 
     const loadLevel = () => {
         levelSuccess = false;

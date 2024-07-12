@@ -274,7 +274,10 @@ const levelStateToData = (levelState: LevelState): LevelData => {
 };
 
 const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
-    const startButton = qwick.createButton([0, 0.45], [0.1, 0.04], "Start");
+    const startButton = qwick.createButton(
+        () => qwick.canvas.getSubSquareMiddle([5, 9], [2, 8], [0, 0], [0.01, 0.01]),
+        "Start"
+    );
 
     const levelState = levelDataToState(levelData);
 
@@ -456,7 +459,7 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
     const createUnitMenuItem = (team: Team, type: UnitType) => ({
         update: () => {
             const pos = getPos();
-            if (!vec2.insideBoundingBox(pos, grid.getBoundingBox(levelState.areas))) return;
+            if (!vec2.insideRect(pos, grid.getBoundingBox(levelState.areas))) return;
             if (qwick.input.isKeyDown("lmb")) {
                 grid.setCell(levelState.areas, getPos(), team === 0 ? "placable" : "none");
                 levelState.units.push(createUnit(team, type, pos));

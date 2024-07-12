@@ -1,20 +1,37 @@
-import { Graphics, Qwick } from ".";
+import { Graphics, Qwick, vec2 } from ".";
 import { InputType } from "./input";
 import { Game } from "./game";
 import { Storage } from "./storage";
 
 export const createMenu = <LevelDatas>(qwick: Qwick, graphics: Graphics, game: Game<LevelDatas>) => {
     const hasLevelEditor = game.loadLevelEditor !== undefined;
-    const startButton = qwick.createButton([hasLevelEditor ? -0.15 : 0, -0.2], [0.12, 0.04], "Start");
-    const editorButton = qwick.createButton([0.15, -0.2], [0.12, 0.04], "Level Editor");
+    const gridCount: vec2.Vec2 = [4, 11];
+    const leftPos: vec2.Vec2 = [hasLevelEditor ? 1 : 1.5, 3];
+    const rightPos: vec2.Vec2 = [2, 3];
+    const subMargin: vec2.Vec2 = [0.01, 0.01];
+    const startButton = qwick.createButton(
+        () => qwick.canvas.getSubSquareMiddle(gridCount, leftPos, [0, 0], subMargin),
+        "Start"
+    );
+    const editorButton = qwick.createButton(
+        () => qwick.canvas.getSubSquareMiddle(gridCount, rightPos, [0, 0], subMargin),
+        "Level Editor"
+    );
 
     const buttonGridWidth = Math.ceil(Math.sqrt(game.levels.length));
     const levelButtons = game.levels.map((_, i) => {
         const xIndex = i % buttonGridWidth;
         const yIndex = Math.floor(i / buttonGridWidth);
-        const x = (xIndex - (buttonGridWidth - 1) / 2) * 0.22;
-        const y = yIndex * 0.1 - 0.05;
-        return qwick.createButton([x, y], [0.1, 0.04], `${i + 1}`);
+        return qwick.createButton(
+            () =>
+                qwick.canvas.getSubSquareMiddle(
+                    [buttonGridWidth, buttonGridWidth + 4],
+                    [xIndex, yIndex + 3],
+                    [0, 0],
+                    subMargin
+                ),
+            `${i + 1}`
+        );
     });
 
     const input = (type: InputType, down: boolean): number | undefined => {

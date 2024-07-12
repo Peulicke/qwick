@@ -24,8 +24,10 @@ export const runTestMenu = (testNames: string[]) => {
     const buttons = testNames.map((name, i) =>
         createButton(
             input.getMousePos,
-            [0, 0.07 * (i - (testNames.length - 1) / 2)],
-            vec2.scale([name.length * charWidth, 1], buttonHeight),
+            vec2.createRect(
+                [0, 0.07 * (i - (testNames.length - 1) / 2)],
+                vec2.scale([name.length * charWidth, 1], buttonHeight)
+            ),
             name
         )
     );
