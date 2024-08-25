@@ -42,6 +42,8 @@ export const floor = (v: Vec3): Vec3 => [Math.floor(v[0]), Math.floor(v[1]), Mat
 
 export const ceil = (v: Vec3): Vec3 => [Math.ceil(v[0]), Math.ceil(v[1]), Math.ceil(v[2])];
 
+export const abs = (v: Vec3): Vec3 => [Math.abs(v[0]), Math.abs(v[1]), Math.abs(v[2])];
+
 export const normalize = (v: Vec3): Vec3 => {
     const l = length(v);
     if (l < 1e-10) return v;
