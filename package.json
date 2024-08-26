@@ -1,9 +1,9 @@
 {
     "name": "qwick",
-    "version": "0.1.15",
+    "version": "0.1.16",
     "main": "dist/index.js",
     "scripts": {
-        "build": "tsc -p tsconfig.json && cp ./src/qwick/index.css ./dist",
+        "build": "rm -r dist && tsc -p tsconfig.json && cp ./src/qwick/index.css ./dist",
         "deploy": "npm run build && npm publish",
         "start": "react-scripts start",
         "test": "react-scripts test"
