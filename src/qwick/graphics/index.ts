@@ -7,6 +7,7 @@ import * as draw from "./draw";
 export * as utils from "./utils";
 export * as transform from "./transform";
 export * as draw from "./draw";
+export * as pixels from "./pixels";
 
 export const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: string) => ({
     getAspectRatio: (): number => ctx.canvas.width / ctx.canvas.height,
