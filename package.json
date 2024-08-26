@@ -1,6 +1,6 @@
 {
     "name": "qwick",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "main": "dist/index.js",
     "scripts": {
         "build": "tsc -p tsconfig.json && cp ./src/qwick/index.css ./dist",
