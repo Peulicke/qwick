@@ -12,7 +12,7 @@ import {
     utils,
     graphics
 } from "./qwick";
-import { LevelEditor } from "./qwick/levelEditor";
+import { LevelEditor } from "./qwick/level-editor";
 
 const smellResolution = 2;
 const border = 0.25;

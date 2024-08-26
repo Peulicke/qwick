@@ -5,10 +5,10 @@ import { createGraphics } from "./graphics";
 import "./index.css";
 import { createInput, InputType } from "./input";
 import { createLevelRunner } from "./level";
-import { createLevelEditorRunner } from "./levelEditor";
+import { createLevelEditorRunner } from "./level-editor";
 import { createMenu } from "./menu";
 import { Position, getPos } from "./position";
-import { TestSuite, createTestSuite } from "./qwickTest";
+import { TestSuite, createTestSuite } from "./qwick-test";
 import { createStorage } from "./storage";
 import * as vec2 from "./vec2";
 
