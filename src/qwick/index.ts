@@ -65,7 +65,7 @@ export const createQwick = <LevelData>(
         .split("/")
         .filter(x => x !== "")
         .map(decodeURIComponent);
-    if (path.length > 0) {
+    if (path.length > 0 && path[0] !== "games") {
         const qwickTest = createTestSuite(path);
         if (loadTest) loadTest(qwickTest);
         return;
