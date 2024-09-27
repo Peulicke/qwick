@@ -281,7 +281,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     const levelState = levelDataToState(levelData);
 
-    const getAreaType = (pos: vec2.Vec2) => grid.getNearestCell(levelState.areas, pos);
+    const getAreaType = (pos: vec2.Vec2): AreaType => grid.getNearestCell(levelState.areas, pos, () => "none");
 
     const getEnemies = (unit: Unit) => levelState.units.filter(u => u.team !== unit.team);
 

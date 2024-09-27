@@ -14,9 +14,14 @@ export const setCell = <T>(grid: Grid<T>, pos: vec2.Vec2, value: T): void => {
     (grid[pos[0]] ?? [])[pos[1]] = value;
 };
 
-export const getCell = <T>(grid: Grid<T>, pos: vec2.Vec2): T | undefined => (grid[pos[0]] ?? [])[pos[1]];
+export const getCell = <T>(grid: Grid<T>, pos: vec2.Vec2, getDefaultValue: (pos: vec2.Vec2) => T): T => {
+    const value = (grid[pos[0]] ?? [])[pos[1]];
+    if (value === undefined) return getDefaultValue(pos);
+    return value;
+};
 
-export const getNearestCell = <T>(grid: Grid<T>, pos: vec2.Vec2): T | undefined => getCell(grid, vec2.round(pos));
+export const getNearestCell = <T>(grid: Grid<T>, pos: vec2.Vec2, getDefaultValue: (pos: vec2.Vec2) => T): T =>
+    getCell(grid, vec2.round(pos), getDefaultValue);
 
 export const transpose = <T>(grid: Grid<T>) => grid[0].map((_, i) => grid.map((_, j) => grid[j][i]));
 
@@ -38,4 +43,4 @@ export const getSize = <T>(grid: Grid<T>): vec2.Vec2 => [grid.length, grid[0]?.l
 export const getBoundingBox = <T>(grid: Grid<T>): vec2.Rect => [[0, 0], getSize(grid)];
 
 export const resize = <T>(grid: Grid<T>, size: vec2.Vec2, getDefaultValue: (pos: vec2.Vec2) => T): Grid<T> =>
-    create(size, pos => getCell(grid, pos) ?? getDefaultValue(pos));
+    create(size, pos => getCell(grid, pos, getDefaultValue));
