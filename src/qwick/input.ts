@@ -49,11 +49,16 @@ export const createInput = () => {
     };
     window.addEventListener("keyup", keyup, true);
 
-    const mousemove = (e: MouseEvent) => {
-        input.mousePos[0] = e.x;
-        input.mousePos[1] = e.y;
+    const setMousePos = (x: number, y: number) => {
+        input.mousePos[0] = x;
+        input.mousePos[1] = y;
     };
+
+    const mousemove = (e: MouseEvent) => setMousePos(e.x, e.y);
     window.addEventListener("mousemove", mousemove, true);
+
+    const touchmove = (e: TouchEvent) => setMousePos(e.touches[0].screenX, e.touches[0].screenY);
+    window.addEventListener("touchmove", touchmove, true);
 
     const mousedown = (e: MouseEvent) => {
         if (e.button === 0) onInput("lmb", true);
@@ -61,11 +66,21 @@ export const createInput = () => {
     };
     window.addEventListener("mousedown", mousedown, true);
 
+    const touchstart = () => {
+        onInput("lmb", true);
+    };
+    window.addEventListener("touchstart", touchstart, true);
+
     const mouseup = (e: MouseEvent) => {
         if (e.button === 0) onInput("lmb", false);
         if (e.button === 2) onInput("rmb", false);
     };
     window.addEventListener("mouseup", mouseup, true);
+
+    const touchend = () => {
+        onInput("lmb", false);
+    };
+    window.addEventListener("touchend", touchend, true);
 
     const clear = () => {
         input.keysPressed.clear();
