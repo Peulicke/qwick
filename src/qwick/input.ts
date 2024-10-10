@@ -57,7 +57,7 @@ export const createInput = () => {
     const mousemove = (e: MouseEvent) => setMousePos(e.x, e.y);
     window.addEventListener("mousemove", mousemove, true);
 
-    const touchmove = (e: TouchEvent) => setMousePos(e.touches[0].screenX, e.touches[0].screenY);
+    const touchmove = (e: TouchEvent) => setMousePos(e.touches[0].clientX, e.touches[0].clientY);
     window.addEventListener("touchmove", touchmove, true);
 
     const mousedown = (e: MouseEvent) => {
