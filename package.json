@@ -38,6 +38,7 @@
     "exports": {
         ".": "./dist/index.js",
         "./*": "./dist/*.js",
-        "./graphics/*": "./dist/graphics/*.js"
+        "./graphics/*": "./dist/graphics/*.js",
+        "./button/*": "./dist/button/*.js"
     }
 }
