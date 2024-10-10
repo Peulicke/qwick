@@ -61,12 +61,14 @@ export const createInput = () => {
     window.addEventListener("touchmove", touchmove, true);
 
     const mousedown = (e: MouseEvent) => {
+        setMousePos(e.x, e.y);
         if (e.button === 0) onInput("lmb", true);
         if (e.button === 2) onInput("rmb", true);
     };
     window.addEventListener("mousedown", mousedown, true);
 
-    const touchstart = () => {
+    const touchstart = (e: TouchEvent) => {
+        setMousePos(e.touches[0].clientX, e.touches[0].clientY);
         onInput("lmb", true);
     };
     window.addEventListener("touchstart", touchstart, true);
