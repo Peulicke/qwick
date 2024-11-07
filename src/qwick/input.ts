@@ -27,8 +27,13 @@ export const createInput = () => {
     };
 
     const onInput = (type: InputType, down: boolean) => {
-        if (down) input.keysDown.add(type);
-        else input.keysDown.delete(type);
+        if (down) {
+            input.keysPressed.add(type);
+            input.keysDown.add(type);
+        } else {
+            input.keysReleased.add(type);
+            input.keysDown.delete(type);
+        }
         if (listeners.input) listeners.input(type, down);
     };
 
