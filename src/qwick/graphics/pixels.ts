@@ -37,3 +37,9 @@ export const pixelsToImage = async (pixels: Pixels) => {
     img.src = url;
     return await waitForLoad(img);
 };
+
+export const loadImage = (src: string): HTMLImageElement => {
+    const image = new Image();
+    image.src = src;
+    return image;
+};
