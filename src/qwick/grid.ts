@@ -1,3 +1,4 @@
+import TinyQueue from "tinyqueue";
 import * as vec2 from "./vec2";
 
 export type Grid<T> = T[][];
@@ -44,3 +45,37 @@ export const getBoundingBox = <T>(grid: Grid<T>): vec2.Rect => [[0, 0], getSize(
 
 export const resize = <T>(grid: Grid<T>, size: vec2.Vec2, getDefaultValue: (pos: vec2.Vec2) => T): Grid<T> =>
     create(size, pos => getCell(grid, pos, getDefaultValue));
+
+const generatePath = (map: Grid<vec2.Vec2>, start: vec2.Vec2): vec2.Vec2[] => {
+    const nextPos = getCell(map, start, () => start);
+    if (vec2.equals(nextPos, start)) return [];
+    return [nextPos, ...generatePath(map, nextPos)];
+};
+
+export const aStar = (start: vec2.Vec2, targets: vec2.Vec2[], walls: Grid<boolean>): vec2.Vec2[] => {
+    const checked = create(getSize(walls), () => false);
+    const map = create<vec2.Vec2>(getSize(walls), pos => pos);
+    const queue = new TinyQueue(
+        targets.map(pos => ({ pos, prevPos: pos, dist: 0, totalDistEstimate: vec2.dist(pos, start) })),
+        (a, b) => a.totalDistEstimate - b.totalDistEstimate
+    );
+    while (queue.length > 0) {
+        const next = queue.pop();
+        if (next === undefined) break;
+        const { pos, prevPos, dist } = next;
+        if (getCell(checked, pos, () => true)) continue;
+        setCell(checked, pos, true);
+        setCell(map, pos, prevPos);
+        if (vec2.equals(pos, start)) break;
+        vec2.gridEdges(pos).forEach(({ p }) => {
+            if (getCell(walls, p, () => true)) return;
+            queue.push({
+                prevPos: pos,
+                pos: p,
+                dist: dist + 1,
+                totalDistEstimate: dist + 1 + vec2.dist(p, start)
+            });
+        });
+    }
+    return generatePath(map, start);
+};
