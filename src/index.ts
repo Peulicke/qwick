@@ -1,18 +1,7 @@
 import { test } from "./test";
-import {
-    createQwick,
-    Qwick,
-    InputType,
-    Graphics,
-    vec2,
-    vec3,
-    matrix,
-    grid,
-    transform2,
-    utils,
-    graphics
-} from "./qwick";
+import { createQwick, Qwick, InputType, Graphics, vec2, vec3, matrix, grid, utils, graphics } from "./qwick";
 import { LevelEditor } from "./qwick/level-editor";
+import { Camera, createCamera } from "./qwick/graphics/camera";
 
 const smellResolution = 2;
 const border = 0.25;
@@ -158,14 +147,6 @@ const level3: LevelData = {
 
 const levels: LevelData[] = [level1, level2, level3];
 
-const getBoardToScreen = (areas: grid.Grid<AreaType>) =>
-    transform2.compose([
-        transform2.translate(vec2.scale(vec2.sub(vec2.sizeOfGrid(areas), [1, 1]), -0.5)),
-        transform2.scale((1 - border) / areas[0].length)
-    ]);
-
-const getScreenToBoard = (areas: grid.Grid<AreaType>) => transform2.inverse(getBoardToScreen(areas));
-
 const colors: Record<AreaType, string> = {
     none: "#555555",
     wall: "#000000",
@@ -192,9 +173,9 @@ const drawUnit = (g: Graphics, unit: Unit) => {
     g.rect([-0.5, -0.5], [frac - 0.5, -0.4], true);
 };
 
-const drawWorld = (g: Graphics, levelState: LevelState) => {
+const drawWorld = (g: Graphics, levelState: LevelState, camera: Camera) => {
     g.context(() => {
-        g.transform(getBoardToScreen(levelState.areas));
+        camera.graphicsTransform(g);
         grid.map(levelState.areas, (type, pos) => {
             g.context(() => {
                 g.translate(pos);
@@ -273,6 +254,11 @@ const levelStateToData = (levelState: LevelState): LevelData => {
     };
 };
 
+const updateCamera = (camera: Camera, levelState: LevelState) => {
+    camera.state.pos = vec2.scale(grid.getSize(levelState.areas), 0.5);
+    camera.state.zoom = (1 - border) / levelState.areas[0].length;
+};
+
 const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     const startButton = qwick.createButton(
         () => qwick.canvas.getSubSquareMiddle([5, 9], [2, 8], [0, 0], [0.01, 0.01]),
@@ -280,6 +266,9 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     );
 
     const levelState = levelDataToState(levelData);
+
+    const camera = createCamera({});
+    updateCamera(camera, levelState);
 
     const getAreaType = (pos: vec2.Vec2): AreaType => grid.getNearestCell(levelState.areas, pos, () => "none");
 
@@ -302,8 +291,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         }
     };
 
-    const getMousePos = () =>
-        transform2.apply(transform2.inverse(getBoardToScreen(levelState.areas)), qwick.input.getMousePos());
+    const getMousePos = () => camera.screenToCamCoords(qwick.input.getMousePos());
 
     const allUnitsPlaced = () =>
         levelState.units.filter(u => u.team === 0).every(u => getAreaType(u.pos) === "placable");
@@ -416,13 +404,13 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         hasLost: () => levelState.units.every(u => u.team !== 0),
         draw: (g: Graphics) => {
             g.context(() => {
-                g.transform(getBoardToScreen(levelState.areas));
+                camera.graphicsTransform(g);
                 g.context(() => {
                     g.translate([-1, -1]);
                     g.image(img);
                 });
             });
-            drawWorld(g, levelState);
+            drawWorld(g, levelState, camera);
             if (!levelState.started) startButton.draw(g);
         }
     };
@@ -446,7 +434,10 @@ const getEmptyLevelData = (): LevelData => ({
 const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
     let levelState = levelDataToState(getEmptyLevelData());
 
-    const getPos = () => vec2.round(transform2.apply(getScreenToBoard(levelState.areas), qwick.input.getMousePos()));
+    const camera = createCamera({});
+    updateCamera(camera, levelState);
+
+    const getPos = () => vec2.round(camera.screenToCamCoords(qwick.input.getMousePos()));
 
     const createAreaMenuItem = (type: AreaType) => ({
         update: () => {
@@ -476,6 +467,7 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
         if (size[0] < 1) return;
         if (size[1] < 1) return;
         levelState.areas = grid.resize(levelState.areas, size, () => "none");
+        updateCamera(camera, levelState);
     };
 
     return {
@@ -512,7 +504,7 @@ const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
                 }
             }))
         ],
-        draw: g => drawWorld(g, levelState)
+        draw: g => drawWorld(g, levelState, camera)
     };
 };
 
