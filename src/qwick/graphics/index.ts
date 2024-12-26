@@ -30,7 +30,8 @@ export const createGraphics = (ctx: CanvasRenderingContext2D, backgroundColor: s
     circle: (v: vec2.Vec2, r: number, fill = false, angleFrom = 0, angleTo = 2 * Math.PI): void =>
         draw.circle(ctx, v, r, fill, angleFrom, angleTo),
     s: (v: vec2.Vec2, r: number): void => draw.s(ctx, v, r),
-    text: (text: string, size: number): void => draw.text(ctx, text, size),
+    text: (text: string, size: number, textAlign: CanvasTextAlign = "center"): void =>
+        draw.text(ctx, text, size, textAlign),
     arrow: (a: vec2.Vec2, r: vec2.Vec2): void => draw.arrow(ctx, a, r),
     fork: (a: vec2.Vec2, r: vec2.Vec2): void => draw.fork(ctx, a, r),
     square: (fill: boolean): void => draw.square(ctx, fill),
