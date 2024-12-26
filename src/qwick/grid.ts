@@ -31,7 +31,7 @@ export const stringToGrid = (s: string) =>
         s
             .trim()
             .split("\n")
-            .map(line => line.split(""))
+            .map(line => line.trim().split(""))
     );
 
 export const gridToString = (grid: string[][]) =>
