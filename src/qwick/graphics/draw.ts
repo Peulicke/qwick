@@ -126,7 +126,7 @@ export const s = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number): void 
 
 export const text = (ctx: CanvasRenderingContext2D, t: string, size: number, textAlign: CanvasTextAlign): void => {
     transform.push(ctx);
-    ctx.font = "100px Arial";
+    ctx.font = "100px Courier";
     ctx.textAlign = textAlign;
     transform.scale(ctx, 0.01 * size);
     transform.translate(ctx, [0, 25]);

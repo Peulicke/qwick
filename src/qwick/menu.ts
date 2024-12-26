@@ -5,9 +5,9 @@ import { Storage } from "./storage";
 
 export const createMenu = <LevelDatas>(qwick: Qwick, graphics: Graphics, game: Game<LevelDatas>) => {
     const hasLevelEditor = game.loadLevelEditor !== undefined;
-    const gridCount: vec2.Vec2 = [4, 11];
-    const leftPos: vec2.Vec2 = [hasLevelEditor ? 1 : 1.5, 3];
-    const rightPos: vec2.Vec2 = [2, 3];
+    const gridCount: vec2.Vec2 = [2, 11];
+    const leftPos: vec2.Vec2 = [hasLevelEditor ? 0 : 0.5, 3];
+    const rightPos: vec2.Vec2 = [1, 3];
     const subMargin: vec2.Vec2 = [0.01, 0.01];
     const startButton = qwick.createButton(
         () => qwick.canvas.getSubSquareMiddle(gridCount, leftPos, [0, 0], subMargin),
