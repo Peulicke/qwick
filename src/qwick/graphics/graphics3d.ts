@@ -57,7 +57,7 @@ export const createGraphics3d = (backgroundColor: string) => {
             directionalLight.shadow.camera.right = size * aspect;
             directionalLight.shadow.camera.top = -size;
             directionalLight.shadow.camera.bottom = size;
-            directionalLight.shadow.bias = -0.00001;
+            directionalLight.shadow.bias = -0.0001;
             directionalLight.position.set(-0.1, 8, 1);
             scene.add(directionalLight);
 
