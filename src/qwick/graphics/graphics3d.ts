@@ -35,8 +35,6 @@ export const createGraphics3d = (backgroundColor: string) => {
 
     let color = "white";
 
-    let zoom = 1;
-
     const transformations: THREE.Group[] = [];
 
     const extendTransformation = () => {
@@ -51,14 +49,7 @@ export const createGraphics3d = (backgroundColor: string) => {
         },
         end: () => {
             const aspect = window.innerWidth / window.innerHeight;
-            const camera = new THREE.OrthographicCamera(
-                -aspect * 0.5 * zoom,
-                aspect * 0.5 * zoom,
-                0.5 * zoom,
-                -0.5 * zoom,
-                0.1,
-                1000
-            );
+            const camera = new THREE.OrthographicCamera(-aspect * 0.5, aspect * 0.5, 0.5, -0.5, 0.1, 1000);
             camera.position.set(0, 1, 1);
             camera.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -93,9 +84,6 @@ export const createGraphics3d = (backgroundColor: string) => {
         },
         color: (c: string) => {
             color = c;
-        },
-        zoom: (z: number) => {
-            zoom = z;
         },
         box: () => {
             const material = materials[color] ?? new THREE.MeshPhongMaterial({ color });
