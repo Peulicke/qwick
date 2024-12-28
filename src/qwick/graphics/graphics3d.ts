@@ -17,6 +17,10 @@ export const createGraphics3d = (backgroundColor: string) => {
 
     const scene = new THREE.Scene();
 
+    const boxGeometry = new THREE.BoxGeometry(1, 1);
+    const planeGeometry = new THREE.PlaneGeometry(1, 1);
+    const materials: Record<string, THREE.Material> = {};
+
     let color = "white";
 
     let zoom = 1;
@@ -94,17 +98,17 @@ export const createGraphics3d = (backgroundColor: string) => {
             zoom = z;
         },
         box: () => {
-            const geometry = new THREE.BoxGeometry(1, 1);
-            const material = new THREE.MeshPhongMaterial({ color });
-            const mesh = new THREE.Mesh(geometry, material);
+            const material = materials[color] ?? new THREE.MeshPhongMaterial({ color });
+            materials[color] = material;
+            const mesh = new THREE.Mesh(boxGeometry, material);
             transformations[transformations.length - 1].add(mesh);
             mesh.castShadow = true;
             mesh.receiveShadow = true;
         },
         plane: () => {
-            const geometry = new THREE.PlaneGeometry(1, 1);
-            const material = new THREE.MeshPhongMaterial({ color });
-            const mesh = new THREE.Mesh(geometry, material);
+            const material = materials[color] ?? new THREE.MeshPhongMaterial({ color });
+            materials[color] = material;
+            const mesh = new THREE.Mesh(planeGeometry, material);
             mesh.receiveShadow = true;
             mesh.castShadow = true;
             transformations[transformations.length - 1].add(mesh);
