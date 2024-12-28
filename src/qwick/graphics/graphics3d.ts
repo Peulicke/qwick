@@ -20,6 +20,18 @@ export const createGraphics3d = (backgroundColor: string) => {
     const boxGeometry = new THREE.BoxGeometry(1, 1);
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
     const materials: Record<string, THREE.Material> = {};
+    const ambientLight = new THREE.AmbientLight("white", 1);
+    const directionalLight = new THREE.DirectionalLight("white", 2); // 2 seems to make the brightest color white
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = window.innerWidth;
+    directionalLight.shadow.mapSize.height = window.innerHeight;
+    const size = 0.9;
+    directionalLight.shadow.camera.left = -size * 2;
+    directionalLight.shadow.camera.right = size * 2;
+    directionalLight.shadow.camera.top = -size;
+    directionalLight.shadow.camera.bottom = size;
+    directionalLight.shadow.bias = -0.0001;
+    directionalLight.position.set(-0.1, 8, 1);
 
     let color = "white";
 
@@ -50,19 +62,7 @@ export const createGraphics3d = (backgroundColor: string) => {
             camera.position.set(0, 1, 1);
             camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-            const ambientLight = new THREE.AmbientLight("white", 1);
             scene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight("white", 2); // 2 seems to make the brightest color white
-            directionalLight.castShadow = true;
-            directionalLight.shadow.mapSize.width = window.innerWidth;
-            directionalLight.shadow.mapSize.height = window.innerHeight;
-            const size = 0.9;
-            directionalLight.shadow.camera.left = -size * aspect;
-            directionalLight.shadow.camera.right = size * aspect;
-            directionalLight.shadow.camera.top = -size;
-            directionalLight.shadow.camera.bottom = size;
-            directionalLight.shadow.bias = -0.0001;
-            directionalLight.position.set(-0.1, 8, 1);
             scene.add(directionalLight);
 
             renderer.render(scene, camera);
