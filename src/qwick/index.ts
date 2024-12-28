@@ -124,7 +124,7 @@ export const createQwick = <LevelData>(
 
     const game = fromPartialGame(loadGame(qwick));
 
-    const graphics = createGraphics(canvas.ctx, game.backgroundColor);
+    const graphics = createGraphics(canvas, game.backgroundColor);
 
     const menu = createMenu(qwick, graphics, game);
 

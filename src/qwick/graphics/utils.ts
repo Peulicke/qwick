@@ -1,9 +1,8 @@
 import { Vec3 } from "../vec3";
 
-export const begin = (ctx: CanvasRenderingContext2D, backgroundColor: string): void => {
+export const begin = (ctx: CanvasRenderingContext2D): void => {
     ctx.save();
-    ctx.fillStyle = backgroundColor;
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.lineWidth = 3;
     ctx.fillStyle = "white";
     ctx.strokeStyle = "white";

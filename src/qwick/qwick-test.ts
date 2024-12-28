@@ -1,6 +1,6 @@
 import "./index.css";
 import { createCanvas } from "./canvas";
-import { Graphics, createGraphics } from "./graphics";
+import { Graphics, Graphics3d, createGraphics } from "./graphics";
 import { Input, InputType, createInput } from "./input";
 import { createButton } from "./button";
 import { vec2 } from ".";
@@ -12,6 +12,7 @@ export type QwickTest = {
     input?: (type: InputType, down: boolean) => void;
     update?: () => void;
     draw?: (graphics: Graphics) => void;
+    draw3d?: (graphics3d: Graphics3d) => void;
 };
 
 export type CreateQwickTest = ({ input }: { input: Input }) => QwickTest;
@@ -19,7 +20,7 @@ export type CreateQwickTest = ({ input }: { input: Input }) => QwickTest;
 export const runTestMenu = (testNames: string[]) => {
     const canvas = createCanvas();
     const input = createInput();
-    const graphics = createGraphics(canvas.ctx, "gray");
+    const graphics = createGraphics(canvas, "gray");
 
     const buttons = testNames.map((name, i) =>
         createButton(
@@ -61,7 +62,7 @@ export const runTestMenu = (testNames: string[]) => {
 export const runTest = (createQwickTest: CreateQwickTest) => {
     const canvas = createCanvas();
     const input = createInput();
-    const graphics = createGraphics(canvas.ctx, "gray");
+    const graphics = createGraphics(canvas, "gray");
 
     const qwickTest = createQwickTest({ input });
 
@@ -71,6 +72,9 @@ export const runTest = (createQwickTest: CreateQwickTest) => {
     const t = setInterval(() => {
         if (qwickTest.update) qwickTest.update();
         graphics.begin();
+        graphics.get3d().context(() => {
+            if (qwickTest.draw3d) qwickTest.draw3d(graphics.get3d());
+        });
         graphics.context(() => {
             graphics.normalize();
             if (qwickTest.draw) qwickTest.draw(graphics);

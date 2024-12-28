@@ -3,8 +3,6 @@ export const createCanvas = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     document.body.appendChild(canvas);
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) throw new Error("Can't get canvas context");
 
     const resize = () => {
         canvas.width = window.innerWidth;
@@ -16,8 +14,7 @@ export const createCanvas = () => {
     };
 
     return {
-        canvas,
-        ctx,
+        canvas: canvas,
         resize,
         destroy
     };
