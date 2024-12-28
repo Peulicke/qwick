@@ -11,6 +11,7 @@ export const createGraphics3d = (backgroundColor: string) => {
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
     renderer.domElement.style.zIndex = "-1";
+    renderer.shadowMap.enabled = true;
     document.body.appendChild(renderer.domElement);
     renderer.clear();
 
@@ -45,9 +46,20 @@ export const createGraphics3d = (backgroundColor: string) => {
             camera.position.set(0, 1, 1);
             camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-            const light = new THREE.DirectionalLight("white", 3); // 3 seems to make the brightest color white
-            light.position.set(-0.1, 8, 1);
-            scene.add(light);
+            const ambientLight = new THREE.AmbientLight("white", 1);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight("white", 2); // 2 seems to make the brightest color white
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = window.innerWidth;
+            directionalLight.shadow.mapSize.height = window.innerHeight;
+            const size = 0.9;
+            directionalLight.shadow.camera.left = -size * aspect;
+            directionalLight.shadow.camera.right = size * aspect;
+            directionalLight.shadow.camera.top = -size;
+            directionalLight.shadow.camera.bottom = size;
+            directionalLight.shadow.bias = -0.00001;
+            directionalLight.position.set(-0.1, 8, 1);
+            scene.add(directionalLight);
 
             renderer.render(scene, camera);
         },
@@ -85,6 +97,16 @@ export const createGraphics3d = (backgroundColor: string) => {
             const geometry = new THREE.BoxGeometry(1, 1);
             const material = new THREE.MeshPhongMaterial({ color });
             const mesh = new THREE.Mesh(geometry, material);
+            transformations[transformations.length - 1].add(mesh);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+        },
+        plane: () => {
+            const geometry = new THREE.PlaneGeometry(1, 1);
+            const material = new THREE.MeshPhongMaterial({ color });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.receiveShadow = true;
+            mesh.castShadow = true;
             transformations[transformations.length - 1].add(mesh);
         }
     };

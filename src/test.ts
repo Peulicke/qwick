@@ -34,7 +34,7 @@ export const testB: CreateQwickTest = () => {
     return { draw };
 };
 
-export const test3d: CreateQwickTest = () => {
+export const test3d: CreateQwickTest = ({ input }) => {
     const draw = (g: Graphics) => {
         g.context(() => {
             g.scale(0.1);
@@ -48,14 +48,20 @@ export const test3d: CreateQwickTest = () => {
         g.context(() => {
             g.scale([0.1, 0.1, 0.1]);
             g.context(() => {
+                g.color("gray");
+                g.rotate([1, 0, 0], -Math.PI / 2);
+                g.scale([100, 100, 100]);
+                g.plane();
+            });
+            g.context(() => {
                 g.color("red");
-                g.translate([3, 0, -1]);
+                g.translate([input.getMousePos()[0] * 10, 3, input.getMousePos()[1] * 10 * Math.SQRT2]);
                 g.rotate([0, 1, 0], Math.PI / 8);
                 g.box();
             });
             g.context(() => {
                 g.color("blue");
-                g.translate([1, 0, -1]);
+                g.translate([1, 1, -1]);
                 g.rotate([1, 1, 1], -Math.PI / 4);
                 g.box();
             });
