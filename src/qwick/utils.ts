@@ -44,3 +44,5 @@ export const shuffle = <T>(objects: T[]) => {
         swap(objects, i, randInt(i + 1, objects.length - 1));
     }
 };
+
+export const clamp = (value: number, from: number, to: number): number => Math.min(Math.max(value, from), to);
