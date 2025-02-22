@@ -3,6 +3,11 @@ import { CreateQwickTest, TestSuite } from "./qwick/qwick-test";
 
 const testA: CreateQwickTest = ({ input }) => {
     let pos = input.getMousePos();
+    let size = 0.25;
+
+    const scroll = (delta: number) => {
+        size *= Math.pow(1.001, delta);
+    };
 
     const update = () => {
         pos = input.getMousePos();
@@ -10,10 +15,11 @@ const testA: CreateQwickTest = ({ input }) => {
 
     const draw = (graphics: Graphics) => {
         graphics.color("white");
-        graphics.circle(pos, 0.25);
+        graphics.circle(pos, size);
     };
 
     return {
+        scroll,
         update,
         draw
     };

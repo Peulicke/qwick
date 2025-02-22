@@ -5,6 +5,7 @@ export type InputType = "lmb" | "rmb";
 export type Listeners = {
     resize: () => void;
     input: (type: InputType, down: boolean) => void;
+    scroll: (delta: number) => void;
 };
 
 export const createInput = () => {
@@ -35,6 +36,10 @@ export const createInput = () => {
             input.keysDown.delete(type);
         }
         if (listeners.input) listeners.input(type, down);
+    };
+
+    const onScroll = (delta: number) => {
+        if (listeners.scroll) listeners.scroll(delta);
     };
 
     window.addEventListener("resize", onResize, true);
@@ -88,6 +93,8 @@ export const createInput = () => {
         onInput("lmb", false);
     };
     window.addEventListener("touchend", touchend, true);
+
+    document.addEventListener("wheel", event => onScroll(event.deltaY));
 
     const clear = () => {
         input.keysPressed.clear();

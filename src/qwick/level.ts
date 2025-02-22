@@ -10,6 +10,7 @@ export type Level = {
     hasLost: () => boolean;
     draw: (graphics: Graphics) => void;
     input: (type: InputType, down: boolean) => void;
+    scroll: (delta: number) => void;
     resize: () => void;
 };
 
@@ -19,6 +20,7 @@ export const defaultLevel = (): Level => ({
     hasLost: () => false,
     draw: () => {},
     input: () => {},
+    scroll: () => {},
     resize: () => {}
 });
 
@@ -79,6 +81,11 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
         } else level.input(type, down);
     };
 
+    const scroll = (delta: number) => {
+        if (level === null) return;
+        level.scroll(delta);
+    };
+
     const update = (l: Level, setLevelCompleted: (n: number) => void) => {
         const fastForward = fastForwardButton.holding || qwick.input.isKeyDown("Space");
         for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1) && !levelSuccess && !levelFail; ++i) {
@@ -124,6 +131,7 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
 
     return {
         input,
+        scroll,
         update: (storage: Storage) => {
             if (level !== null) update(level, storage.setLevelCompleted);
         },

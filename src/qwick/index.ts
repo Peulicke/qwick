@@ -152,6 +152,11 @@ export const createQwick = <LevelData>(
         levelRunner.startLevel(levelPressed);
     };
 
+    input.listeners.scroll = (delta: number) => {
+        if (levelRunner.isRunning()) levelRunner.scroll(delta);
+        if (levelEditorRunner.isRunning()) levelEditorRunner.scroll(delta);
+    };
+
     const t = setInterval(() => {
         if (levelRunner.isRunning()) levelRunner.update(storage);
         else if (levelEditorRunner.isRunning()) levelEditorRunner.update(storage);

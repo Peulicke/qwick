@@ -133,6 +133,10 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         }
     };
 
+    const scroll = (delta: number) => {
+        if (level !== null) level.scroll(delta);
+    };
+
     const drawPlaying = (l: Level) => {
         if (game.show.fastForward) fastForwardButton.draw(graphics);
         stopButton.draw(graphics);
@@ -186,6 +190,9 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         start,
         input: (type: InputType, down: boolean) => {
             if (levelEditor !== null) input(type, down, levelEditor);
+        },
+        scroll: (delta: number) => {
+            if (levelEditor !== null) scroll(delta);
         },
         update: (_: Storage) => {
             if (levelEditor !== null) update(levelEditor);

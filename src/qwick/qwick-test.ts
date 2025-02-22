@@ -10,6 +10,7 @@ const charWidth = 0.3;
 
 export type QwickTest = {
     input?: (type: InputType, down: boolean) => void;
+    scroll?: (delta: number) => void;
     update?: () => void;
     draw?: (graphics: Graphics) => void;
     draw3d?: (graphics3d: Graphics3d) => void;
@@ -68,6 +69,7 @@ export const runTest = (createQwickTest: CreateQwickTest) => {
 
     input.listeners.resize = () => canvas.resize();
     input.listeners.input = qwickTest.input;
+    input.listeners.scroll = qwickTest.scroll;
 
     const t = setInterval(() => {
         if (qwickTest.update) qwickTest.update();

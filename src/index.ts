@@ -396,6 +396,9 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
                 levelState.selectedUnit.index = -1;
             }
         },
+        scroll: (delta: number) => {
+            camera.state.zoom *= Math.pow(0.999, delta);
+        },
         update: () => {
             if (levelState.started) updateSimulation();
             else updatePreparation();
