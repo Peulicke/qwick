@@ -9,6 +9,7 @@
         "deploy": "npm run build && npm publish"
     },
     "dependencies": {
+        "@peulicke/geometry": "^1.0.3",
         "random-seed": "^0.3.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
