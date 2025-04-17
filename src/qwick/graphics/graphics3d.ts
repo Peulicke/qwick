@@ -1,5 +1,5 @@
+import { vec3 } from "@peulicke/geometry";
 import * as THREE from "three";
-import { vec3 } from "..";
 
 export const createGraphics3d = (backgroundColor: string) => {
     const renderer = new THREE.WebGLRenderer();

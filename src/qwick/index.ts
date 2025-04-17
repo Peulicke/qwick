@@ -1,3 +1,4 @@
+import { vec2 } from "@peulicke/geometry";
 import { Button, createButton } from "./button";
 import { createCanvas } from "./canvas";
 import { PartialGame, fromPartialGame } from "./game";
@@ -10,15 +11,11 @@ import { createMenu } from "./menu";
 import { Position, getPos } from "./position";
 import { TestSuite, createTestSuite } from "./qwick-test";
 import { createStorage } from "./storage";
-import * as vec2 from "./vec2";
 
 export { default as random } from "./random";
 export type { Graphics } from "./graphics";
 export type { InputType } from "./input";
-export * as vec2 from "./vec2";
-export * as vec3 from "./vec3";
 export * as matrix from "./matrix";
-export * as grid from "./grid";
 export * as transform2 from "./transform2";
 export * as button from "./button";
 export * as graphics from "./graphics";

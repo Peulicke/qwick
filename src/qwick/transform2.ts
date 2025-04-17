@@ -1,4 +1,4 @@
-import * as vec2 from "./vec2";
+import { vec2 } from "@peulicke/geometry";
 
 export enum TransformType {
     Translate,

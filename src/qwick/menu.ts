@@ -1,7 +1,8 @@
-import { Graphics, Qwick, vec2 } from ".";
+import { Graphics, Qwick } from ".";
 import { InputType } from "./input";
 import { Game } from "./game";
 import { Storage } from "./storage";
+import { vec2 } from "@peulicke/geometry";
 
 export const createMenu = <LevelDatas>(qwick: Qwick, graphics: Graphics, game: Game<LevelDatas>) => {
     const hasLevelEditor = game.loadLevelEditor !== undefined;

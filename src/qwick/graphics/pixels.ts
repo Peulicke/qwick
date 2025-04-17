@@ -1,4 +1,4 @@
-import * as vec3 from "../vec3";
+import { vec3 } from "@peulicke/geometry";
 
 export type Pixel = {
     color: vec3.Vec3;

@@ -1,5 +1,5 @@
+import { vec2 } from "@peulicke/geometry";
 import { lerp } from "./utils";
-import * as vec2 from "./vec2";
 
 const lerp2 = (v00: number, v10: number, v01: number, v11: number, w: vec2.Vec2) =>
     lerp(lerp(v00, v10, w[0]), lerp(v01, v11, w[0]), w[1]);

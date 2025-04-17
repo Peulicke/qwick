@@ -1,4 +1,4 @@
-import * as vec2 from "../vec2";
+import { vec2 } from "@peulicke/geometry";
 import * as transform from "./transform";
 
 const stroke = (ctx: CanvasRenderingContext2D, fill: boolean): void => {

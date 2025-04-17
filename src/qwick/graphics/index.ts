@@ -1,10 +1,10 @@
-import * as vec2 from "../vec2";
 import { Transform2 } from "../transform2";
 import * as utils from "./utils";
 import * as transform from "./transform";
 import * as draw from "./draw";
 import { createGraphics3d } from "./graphics3d";
 import { Canvas } from "../canvas";
+import { vec2 } from "@peulicke/geometry";
 
 export * as utils from "./utils";
 export * as transform from "./transform";

@@ -1,4 +1,5 @@
-import { Graphics, Qwick, vec2 } from ".";
+import { vec2 } from "@peulicke/geometry";
+import { Graphics, Qwick } from ".";
 import { EventType, emit } from "./event";
 import { Game } from "./game";
 import { InputType } from "./input";

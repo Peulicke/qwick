@@ -3,7 +3,7 @@ import { createCanvas } from "./canvas";
 import { Graphics, Graphics3d, createGraphics } from "./graphics";
 import { Input, InputType, createInput } from "./input";
 import { createButton } from "./button";
-import { vec2 } from ".";
+import { vec2 } from "@peulicke/geometry";
 
 const buttonHeight = 0.03;
 const charWidth = 0.3;

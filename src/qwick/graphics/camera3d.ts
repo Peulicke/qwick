@@ -1,6 +1,5 @@
-import * as vec2 from "../vec2";
+import { vec2, vec3 } from "@peulicke/geometry";
 import { Graphics3d } from ".";
-import { vec3 } from "..";
 
 export type Camera3dState = {
     pos: vec3.Vec3;
