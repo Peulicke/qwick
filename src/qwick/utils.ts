@@ -8,12 +8,12 @@ export const forEachPair = <T>(list: T[], func: (a: T, b: T) => void): void => {
     }
 };
 
-export const spliceWhere = <T>(list: T[], condition: (t: T) => boolean): T[] => {
-    const spliced: T[] = [];
+export const deleteWhere = <T>(list: T[], condition: (t: T) => boolean): T[] => {
+    const deleted: T[] = [];
     for (let i = list.length - 1; i >= 0; --i) {
-        if (condition(list[i])) spliced.push(...list.splice(i, 1));
+        if (condition(list[i])) deleted.push(...list.splice(i, 1));
     }
-    return spliced;
+    return deleted;
 };
 
 export const sum = (array: number[]): number => array.reduce((s, v) => s + v, 0);

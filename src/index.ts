@@ -320,12 +320,12 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
             if (!enemy) return;
             if (unit.chargeTime >= unitTypeToSpecs[unit.type].rechargeTime) unitAttack(unit, enemy);
         });
-        utils.spliceWhere(levelState.units, unit => unit.hpLost >= unitTypeToSpecs[unit.type].hp);
+        utils.deleteWhere(levelState.units, unit => unit.hpLost >= unitTypeToSpecs[unit.type].hp);
     };
 
     const updateAttacks = () => {
         const attackSpeed = 0.1;
-        const hits = utils.spliceWhere(
+        const hits = utils.deleteWhere(
             levelState.attacks,
             attack => vec2.dist(attack.pos, attack.target.pos) < attackSpeed
         );
