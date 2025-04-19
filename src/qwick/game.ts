@@ -1,6 +1,6 @@
-import { Level, defaultLevel } from "./level";
-import { LevelEditor } from "./level-editor";
-import { ShowOptions, defaultShowOptions } from "./show-options";
+import { type Level, defaultLevel } from "./level";
+import { type LevelEditor } from "./level-editor";
+import { type ShowOptions, defaultShowOptions } from "./show-options";
 
 export type Game<LevelData> = {
     name: string;

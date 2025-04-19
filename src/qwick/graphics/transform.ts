@@ -1,5 +1,5 @@
 import { vec2 } from "@peulicke/geometry";
-import { Transform2, TransformType } from "../transform2";
+import { TransformType, type Transform2 } from "../transform2";
 
 export const push = (ctx: CanvasRenderingContext2D): void => {
     ctx.save();

@@ -1,7 +1,7 @@
 import { vec2 } from "@peulicke/geometry";
-import { Graphics } from "./graphics";
-import { Color } from "./graphics/utils";
-import { InputType } from "./input";
+import type { Graphics } from "./graphics";
+import type { Color } from "./graphics/utils";
+import type { InputType } from "./input";
 
 export type Button = {
     holding: boolean;

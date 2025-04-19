@@ -11,7 +11,8 @@ export const loadFile = async (): Promise<string> => {
             const reader = new FileReader();
 
             reader.onload = () => {
-                typeof reader.result === "string" ? resolve(reader.result) : reject();
+                if (typeof reader.result === "string") resolve(reader.result);
+                else reject();
             };
 
             reader.onerror = () => reject(reader.error);

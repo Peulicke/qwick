@@ -1,5 +1,5 @@
 import { vec2 } from "@peulicke/geometry";
-import { Graphics } from ".";
+import type { Graphics } from ".";
 
 export type CameraState = {
     pos: vec2.Vec2;

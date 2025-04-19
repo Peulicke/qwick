@@ -1,8 +1,9 @@
 import { test } from "./test";
-import { createQwick, Qwick, InputType, Graphics, matrix, utils, graphics } from "./qwick";
-import { LevelEditor } from "./qwick/level-editor";
-import { Camera, createCamera } from "./qwick/graphics/camera";
+import type { Qwick, InputType, Graphics } from "./qwick";
+import { createQwick, graphics, matrix, utils } from "./qwick";
+import { type Camera, createCamera } from "./qwick/graphics/camera";
 import { grid, vec2, vec3 } from "@peulicke/geometry";
+import type { LevelEditor } from "./qwick/level-editor";
 
 const smellResolution = 2;
 const border = 0.25;

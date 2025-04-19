@@ -1,11 +1,11 @@
 import { vec2 } from "@peulicke/geometry";
-import { Graphics, Qwick } from ".";
-import { Button } from "./button";
-import { Game } from "./game";
-import { InputType } from "./input";
+import type { Graphics, Qwick } from ".";
+import type { Button } from "./button";
+import type { Game } from "./game";
+import type { InputType } from "./input";
 import { loadFile, saveFile } from "./io";
-import { Level } from "./level";
-import { Storage } from "./storage";
+import type { Level } from "./level";
+import type { Storage } from "./storage";
 
 const menuItemSize = 0.1;
 

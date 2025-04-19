@@ -1,18 +1,18 @@
 import { vec2 } from "@peulicke/geometry";
-import { Button, createButton } from "./button";
+import { type Button, createButton } from "./button";
 import { createCanvas } from "./canvas";
-import { PartialGame, fromPartialGame } from "./game";
+import { type PartialGame, fromPartialGame } from "./game";
 import { createGraphics } from "./graphics";
 import "./index.css";
-import { createInput, InputType } from "./input";
+import { createInput, type InputType } from "./input";
 import { createLevelRunner } from "./level";
 import { createLevelEditorRunner } from "./level-editor";
 import { createMenu } from "./menu";
-import { Position, getPos } from "./position";
-import { TestSuite, createTestSuite } from "./qwick-test";
+import { type Position, getPos } from "./position";
+import { type TestSuite, createTestSuite } from "./qwick-test";
 import { createStorage } from "./storage";
 
-export { default as random } from "./random";
+export { rand as random } from "./random";
 export type { Graphics } from "./graphics";
 export type { InputType } from "./input";
 export * as matrix from "./matrix";

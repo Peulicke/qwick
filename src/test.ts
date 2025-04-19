@@ -1,5 +1,5 @@
-import { Graphics, Graphics3d } from "./qwick/graphics";
-import { CreateQwickTest, TestSuite } from "./qwick/qwick-test";
+import type { Graphics, Graphics3d } from "./qwick/graphics";
+import type { CreateQwickTest, TestSuite } from "./qwick/qwick-test";
 
 const testA: CreateQwickTest = ({ input }) => {
     let pos = input.getMousePos();

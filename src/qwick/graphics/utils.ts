@@ -1,4 +1,4 @@
-import { Vec3 } from "@peulicke/geometry/vec3";
+import type { Vec3 } from "@peulicke/geometry/vec3";
 
 export const begin = (ctx: CanvasRenderingContext2D): void => {
     ctx.save();

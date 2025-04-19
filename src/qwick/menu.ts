@@ -1,7 +1,7 @@
-import { Graphics, Qwick } from ".";
-import { InputType } from "./input";
-import { Game } from "./game";
-import { Storage } from "./storage";
+import type { Graphics, Qwick } from ".";
+import type { InputType } from "./input";
+import type { Game } from "./game";
+import type { Storage } from "./storage";
 import { vec2 } from "@peulicke/geometry";
 
 export const createMenu = <LevelDatas>(qwick: Qwick, graphics: Graphics, game: Game<LevelDatas>) => {

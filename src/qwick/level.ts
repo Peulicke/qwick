@@ -1,9 +1,9 @@
 import { vec2 } from "@peulicke/geometry";
-import { Graphics, Qwick } from ".";
+import type { Graphics, Qwick } from ".";
 import { EventType, emit } from "./event";
-import { Game } from "./game";
-import { InputType } from "./input";
-import { Storage } from "./storage";
+import type { Game } from "./game";
+import type { InputType } from "./input";
+import type { Storage } from "./storage";
 
 export type Level = {
     update: () => void;
