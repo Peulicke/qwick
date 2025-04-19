@@ -1,4 +1,4 @@
-import { lerp } from "@peulicke/algorithms";
+import { lerp } from "@peulicke/algorithms/basic";
 import { vec2 } from "@peulicke/geometry";
 
 const lerp2 = (v00: number, v10: number, v01: number, v11: number, w: vec2.Vec2) =>

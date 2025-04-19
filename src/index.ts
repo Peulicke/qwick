@@ -1,4 +1,4 @@
-import * as algorithms from "@peulicke/algorithms";
+import { basic } from "@peulicke/algorithms";
 import { test } from "./test";
 import type { Qwick, InputType, Graphics } from "./qwick";
 import { createQwick, graphics, matrix } from "./qwick";
@@ -286,10 +286,10 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         for (let team = 0; team < levelState.smell.length; ++team) {
             levelState.smell[team] = grid.map(levelState.smell[team], (value, pos) => {
                 if (getAreaType(vec2.floor(vec2.scale(pos, 1 / smellResolution))) === "wall") return 0;
-                const neighborMean = algorithms.mean(
+                const neighborMean = basic.mean(
                     vec2.gridEdges(pos).map(({ p }) => matrix.getValue(levelState.smell[team], p))
                 );
-                return algorithms.mean([value, neighborMean]) * 0.999;
+                return basic.mean([value, neighborMean]) * 0.999;
             });
         }
     };
@@ -322,12 +322,12 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
             if (!enemy) return;
             if (unit.chargeTime >= unitTypeToSpecs[unit.type].rechargeTime) unitAttack(unit, enemy);
         });
-        algorithms.deleteWhere(levelState.units, unit => unit.hpLost >= unitTypeToSpecs[unit.type].hp);
+        basic.deleteWhere(levelState.units, unit => unit.hpLost >= unitTypeToSpecs[unit.type].hp);
     };
 
     const updateAttacks = () => {
         const attackSpeed = 0.1;
-        const hits = algorithms.deleteWhere(
+        const hits = basic.deleteWhere(
             levelState.attacks,
             attack => vec2.dist(attack.pos, attack.target.pos) < attackSpeed
         );
@@ -356,7 +356,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     };
 
     const unitCollisions = () => {
-        algorithms.forEachPair(levelState.units, (a, b) => {
+        basic.forEachPair(levelState.units, (a, b) => {
             const c = vec2.lerp(a.pos, b.pos, 0.5);
             a.pos = vec2.resolveCollision(a.pos, c, unitRadius);
             b.pos = vec2.resolveCollision(b.pos, c, unitRadius);
