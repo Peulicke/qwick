@@ -1,5 +1,3 @@
-import { randInt } from "./random";
-
 export const forEachPair = <T>(list: T[], func: (a: T, b: T) => void): void => {
     for (let i = 0; i < list.length; ++i) {
         for (let j = i + 1; j < list.length; ++j) {
@@ -39,7 +37,7 @@ export const swap = <T>(objects: T[], i: number, j: number) => {
     [objects[i], objects[j]] = [oj, oi];
 };
 
-export const shuffle = <T>(objects: T[]) => {
+export const shuffle = <T>(objects: T[], randInt: (min: number, max: number) => number) => {
     for (let i = 0; i + 1 < objects.length; ++i) {
         swap(objects, i, randInt(i + 1, objects.length - 1));
     }

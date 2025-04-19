@@ -12,7 +12,6 @@ import { type Position, getPos } from "./position";
 import { type TestSuite, createTestSuite } from "./qwick-test";
 import { createStorage } from "./storage";
 
-export { rand as random } from "./random";
 export type { Graphics } from "./graphics";
 export type { InputType } from "./input";
 export * as matrix from "./matrix";
