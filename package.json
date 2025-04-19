@@ -57,5 +57,8 @@
         "./*": "./dist/*.js",
         "./graphics/*": "./dist/graphics/*.js",
         "./button/*": "./dist/button/*.js"
-    }
+    },
+    "files": [
+        "dist/"
+    ]
 }
