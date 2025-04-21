@@ -5,6 +5,7 @@ import { createQwick, graphics, matrix } from "./qwick";
 import { type Camera, createCamera } from "./qwick/graphics/camera";
 import { grid, vec2, vec3 } from "@peulicke/geometry";
 import type { LevelEditor } from "./qwick/level-editor";
+import { loadImage } from "@peulicke/image/pixels";
 
 const smellResolution = 2;
 const border = 0.25;
@@ -376,8 +377,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         unitCollisions();
     };
 
-    const img = new Image();
-    img.src = "example.png";
+    const img = loadImage("example.png");
 
     return {
         input: (type: InputType, down: boolean) => {

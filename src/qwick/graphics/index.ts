@@ -9,7 +9,6 @@ import type { Transform2 } from "../transform2";
 export * as utils from "./utils";
 export * as transform from "./transform";
 export * as draw from "./draw";
-export * as pixels from "./pixels";
 export type { Graphics3d } from "./graphics3d";
 
 export const createGraphics = (canvas: Canvas, backgroundColor: string) => {
