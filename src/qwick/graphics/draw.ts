@@ -108,7 +108,7 @@ export const circle = (
     ctx.beginPath();
     transform.push(ctx);
     transform.translate(ctx, [v[0], v[1]]);
-    transform.scale(ctx, r);
+    transform.scale(ctx, [r, r]);
     ctx.moveTo(1, 0);
     ctx.arc(0, 0, 1, angleFrom, angleTo);
     transform.pop(ctx);
@@ -128,7 +128,7 @@ export const text = (ctx: CanvasRenderingContext2D, t: string, size: number, tex
     transform.push(ctx);
     ctx.font = "100px Courier";
     ctx.textAlign = textAlign;
-    transform.scale(ctx, 0.01 * size);
+    transform.scale(ctx, [0.01 * size, 0.01 * size]);
     transform.translate(ctx, [0, 25]);
     const lines = t.split("\n");
     transform.translate(ctx, [0, -0.5 * 100 * (lines.length - 1)]);
@@ -144,7 +144,7 @@ export type IconType = "o" | "+" | "square" | "arrow" | "sword";
 export const icon = (ctx: CanvasRenderingContext2D, v: vec2.Vec2, r: number, type: IconType, filled: boolean): void => {
     transform.context(ctx, () => {
         transform.translate(ctx, v);
-        transform.scale(ctx, r);
+        transform.scale(ctx, [r, r]);
         if (type === "o") return circle(ctx, [0, 0], 1, filled, 0, 2 * Math.PI);
         if (type === "+")
             return lineStrips(ctx, [
