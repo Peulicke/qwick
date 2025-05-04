@@ -45,3 +45,10 @@ export const normalize = (ctx: CanvasRenderingContext2D) => {
     scale(ctx, [ctx.canvas.height, ctx.canvas.height]);
     translate(ctx, [0.5 * (ctx.canvas.width / ctx.canvas.height), 0.5]);
 };
+
+export const invertedVerticalContext = (ctx: CanvasRenderingContext2D, func: () => void) => {
+    context(ctx, () => {
+        scale(ctx, [1, -1]);
+        func();
+    });
+};

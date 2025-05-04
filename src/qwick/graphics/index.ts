@@ -16,6 +16,13 @@ export const createGraphics = (canvas: Canvas, backgroundColor: string) => {
     const ctx = canvas.canvas.getContext("2d", { alpha: true });
     if (!ctx) throw new Error("Can't get canvas 2d context");
 
+    let invertVertical = false;
+
+    const doNotInvertVertical = (func: () => void): (() => void) => {
+        if (!invertVertical) return func;
+        return () => transform.invertedVerticalContext(ctx, func);
+    };
+
     return {
         getAspectRatio: (): number => ctx.canvas.width / ctx.canvas.height,
         begin: (): void => {
@@ -30,6 +37,11 @@ export const createGraphics = (canvas: Canvas, backgroundColor: string) => {
         push: (): void => transform.push(ctx),
         pop: (): void => transform.pop(ctx),
         context: (func: () => void): void => transform.context(ctx, func),
+        contextVerticalInversion: (func: () => void): void => {
+            invertVertical = true;
+            transform.invertedVerticalContext(ctx, func);
+            invertVertical = false;
+        },
         normalize: (): void => transform.normalize(ctx),
         translate: (v: vec2.Vec2): void => transform.translate(ctx, v),
         rotate: (v: number): void => transform.rotate(ctx, v),
@@ -43,16 +55,16 @@ export const createGraphics = (canvas: Canvas, backgroundColor: string) => {
         lineStrips: (a: vec2.Vec2[][]): void => draw.lineStrips(ctx, a),
         circle: (v: vec2.Vec2, r: number, fill = false, angleFrom = 0, angleTo = 2 * Math.PI): void =>
             draw.circle(ctx, v, r, fill, angleFrom, angleTo),
-        s: (v: vec2.Vec2, r: number): void => draw.s(ctx, v, r),
+        s: (v: vec2.Vec2, r: number): void => doNotInvertVertical(() => draw.s(ctx, v, r))(),
         text: (text: string, size: number, textAlign: CanvasTextAlign = "center"): void =>
-            draw.text(ctx, text, size, textAlign),
+            doNotInvertVertical(() => draw.text(ctx, text, size, textAlign))(),
         arrow: (a: vec2.Vec2, r: vec2.Vec2): void => draw.arrow(ctx, a, r),
         fork: (a: vec2.Vec2, r: vec2.Vec2): void => draw.fork(ctx, a, r),
         square: (fill: boolean): void => draw.square(ctx, fill),
         rect: (a: vec2.Vec2, b: vec2.Vec2, fill: boolean): void => draw.rect(ctx, a, b, fill),
         icon: (v: vec2.Vec2, r: number, type: draw.IconType, filled = false): void =>
-            draw.icon(ctx, v, r, type, filled),
-        image: (img: HTMLImageElement): void => draw.image(ctx, img),
+            doNotInvertVertical(() => draw.icon(ctx, v, r, type, filled))(),
+        image: (img: HTMLImageElement): void => doNotInvertVertical(() => draw.image(ctx, img))(),
         get3d: () => graphics3d
     };
 };
