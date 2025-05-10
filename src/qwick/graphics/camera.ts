@@ -31,7 +31,10 @@ export const createCamera = (partialState: Partial<CameraState>): Camera => {
     };
     const context: Context = (graphics, func) => {
         const c = state.verticalInversion ? graphics.contextVerticalInversion : graphics.context;
-        c(func);
+        c(() => {
+            graphicsTransform(graphics);
+            func();
+        });
     };
     return {
         state,
