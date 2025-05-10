@@ -178,8 +178,7 @@ const drawUnit = (g: Graphics, unit: Unit) => {
 };
 
 const drawWorld = (g: Graphics, levelState: LevelState, camera: Camera) => {
-    g.context(() => {
-        camera.graphicsTransform(g);
+    camera.context(g, () => {
         grid.map(levelState.areas, (type, pos) => {
             g.context(() => {
                 g.translate(pos);
@@ -409,12 +408,9 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         hasWon: () => levelState.units.every(u => u.team === 0),
         hasLost: () => levelState.units.every(u => u.team !== 0),
         draw: (g: Graphics) => {
-            g.context(() => {
-                camera.graphicsTransform(g);
-                g.context(() => {
-                    g.translate([-1, -1]);
-                    g.image(img);
-                });
+            camera.context(g, () => {
+                g.translate([-1, -1]);
+                g.image(img);
             });
             drawWorld(g, levelState, camera);
             if (!levelState.started) startButton.draw(g);
