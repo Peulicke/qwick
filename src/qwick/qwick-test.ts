@@ -16,7 +16,7 @@ export type QwickTest = {
     draw3d?: (graphics3d: Graphics3d) => void;
 };
 
-export type CreateQwickTest = ({ input }: { input: Input }) => QwickTest;
+export type CreateQwickTest = ({ input, getAspectRatio }: { input: Input; getAspectRatio: () => number }) => QwickTest;
 
 export const runTestMenu = (testNames: string[]) => {
     const canvas = createCanvas();
@@ -65,7 +65,7 @@ export const runTest = (createQwickTest: CreateQwickTest) => {
     const input = createInput();
     const graphics = createGraphics(canvas, "gray");
 
-    const qwickTest = createQwickTest({ input });
+    const qwickTest = createQwickTest({ input, getAspectRatio: graphics.getAspectRatio });
 
     input.listeners.resize = () => canvas.resize();
     input.listeners.input = qwickTest.input;
