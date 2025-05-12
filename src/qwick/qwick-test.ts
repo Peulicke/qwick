@@ -1,9 +1,11 @@
 import "./index.css";
 import { createCanvas } from "./canvas";
 import { type Graphics, type Graphics3d, createGraphics } from "./graphics";
-import { type Input, type InputType, createInput } from "./input";
+import { type InputType, createInput } from "./input";
 import { createButton } from "./button";
 import { vec2 } from "@peulicke/geometry";
+import type { QwickInput } from ".";
+import { createQwickInput } from "./qwick-input";
 
 const buttonHeight = 0.03;
 const charWidth = 0.3;
@@ -16,7 +18,13 @@ export type QwickTest = {
     draw3d?: (graphics3d: Graphics3d) => void;
 };
 
-export type CreateQwickTest = ({ input, getAspectRatio }: { input: Input; getAspectRatio: () => number }) => QwickTest;
+export type CreateQwickTest = ({
+    input,
+    getAspectRatio
+}: {
+    input: QwickInput;
+    getAspectRatio: () => number;
+}) => QwickTest;
 
 export const runTestMenu = (testNames: string[]) => {
     const canvas = createCanvas();
@@ -65,7 +73,7 @@ export const runTest = (createQwickTest: CreateQwickTest) => {
     const input = createInput();
     const graphics = createGraphics(canvas, "gray");
 
-    const qwickTest = createQwickTest({ input, getAspectRatio: graphics.getAspectRatio });
+    const qwickTest = createQwickTest({ input: createQwickInput(input), getAspectRatio: graphics.getAspectRatio });
 
     input.listeners.resize = () => canvas.resize();
     input.listeners.input = qwickTest.input;

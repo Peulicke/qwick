@@ -11,6 +11,7 @@ import { createMenu } from "./menu";
 import { type Position, getPos } from "./position";
 import { type TestSuite, createTestSuite } from "./qwick-test";
 import { createStorage } from "./storage";
+import { createQwickInput } from "./qwick-input";
 
 export type { Graphics } from "./graphics";
 export type { InputType } from "./input";
@@ -69,14 +70,7 @@ export const createQwick = <LevelData>(
     const storage = createStorage();
     const input = createInput();
 
-    const qwickInput: QwickInput = {
-        getMousePos: input.getMousePos,
-        getMousePosPixels: () => input.mousePos,
-        isKeyDown: (key: string) => input.keysDown.has(key),
-        wasKeyPressed: (key: string) => input.keysPressed.has(key),
-        wasKeyReleased: (key: string) => input.keysReleased.has(key),
-        getArrowInput: input.getArrowInput
-    };
+    const qwickInput = createQwickInput(input);
 
     const getAspectRatio = () => canvas.canvas.width / canvas.canvas.height;
     const getNormalizedSize = (): vec2.Vec2 => [getAspectRatio(), 1];
