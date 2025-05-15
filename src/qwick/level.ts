@@ -108,7 +108,7 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
         graphics.normalize();
         graphics.context(() => {
             graphics.color("black");
-            graphics.translate(vec2.add(qwick.canvas.getPos("top-right"), [-0.1, 0.05]));
+            graphics.translate(vec2.add(qwick.canvas.getPos("top-right"), [-0.15, 0.05]));
             if (game.show.level) graphics.text(`Level ${levelNum + 1}`, 0.05);
         });
         if (game.show.menu) menuButton.draw(graphics);
