@@ -1,6 +1,14 @@
 import { vec3 } from "@peulicke/geometry";
 import * as THREE from "three";
 
+const createBufferGeometry = (points: vec3.Vec3[], faces: [number, number, number][]) => {
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(points.flat(), 3));
+    geometry.setIndex(faces.flat());
+    geometry.computeVertexNormals();
+    return geometry;
+};
+
 export const createGraphics3d = (backgroundColor: string) => {
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -42,6 +50,8 @@ export const createGraphics3d = (backgroundColor: string) => {
         transformations[transformations.length - 1].add(group);
         transformations[transformations.length - 1] = group;
     };
+
+    const geometries: Record<string, THREE.BufferGeometry> = {};
 
     return {
         begin: () => {
@@ -97,6 +107,15 @@ export const createGraphics3d = (backgroundColor: string) => {
             const material = materials[color] ?? new THREE.MeshPhongMaterial({ color });
             materials[color] = material;
             const mesh = new THREE.Mesh(planeGeometry, material);
+            mesh.receiveShadow = true;
+            mesh.castShadow = true;
+            transformations[transformations.length - 1].add(mesh);
+        },
+        drawGeometry: (name: string, points: vec3.Vec3[], faces: [number, number, number][]) => {
+            if (geometries[name] === undefined) geometries[name] = createBufferGeometry(points, faces);
+            const material = materials[color] ?? new THREE.MeshPhongMaterial({ color });
+            materials[color] = material;
+            const mesh = new THREE.Mesh(geometries[name], material);
             mesh.receiveShadow = true;
             mesh.castShadow = true;
             transformations[transformations.length - 1].add(mesh);

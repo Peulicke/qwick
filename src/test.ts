@@ -1,3 +1,4 @@
+import type { vec3 } from "@peulicke/geometry";
 import type { Graphics, Graphics3d } from "./qwick/graphics";
 import type { CreateQwickTest, TestSuite } from "./qwick/qwick-test";
 
@@ -50,6 +51,19 @@ export const test3d: CreateQwickTest = ({ input }) => {
         });
     };
 
+    const points: vec3.Vec3[] = [
+        [0, 0, 0],
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1]
+    ];
+    const faces: vec3.Vec3[] = [
+        [1, 0, 2],
+        [2, 0, 3],
+        [3, 0, 1],
+        [1, 2, 3]
+    ];
+
     const draw3d = (g: Graphics3d) => {
         g.context(() => {
             g.scale([0.1, 0.1, 0.1]);
@@ -70,6 +84,12 @@ export const test3d: CreateQwickTest = ({ input }) => {
                 g.translate([1, 1, -1]);
                 g.rotate([1, 1, 1], -Math.PI / 4);
                 g.box();
+            });
+            g.context(() => {
+                g.color("green");
+                g.translate([-1, 1, -1]);
+                g.rotate([0, 1, 0], Date.now() / 1000);
+                g.drawGeometry("customShape", points, faces);
             });
         });
     };
