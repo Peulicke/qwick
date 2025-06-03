@@ -102,6 +102,11 @@ export const runTest = (createQwickTest: CreateQwickTest) => {
 
 const isSamePath = (a: string[], b: string[]) => a.join("/") === b.join("/");
 
+const isSubPath = (a: string[], b: string[]) => {
+    if (a.length < b.length) return false;
+    return isSamePath(a.slice(0, b.length), b);
+};
+
 export const createTestSuite = (locationPath: string[]) => {
     const path: string[] = [];
     const names: string[] = [];
@@ -113,10 +118,12 @@ export const createTestSuite = (locationPath: string[]) => {
     const context = (name: string, func: () => void) => {
         path.push(name);
         pushToNames(name);
-        func();
-        if (isSamePath(locationPath, path)) {
-            runTestMenu([...names]);
-            names.length = 0;
+        if (isSubPath(locationPath, path)) {
+            func();
+            if (isSamePath(locationPath, path)) {
+                runTestMenu([...names]);
+                names.length = 0;
+            }
         }
         path.pop();
     };
