@@ -1,4 +1,4 @@
-import { vec3 } from "@peulicke/geometry";
+import { orient, vec3 } from "@peulicke/geometry";
 import * as THREE from "three";
 
 const createBufferGeometry = (points: vec3.Vec3[], faces: [number, number, number][]) => {
@@ -91,6 +91,12 @@ export const createGraphics3d = (backgroundColor: string) => {
         rotate: (axis: vec3.Vec3, angle: number) => {
             extendTransformation();
             transformations[transformations.length - 1].rotateOnAxis(new THREE.Vector3(...axis).normalize(), angle);
+        },
+        orient: (o: orient.Orient) => {
+            extendTransformation();
+            transformations[transformations.length - 1].applyQuaternion(
+                new THREE.Quaternion(o.v[0], o.v[1], o.v[2], o.w)
+            );
         },
         color: (c: string) => {
             color = c;
