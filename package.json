@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "start": "vite",
-        "build": "rm -r dist && tsc -p tsconfig.build.json && cp ./src/qwick/index.css ./dist",
+        "build": "rm -r dist; tsc -p tsconfig.build.json && cp ./src/qwick/index.css ./dist",
         "typecheck": "tsc --noEmit",
         "lint": "eslint src",
         "deploy": "npm run build && npm publish",
