@@ -20,6 +20,9 @@
             "dom.iterable",
             "esnext"
         ],
+        "types": [
+            "vitest"
+        ]
     },
     "type": "module"
 }
