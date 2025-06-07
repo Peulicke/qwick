@@ -1,6 +1,7 @@
-import type { vec3 } from "@peulicke/geometry";
+import { orient, type vec3 } from "@peulicke/geometry";
 import type { Graphics, Graphics3d } from "./qwick/graphics";
 import type { CreateQwickTest, TestSuite } from "./qwick/qwick-test";
+import { createCamera3d } from "./qwick/graphics/camera3d";
 
 const testA: CreateQwickTest = ({ input }) => {
     let pos = input.getMousePos();
@@ -64,9 +65,11 @@ export const test3d: CreateQwickTest = ({ input }) => {
         [1, 2, 3]
     ];
 
+    const cam = createCamera3d({ zoom: 0.1, orient: orient.fromAxisAngle([1, 0, 0], Math.PI / 4) });
+
     const draw3d = (g: Graphics3d) => {
         g.context(() => {
-            g.scale([0.1, 0.1, 0.1]);
+            cam.graphicsTransform(g);
             g.context(() => {
                 g.color("gray");
                 g.rotate([1, 0, 0], -Math.PI / 2);
