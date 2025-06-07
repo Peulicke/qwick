@@ -68,8 +68,7 @@ export const test3d: CreateQwickTest = ({ input }) => {
     const cam = createCamera3d({ zoom: 0.1, orient: orient.fromAxisAngle([1, 0, 0], Math.PI / 4) });
 
     const draw3d = (g: Graphics3d) => {
-        g.context(() => {
-            cam.graphicsTransform(g);
+        cam.context(g, () => {
             g.context(() => {
                 g.color("gray");
                 g.rotate([1, 0, 0], -Math.PI / 2);

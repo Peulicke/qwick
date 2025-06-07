@@ -7,10 +7,13 @@ export type Camera3dState = {
     orient: orient.Orient;
 };
 
+export type Context = (graphics: Graphics3d, func: () => void) => void;
+
 export type Camera3d = {
     state: Camera3dState;
     worldToScreenCoords: (pos: vec3.Vec3) => vec2.Vec2;
     graphicsTransform: (graphics: Graphics3d) => void;
+    context: Context;
 };
 
 const proj = (v: vec3.Vec3): vec2.Vec2 => [v[0], v[1]];
@@ -33,9 +36,17 @@ export const createCamera3d = (partialState: Partial<Camera3dState>): Camera3d =
         graphics.translate(vec3.negate(state.pos));
     };
 
+    const context: Context = (graphics, func) => {
+        graphics.context(() => {
+            graphicsTransform(graphics);
+            func();
+        });
+    };
+
     return {
         state,
         worldToScreenCoords,
-        graphicsTransform
+        graphicsTransform,
+        context
     };
 };
