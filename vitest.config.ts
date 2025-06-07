@@ -2,6 +2,6 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
     test: {
-        setupFiles: ["src/vitest-extensions.ts"]
+        setupFiles: ["src/qwick/vitest-extensions.ts"]
     }
 });
