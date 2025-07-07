@@ -91,7 +91,12 @@ export const test3d: CreateQwickTest = ({ input }) => {
                 g.color("green");
                 g.translate([-1, 1, -1]);
                 g.rotate([0, 1, 0], Date.now() / 1000);
-                g.drawGeometry("customShape", points, faces);
+                g.drawGeometry("customShape", points, faces, [
+                    [1, 1, 1],
+                    [1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1]
+                ]);
             });
         });
     };
