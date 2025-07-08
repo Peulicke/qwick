@@ -2,6 +2,7 @@ import { vec2 } from "@peulicke/geometry";
 import type { Graphics, Qwick } from ".";
 import { EventType, emit } from "./event";
 import type { Game } from "./game";
+import type { Graphics3d } from "./graphics";
 import type { InputType } from "./input";
 import type { Storage } from "./storage";
 
@@ -10,6 +11,7 @@ export type Level = {
     hasWon: () => boolean;
     hasLost: () => boolean;
     draw: (graphics: Graphics) => void;
+    draw3d: (graphics: Graphics3d) => void;
     input: (type: InputType, down: boolean) => void;
     scroll: (delta: number) => void;
     resize: () => void;
@@ -20,6 +22,7 @@ export const defaultLevel = (): Level => ({
     hasWon: () => false,
     hasLost: () => false,
     draw: () => {},
+    draw3d: () => {},
     input: () => {},
     scroll: () => {},
     resize: () => {}
@@ -101,6 +104,9 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
             }
         }
         graphics.begin();
+        graphics.get3d().context(() => {
+            if (l.draw3d) l.draw3d(graphics.get3d());
+        });
         graphics.context(() => {
             graphics.normalize();
             l.draw(graphics);
