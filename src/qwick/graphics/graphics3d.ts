@@ -35,17 +35,6 @@ export const createGraphics3d = (backgroundColor: string) => {
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
     const materials: Record<string, THREE.Material> = {};
     const ambientLight = new THREE.AmbientLight("white", 1);
-    const directionalLight = new THREE.DirectionalLight("white", 2); // 2 seems to make the brightest color white
-    directionalLight.castShadow = true;
-    directionalLight.shadow.mapSize.width = window.innerWidth;
-    directionalLight.shadow.mapSize.height = window.innerHeight;
-    const size = 0.9;
-    directionalLight.shadow.camera.left = -size * 2;
-    directionalLight.shadow.camera.right = size * 2;
-    directionalLight.shadow.camera.top = -size;
-    directionalLight.shadow.camera.bottom = size;
-    directionalLight.shadow.bias = -0.0001;
-    directionalLight.position.set(-0.1, 8, 1);
 
     let color = "white";
 
@@ -70,7 +59,6 @@ export const createGraphics3d = (backgroundColor: string) => {
             camera.lookAt(new THREE.Vector3(0, 0, 0));
 
             scene.add(ambientLight);
-            scene.add(directionalLight);
 
             renderer.render(scene, camera);
         },
@@ -141,6 +129,21 @@ export const createGraphics3d = (backgroundColor: string) => {
             mesh.receiveShadow = true;
             mesh.castShadow = true;
             transformations[transformations.length - 1].add(mesh);
+        },
+        addLight: (dir: vec3.Vec3, color: vec3.Vec3 = [1, 1, 1], resolution = 1024, size = 1) => {
+            const directionalLight = new THREE.DirectionalLight(new THREE.Color(...color));
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = resolution;
+            directionalLight.shadow.mapSize.height = resolution;
+            directionalLight.shadow.camera.left = -size;
+            directionalLight.shadow.camera.right = size;
+            directionalLight.shadow.camera.top = -size;
+            directionalLight.shadow.camera.bottom = size;
+            directionalLight.shadow.camera.near = -100;
+            directionalLight.shadow.camera.far = 100;
+            directionalLight.shadow.bias = -1e-4;
+            directionalLight.position.set(...dir);
+            transformations[transformations.length - 1].add(directionalLight);
         }
     };
 };
