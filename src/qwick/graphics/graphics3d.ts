@@ -143,7 +143,10 @@ export const createGraphics3d = (backgroundColor: string) => {
             directionalLight.shadow.camera.far = 100;
             directionalLight.shadow.bias = -1e-4;
             directionalLight.position.set(...dir);
+            const targetObject = new THREE.Object3D();
+            directionalLight.target = targetObject;
             transformations[transformations.length - 1].add(directionalLight);
+            transformations[transformations.length - 1].add(targetObject);
         }
     };
 };
