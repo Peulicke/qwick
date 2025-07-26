@@ -82,8 +82,8 @@ export const test3d: CreateQwickTest = ({ input }) => {
                 g.addMesh(plane);
             });
             g.context(() => {
-                g.orient(orient.fromAxisAngle([0, 1, 0], Math.PI / 8));
                 g.translate([input.getMousePos()[0] * 10, 3, input.getMousePos()[1] * 10 * Math.SQRT2]);
+                g.orient(orient.fromAxisAngle([0, 1, 0], Date.now() / 1000));
                 g.addMesh(redBox);
             });
             g.context(() => {
@@ -93,8 +93,8 @@ export const test3d: CreateQwickTest = ({ input }) => {
             });
             [...Array(10)].forEach((_, i) => {
                 g.context(() => {
-                    g.orient(orient.fromAxisAngle([0, 1, 0], Date.now() / 1000));
                     g.translate([-1 + i, 1, -1]);
+                    g.orient(orient.fromAxisAngle([0, 1, 0], Date.now() / 1000));
                     g.addMesh(customShape);
                 });
             });

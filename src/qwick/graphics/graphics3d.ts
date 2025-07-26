@@ -214,26 +214,26 @@ export const createGraphics3d = (backgroundColor: string) => {
         },
         translate: (pos: vec3.Vec3) => {
             transformations[transformations.length - 1] = combineTransformations([
+                transformations[transformations.length - 1],
                 createTransformation({
                     pos
-                }),
-                transformations[transformations.length - 1]
+                })
             ]);
         },
         scale: (s: number) => {
             transformations[transformations.length - 1] = combineTransformations([
+                transformations[transformations.length - 1],
                 createTransformation({
                     scale: s
-                }),
-                transformations[transformations.length - 1]
+                })
             ]);
         },
         orient: (o: orient.Orient) => {
             transformations[transformations.length - 1] = combineTransformations([
+                transformations[transformations.length - 1],
                 createTransformation({
                     orient: o
-                }),
-                transformations[transformations.length - 1]
+                })
             ]);
         },
         addMesh: (mesh: MeshWithId) => {

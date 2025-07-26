@@ -63,9 +63,9 @@ export const createCamera3d = (partialState: Partial<Camera3dState>): Camera3d =
     };
 
     const graphicsTransform: Camera3d["graphicsTransform"] = graphics => {
-        graphics.translate(vec3.negate(state.pos));
-        graphics.orient(state.orient);
         graphics.scale(state.zoom);
+        graphics.orient(state.orient);
+        graphics.translate(vec3.negate(state.pos));
     };
 
     const context: Context = (graphics, func) => {

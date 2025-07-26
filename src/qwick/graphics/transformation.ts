@@ -19,7 +19,7 @@ export const createTransformation = (partialTransformation: Partial<Transformati
 
 const combineTwoTransformations = (t1: Transformation, t2: Transformation): Transformation => ({
     pos: vec3.add(t1.pos, vec3.scale(orient.rotateVec3(t1.orient, t2.pos), t1.scale)),
-    orient: orient.combine([t1.orient, t2.orient]),
+    orient: orient.combine([t2.orient, t1.orient]),
     scale: t1.scale * t2.scale
 });
 
@@ -47,4 +47,4 @@ export const getInverseTransformation = (t: Transformation): Transformation => {
 };
 
 export const applyTransformation = (pos: vec3.Vec3, transformation: Transformation): vec3.Vec3 =>
-    combineTransformations([createTransformation({ pos }), transformation]).pos;
+    combineTransformations([transformation, createTransformation({ pos })]).pos;
