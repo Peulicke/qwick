@@ -1,4 +1,5 @@
 import { orient, vec3 } from "@peulicke/geometry";
+import type { Mesh } from "@peulicke/mesh/mesh";
 import * as THREE from "three";
 import {
     applyTransformation,
@@ -7,28 +8,25 @@ import {
     type Transformation
 } from "./transformation";
 
-type Mesh = {
+export type MeshWithId = Mesh & {
     id: string;
-    points: vec3.Vec3[];
-    faces: [number, number, number][];
-    vertexColors: vec3.Vec3[];
 };
 
-export const createMesh = (points: vec3.Vec3[], faces: vec3.Vec3[], color: vec3.Vec3): Mesh => ({
+export const createMesh = (points: vec3.Vec3[], faces: vec3.Vec3[], color: vec3.Vec3): MeshWithId => ({
     id: Math.random().toString(),
     points,
     faces,
-    vertexColors: points.map(() => color)
+    colors: points.map(() => color)
 });
 
-export const transformMesh = (mesh: Mesh, transformation: Transformation): Mesh => ({
+export const transformMesh = (mesh: MeshWithId, transformation: Transformation): MeshWithId => ({
     id: Math.random().toString(),
     points: mesh.points.map(p => applyTransformation(p, transformation)),
     faces: mesh.faces,
-    vertexColors: mesh.vertexColors
+    colors: mesh.colors
 });
 
-const mergeTwoMeshes = (a: Mesh, b: Mesh): Mesh => {
+const mergeTwoMeshes = (a: MeshWithId, b: MeshWithId): MeshWithId => {
     return {
         id: Math.random().toString(),
         points: [...a.points, ...b.points],
@@ -36,13 +34,13 @@ const mergeTwoMeshes = (a: Mesh, b: Mesh): Mesh => {
             ...a.faces,
             ...b.faces.map(([i, j, k]): vec3.Vec3 => [i + a.points.length, j + a.points.length, k + a.points.length])
         ],
-        vertexColors: [...a.vertexColors, ...b.vertexColors]
+        colors: [...a.colors, ...b.colors]
     };
 };
 
-export const mergeMeshes = (meshes: Mesh[]): Mesh => meshes.reduce((s, v) => mergeTwoMeshes(s, v));
+export const mergeMeshes = (meshes: MeshWithId[]): MeshWithId => meshes.reduce((s, v) => mergeTwoMeshes(s, v));
 
-export const createPlaneMesh = (color: vec3.Vec3): Mesh => {
+export const createPlaneMesh = (color: vec3.Vec3): MeshWithId => {
     const points: vec3.Vec3[] = [
         [-1, 0, -1],
         [-1, 0, 1],
@@ -59,7 +57,7 @@ export const createPlaneMesh = (color: vec3.Vec3): Mesh => {
     );
 };
 
-export const createBoxMesh = (color: vec3.Vec3): Mesh => {
+export const createBoxMesh = (color: vec3.Vec3): MeshWithId => {
     const top = transformMesh(createPlaneMesh(color), createTransformation({ pos: [0, 1, 0] }));
     const bottom = transformMesh(top, createTransformation({ orient: orient.fromAxisAngle([1, 0, 0], Math.PI) }));
     const topBottom = mergeMeshes([top, bottom]);
@@ -132,7 +130,7 @@ export const createGraphics3d = (backgroundColor: string) => {
     const ambientLight = new THREE.AmbientLight("white", 1);
 
     const transformations: Transformation[] = [createTransformation({})];
-    const meshes: { mesh: Mesh; transformation: Transformation }[] = [];
+    const meshes: { mesh: MeshWithId; transformation: Transformation }[] = [];
     const lights: { light: Light; transformation: Transformation }[] = [];
 
     const threeMeshes: Record<string, THREE.InstancedMesh> = {};
@@ -149,7 +147,7 @@ export const createGraphics3d = (backgroundColor: string) => {
         end: () => {
             meshes.forEach(({ mesh, transformation }) => {
                 if (threeMeshes[mesh.id] === undefined) {
-                    const g = createBufferGeometry(mesh.points, mesh.faces, mesh.vertexColors);
+                    const g = createBufferGeometry(mesh.points, mesh.faces, mesh.colors);
                     const material = new THREE.MeshPhongMaterial({
                         vertexColors: true
                     });
@@ -238,7 +236,7 @@ export const createGraphics3d = (backgroundColor: string) => {
                 transformations[transformations.length - 1]
             ]);
         },
-        addMesh: (mesh: Mesh) => {
+        addMesh: (mesh: MeshWithId) => {
             meshes.push({
                 mesh,
                 transformation: combineTransformations(transformations)
