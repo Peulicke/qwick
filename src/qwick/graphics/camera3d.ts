@@ -1,5 +1,6 @@
 import { orient, vec2, vec3 } from "@peulicke/geometry";
 import type { Graphics3d } from ".";
+import { combineTransformations, createTransformation } from "./transformation";
 
 export type Camera3dState = {
     pos: vec3.Vec3;
@@ -63,11 +64,11 @@ export const createCamera3d = (partialState: Partial<Camera3dState>): Camera3d =
 
     const context: Context = (graphics, func) => {
         graphics.transformation(
-            {
-                pos: vec3.scale(state.pos, -state.zoom),
-                scale: state.zoom,
-                orient: state.orient
-            },
+            combineTransformations([
+                createTransformation({ scale: state.zoom }),
+                createTransformation({ orient: state.orient }),
+                createTransformation({ pos: vec3.negate(state.pos) })
+            ]),
             func
         );
     };
