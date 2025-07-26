@@ -1,6 +1,7 @@
 import { orient, type vec3 } from "@peulicke/geometry";
 import type { Graphics, Graphics3d } from "./qwick/graphics";
 import { createCamera3d } from "./qwick/graphics/camera3d";
+import { createBoxMesh, createLight, createMesh, createPlaneMesh } from "./qwick/graphics/graphics3d";
 import type { CreateQwickTest, TestSuite } from "./qwick/qwick-test";
 
 const testA: CreateQwickTest = ({ input }) => {
@@ -52,6 +53,12 @@ export const test3d: CreateQwickTest = ({ input }) => {
         });
     };
 
+    const cam = createCamera3d({ zoom: 0.1, orient: orient.fromAxisAngle([1, 0, 0], Math.PI / 4) });
+
+    const plane = createPlaneMesh([0.5, 0.5, 0.5]);
+    const redBox = createBoxMesh([1, 0, 0]);
+    const blueBox = createBoxMesh([0, 0, 1]);
+
     const points: vec3.Vec3[] = [
         [0, 0, 0],
         [1, 0, 0],
@@ -64,40 +71,32 @@ export const test3d: CreateQwickTest = ({ input }) => {
         [3, 0, 1],
         [1, 2, 3]
     ];
-
-    const cam = createCamera3d({ zoom: 0.1, orient: orient.fromAxisAngle([1, 0, 0], Math.PI / 4) });
+    const customShape = createMesh(points, faces, [0, 1, 0]);
+    const light = createLight({ dir: [0, 1, 0] });
 
     const draw3d = (g: Graphics3d) => {
         cam.context(g, () => {
-            g.addLight([0, 1, 0]);
+            g.addLight(light);
             g.context(() => {
-                g.color("gray");
-                g.rotate([1, 0, 0], -Math.PI / 2);
-                g.scale([100, 100, 100]);
-                g.plane();
+                g.scale(100);
+                g.addMesh(plane);
             });
             g.context(() => {
-                g.color("red");
+                g.orient(orient.fromAxisAngle([0, 1, 0], Math.PI / 8));
                 g.translate([input.getMousePos()[0] * 10, 3, input.getMousePos()[1] * 10 * Math.SQRT2]);
-                g.rotate([0, 1, 0], Math.PI / 8);
-                g.box();
+                g.addMesh(redBox);
             });
             g.context(() => {
-                g.color("blue");
                 g.translate([1, 1, -1]);
-                g.rotate([1, 1, 1], -Math.PI / 4);
-                g.box();
+                g.orient(orient.fromAxisAngle([1, 1, 1], -Math.PI / 4));
+                g.addMesh(blueBox);
             });
-            g.context(() => {
-                g.color("green");
-                g.translate([-1, 1, -1]);
-                g.rotate([0, 1, 0], Date.now() / 1000);
-                g.drawGeometry("customShape", points, faces, [
-                    [1, 1, 1],
-                    [1, 0, 0],
-                    [0, 1, 0],
-                    [0, 0, 1]
-                ]);
+            [...Array(10)].forEach((_, i) => {
+                g.context(() => {
+                    g.orient(orient.fromAxisAngle([0, 1, 0], Date.now() / 1000));
+                    g.translate([-1 + i, 1, -1]);
+                    g.addMesh(customShape);
+                });
             });
         });
     };
