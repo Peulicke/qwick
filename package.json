@@ -11,28 +11,28 @@
         "test": "vitest"
     },
     "dependencies": {
-        "@peulicke/algorithms": "^1.0.7",
-        "@peulicke/geometry": "^1.0.17",
+        "@peulicke/algorithms": "^1.0.10",
+        "@peulicke/geometry": "^1.0.20",
         "@peulicke/image": "^1.0.1",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "three": "^0.177.0",
-        "vitest": "^3.2.2"
+        "three": "^0.178.0",
+        "vitest": "^3.2.4"
     },
     "devDependencies": {
-        "@eslint/js": "^9.28.0",
-        "@types/react": "^19.1.6",
+        "@eslint/js": "^9.32.0",
+        "@types/react": "^19.1.8",
         "@types/react-dom": "^19.1.6",
-        "@types/three": "^0.177.0",
-        "@vitejs/plugin-react": "^4.5.1",
-        "eslint": "^9.28.0",
+        "@types/three": "^0.178.1",
+        "@vitejs/plugin-react": "^4.7.0",
+        "eslint": "^9.32.0",
         "eslint-plugin-only-warn": "^1.1.0",
         "eslint-plugin-react-hooks": "^5.2.0",
         "eslint-plugin-react-refresh": "^0.4.20",
-        "globals": "^16.2.0",
+        "globals": "^16.3.0",
         "typescript": "~5.8.3",
-        "typescript-eslint": "^8.33.1",
-        "vite": "^6.3.5"
+        "typescript-eslint": "^8.38.0",
+        "vite": "^7.0.6"
     },
     "browserslist": {
         "production": [
