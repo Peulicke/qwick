@@ -33,7 +33,6 @@ export type Camera3d = {
     state: Camera3dState;
     worldToScreenCoords: (pos: vec3.Vec3) => vec2.Vec2;
     screenToWorldCoords: (pos: vec2.Vec2, plane: Plane) => vec3.Vec3;
-    graphicsTransform: (graphics: Graphics3d) => void;
     context: Context;
 };
 
@@ -62,24 +61,21 @@ export const createCamera3d = (partialState: Partial<Camera3dState>): Camera3d =
         return linePlaneIntersection({ from, to }, plane);
     };
 
-    const graphicsTransform: Camera3d["graphicsTransform"] = graphics => {
-        graphics.scale(state.zoom);
-        graphics.orient(state.orient);
-        graphics.translate(vec3.negate(state.pos));
-    };
-
     const context: Context = (graphics, func) => {
-        graphics.context(() => {
-            graphicsTransform(graphics);
-            func();
-        });
+        graphics.transformation(
+            {
+                pos: vec3.negate(state.pos),
+                scale: state.zoom,
+                orient: state.orient
+            },
+            func
+        );
     };
 
     return {
         state,
         worldToScreenCoords,
         screenToWorldCoords,
-        graphicsTransform,
         context
     };
 };

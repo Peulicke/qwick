@@ -104,9 +104,7 @@ export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, 
             }
         }
         graphics.begin();
-        graphics.get3d().context(() => {
-            if (l.draw3d) l.draw3d(graphics.get3d());
-        });
+        if (l.draw3d) l.draw3d(graphics.get3d());
         graphics.context(() => {
             graphics.normalize();
             l.draw(graphics);

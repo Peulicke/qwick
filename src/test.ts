@@ -77,26 +77,37 @@ export const test3d: CreateQwickTest = ({ input }) => {
     const draw3d = (g: Graphics3d) => {
         cam.context(g, () => {
             g.addLight(light);
-            g.context(() => {
-                g.scale(100);
+            g.transformation({ scale: 100 }, () => {
                 g.addMesh(plane);
             });
-            g.context(() => {
-                g.translate([input.getMousePos()[0] * 10, 3, input.getMousePos()[1] * 10 * Math.SQRT2]);
-                g.orient(orient.fromAxisAngle([0, 1, 0], Date.now() / 1000));
-                g.addMesh(redBox);
-            });
-            g.context(() => {
-                g.translate([1, 1, -1]);
-                g.orient(orient.fromAxisAngle([1, 1, 1], -Math.PI / 4));
-                g.addMesh(blueBox);
-            });
-            [...Array(10)].forEach((_, i) => {
-                g.context(() => {
-                    g.translate([-1 + i, 1, -1]);
-                    g.orient(orient.fromAxisAngle([0, 1, 0], Date.now() / 1000));
-                    g.addMesh(customShape);
-                });
+            g.transformation(
+                {
+                    pos: [input.getMousePos()[0] * 10, 3, input.getMousePos()[1] * 10 * Math.SQRT2],
+                    orient: orient.fromAxisAngle([0, 1, 0], Date.now() / 1000)
+                },
+                () => {
+                    g.addMesh(redBox);
+                }
+            );
+            g.transformation(
+                {
+                    pos: [1, 1, -1],
+                    orient: orient.fromAxisAngle([1, 1, 1], -Math.PI / 4)
+                },
+                () => {
+                    g.addMesh(blueBox);
+                }
+            );
+            [...Array(100)].forEach((_, i) => {
+                g.transformation(
+                    {
+                        pos: [-1 + i, 1, -1],
+                        orient: orient.fromAxisAngle([0, 1, 0], Date.now() / 1000)
+                    },
+                    () => {
+                        g.addMesh(customShape);
+                    }
+                );
             });
         });
     };

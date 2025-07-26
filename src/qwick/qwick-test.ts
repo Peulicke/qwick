@@ -1,10 +1,10 @@
-import "./index.css";
-import { createCanvas } from "./canvas";
-import { type Graphics, type Graphics3d, createGraphics } from "./graphics";
-import { type InputType, createInput } from "./input";
-import { createButton } from "./button";
 import { vec2 } from "@peulicke/geometry";
 import type { QwickInput } from ".";
+import { createButton } from "./button";
+import { createCanvas } from "./canvas";
+import { type Graphics, type Graphics3d, createGraphics } from "./graphics";
+import "./index.css";
+import { type InputType, createInput } from "./input";
 import { createQwickInput } from "./qwick-input";
 
 const buttonHeight = 0.03;
@@ -82,9 +82,7 @@ export const runTest = (createQwickTest: CreateQwickTest) => {
     const t = setInterval(() => {
         if (qwickTest.update) qwickTest.update();
         graphics.begin();
-        graphics.get3d().context(() => {
-            if (qwickTest.draw3d) qwickTest.draw3d(graphics.get3d());
-        });
+        if (qwickTest.draw3d) qwickTest.draw3d(graphics.get3d());
         graphics.context(() => {
             graphics.normalize();
             if (qwickTest.draw) qwickTest.draw(graphics);

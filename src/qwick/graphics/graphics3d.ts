@@ -151,7 +151,7 @@ export const createGraphics3d = (backgroundColor: string) => {
                     const material = new THREE.MeshPhongMaterial({
                         vertexColors: true
                     });
-                    const threeMesh = new THREE.InstancedMesh(g, material, 1000);
+                    const threeMesh = new THREE.InstancedMesh(g, material, 10000);
                     threeMesh.frustumCulled = false;
                     threeMesh.receiveShadow = true;
                     threeMesh.castShadow = true;
@@ -162,10 +162,14 @@ export const createGraphics3d = (backgroundColor: string) => {
                 const index = threeMeshes[mesh.id].count ?? 0;
                 threeMeshes[mesh.id].count = index + 1;
 
-                const dummy = new THREE.Object3D();
-                transformThreeObject(dummy, transformation);
-                dummy.updateMatrix();
-                threeMeshes[mesh.id].setMatrixAt(index, dummy.matrix);
+                const matrix = new THREE.Matrix4();
+                const position = new THREE.Vector3(...transformation.pos);
+                const quaternion = new THREE.Quaternion(...transformation.orient.v, transformation.orient.w);
+                const scale = new THREE.Vector3(transformation.scale, transformation.scale, transformation.scale);
+
+                matrix.compose(position, quaternion, scale);
+
+                threeMeshes[mesh.id].setMatrixAt(index, matrix);
                 threeMeshes[mesh.id].instanceMatrix.needsUpdate = true;
             });
 
@@ -207,45 +211,26 @@ export const createGraphics3d = (backgroundColor: string) => {
 
             renderer.render(scene, camera);
         },
-        context: (func: () => void) => {
-            transformations.push(createTransformation({}));
+        transformation: (transformation: Partial<Transformation>, func: () => void) => {
+            transformations.push(
+                combineTransformations([
+                    transformations[transformations.length - 1],
+                    createTransformation(transformation)
+                ])
+            );
             func();
             transformations.pop();
-        },
-        translate: (pos: vec3.Vec3) => {
-            transformations[transformations.length - 1] = combineTransformations([
-                transformations[transformations.length - 1],
-                createTransformation({
-                    pos
-                })
-            ]);
-        },
-        scale: (s: number) => {
-            transformations[transformations.length - 1] = combineTransformations([
-                transformations[transformations.length - 1],
-                createTransformation({
-                    scale: s
-                })
-            ]);
-        },
-        orient: (o: orient.Orient) => {
-            transformations[transformations.length - 1] = combineTransformations([
-                transformations[transformations.length - 1],
-                createTransformation({
-                    orient: o
-                })
-            ]);
         },
         addMesh: (mesh: MeshWithId) => {
             meshes.push({
                 mesh,
-                transformation: combineTransformations(transformations)
+                transformation: transformations[transformations.length - 1]
             });
         },
         addLight: (light: Light) => {
             lights.push({
                 light,
-                transformation: combineTransformations(transformations)
+                transformation: transformations[transformations.length - 1]
             });
         }
     };
