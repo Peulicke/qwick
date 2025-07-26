@@ -1,6 +1,6 @@
 {
     "name": "qwick",
-    "version": "0.1.72",
+    "version": "0.1.73",
     "type": "module",
     "scripts": {
         "start": "vite",
