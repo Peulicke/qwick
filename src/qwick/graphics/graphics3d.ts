@@ -1,3 +1,4 @@
+import { getEntries } from "@peulicke/algorithms/object";
 import { orient, vec3 } from "@peulicke/geometry";
 import type { Mesh } from "@peulicke/mesh/mesh";
 import * as THREE from "three";
@@ -8,27 +9,20 @@ import {
     type Transformation
 } from "./transformation";
 
-export type MeshWithId = Mesh & {
-    id: string;
-};
-
-export const createMesh = (points: vec3.Vec3[], faces: vec3.Vec3[], color: vec3.Vec3): MeshWithId => ({
-    id: Math.random().toString(),
+export const createMesh = (points: vec3.Vec3[], faces: vec3.Vec3[], color: vec3.Vec3): Mesh => ({
     points,
     faces,
     colors: points.map(() => color)
 });
 
-export const transformMesh = (mesh: MeshWithId, transformation: Transformation): MeshWithId => ({
-    id: Math.random().toString(),
+export const transformMesh = (mesh: Mesh, transformation: Transformation): Mesh => ({
     points: mesh.points.map(p => applyTransformation(p, transformation)),
     faces: mesh.faces,
     colors: mesh.colors
 });
 
-const mergeTwoMeshes = (a: MeshWithId, b: MeshWithId): MeshWithId => {
+const mergeTwoMeshes = (a: Mesh, b: Mesh): Mesh => {
     return {
-        id: Math.random().toString(),
         points: [...a.points, ...b.points],
         faces: [
             ...a.faces,
@@ -38,9 +32,9 @@ const mergeTwoMeshes = (a: MeshWithId, b: MeshWithId): MeshWithId => {
     };
 };
 
-export const mergeMeshes = (meshes: MeshWithId[]): MeshWithId => meshes.reduce((s, v) => mergeTwoMeshes(s, v));
+export const mergeMeshes = (meshes: Mesh[]): Mesh => meshes.reduce((s, v) => mergeTwoMeshes(s, v));
 
-export const createPlaneMesh = (color: vec3.Vec3): MeshWithId => {
+export const createPlaneMesh = (color: vec3.Vec3): Mesh => {
     const points: vec3.Vec3[] = [
         [-1, 0, -1],
         [-1, 0, 1],
@@ -57,7 +51,7 @@ export const createPlaneMesh = (color: vec3.Vec3): MeshWithId => {
     );
 };
 
-export const createBoxMesh = (color: vec3.Vec3): MeshWithId => {
+export const createBoxMesh = (color: vec3.Vec3): Mesh => {
     const top = transformMesh(createPlaneMesh(color), createTransformation({ pos: [0, 1, 0] }));
     const bottom = transformMesh(top, createTransformation({ orient: orient.fromAxisAngle([1, 0, 0], Math.PI) }));
     const topBottom = mergeMeshes([top, bottom]);
@@ -73,7 +67,6 @@ export const createBoxMesh = (color: vec3.Vec3): MeshWithId => {
 };
 
 type Light = {
-    id: string;
     dir: vec3.Vec3;
     color: vec3.Vec3;
     resolution: number;
@@ -82,7 +75,6 @@ type Light = {
 
 export const createLight = (partialLight: Partial<Light>): Light => {
     const light: Light = {
-        id: Math.random().toString(),
         dir: [0, 1, 0],
         color: [1, 1, 1],
         resolution: 1024,
@@ -130,37 +122,45 @@ export const createGraphics3d = (backgroundColor: string) => {
     const ambientLight = new THREE.AmbientLight("white", 1);
 
     const transformations: Transformation[] = [createTransformation({})];
-    const meshes: { mesh: MeshWithId; transformation: Transformation }[] = [];
+    const meshes: { mesh: Mesh; transformation: Transformation }[] = [];
     const lights: { light: Light; transformation: Transformation }[] = [];
 
-    const threeMeshes: Record<string, THREE.InstancedMesh> = {};
-    const threeLights: Record<string, { light: THREE.Light; target: THREE.Object3D }> = {};
+    const threeMeshes: Record<symbol, THREE.InstancedMesh> = {};
+    const threeLights: Record<symbol, { light: THREE.Light; target: THREE.Object3D }> = {};
+
+    const meshIds = new WeakMap<Mesh, symbol>();
+    const lightIds = new WeakMap<Light, symbol>();
 
     scene.add(ambientLight);
     return {
         begin: () => {
-            meshes.length = 0;
-            Object.keys(threeMeshes).forEach(key => {
-                threeMeshes[key].count = 0;
+            meshes.forEach(({ mesh }) => {
+                const id = meshIds.get(mesh);
+                if (id !== undefined) threeMeshes[id].count = 0;
             });
+            meshes.length = 0;
         },
         end: () => {
             meshes.forEach(({ mesh, transformation }) => {
-                if (threeMeshes[mesh.id] === undefined) {
+                if (!meshIds.has(mesh)) {
+                    const id = Symbol();
+                    meshIds.set(mesh, id);
                     const g = createBufferGeometry(mesh.points, mesh.faces, mesh.colors);
                     const material = new THREE.MeshPhongMaterial({
                         vertexColors: true
                     });
-                    const threeMesh = new THREE.InstancedMesh(g, material, 10000);
+                    const threeMesh = new THREE.InstancedMesh(g, material, 10);
                     threeMesh.frustumCulled = false;
                     threeMesh.receiveShadow = true;
                     threeMesh.castShadow = true;
                     threeMesh.count = 0;
-                    threeMeshes[mesh.id] = threeMesh;
+                    threeMeshes[id] = threeMesh;
                     scene.add(threeMesh);
                 }
-                const index = threeMeshes[mesh.id].count ?? 0;
-                threeMeshes[mesh.id].count = index + 1;
+                const id = meshIds.get(mesh);
+                if (id === undefined) throw new Error("mesh has no id");
+                const index = threeMeshes[id].count ?? 0;
+                threeMeshes[id].count = index + 1;
 
                 const matrix = new THREE.Matrix4();
                 const position = new THREE.Vector3(...transformation.pos);
@@ -169,12 +169,14 @@ export const createGraphics3d = (backgroundColor: string) => {
 
                 matrix.compose(position, quaternion, scale);
 
-                threeMeshes[mesh.id].setMatrixAt(index, matrix);
-                threeMeshes[mesh.id].instanceMatrix.needsUpdate = true;
+                threeMeshes[id].setMatrixAt(index, matrix);
+                threeMeshes[id].instanceMatrix.needsUpdate = true;
             });
 
             lights.forEach(({ light, transformation }) => {
-                if (threeLights[light.id] !== undefined) return;
+                if (lightIds.has(light)) return;
+                const id = Symbol();
+                lightIds.set(light, id);
                 const directionalLight = new THREE.DirectionalLight(new THREE.Color(...light.color));
                 directionalLight.castShadow = true;
                 directionalLight.shadow.mapSize.width = light.resolution;
@@ -190,18 +192,18 @@ export const createGraphics3d = (backgroundColor: string) => {
                 directionalLight.target = targetObject;
                 scene.add(directionalLight);
                 scene.add(targetObject);
-                threeLights[light.id] = { light: directionalLight, target: targetObject };
+                threeLights[id] = { light: directionalLight, target: targetObject };
 
                 transformThreeObject(
-                    threeLights[light.id].light,
+                    threeLights[id].light,
                     combineTransformations([transformation, createTransformation({ pos: light.dir })])
                 );
             });
 
-            Object.keys(threeLights).forEach(key => {
-                if (lights.find(l => l.light.id === key)) return;
-                scene.remove(threeLights[key].light);
-                scene.remove(threeLights[key].target);
+            getEntries(threeLights).forEach(([key, threeLight]) => {
+                if (lights.find(l => lightIds.get(l.light) === key)) return;
+                scene.remove(threeLight.light);
+                scene.remove(threeLight.target);
             });
 
             const aspect = window.innerWidth / window.innerHeight;
@@ -221,7 +223,7 @@ export const createGraphics3d = (backgroundColor: string) => {
             func();
             transformations.pop();
         },
-        addMesh: (mesh: MeshWithId) => {
+        addMesh: (mesh: Mesh) => {
             meshes.push({
                 mesh,
                 transformation: transformations[transformations.length - 1]
