@@ -149,7 +149,7 @@ export const createGraphics3d = (backgroundColor: string) => {
                     const material = new THREE.MeshPhongMaterial({
                         vertexColors: true
                     });
-                    const threeMesh = new THREE.InstancedMesh(g, material, 10);
+                    const threeMesh = new THREE.InstancedMesh(g, material, 10000);
                     threeMesh.frustumCulled = false;
                     threeMesh.receiveShadow = true;
                     threeMesh.castShadow = true;
