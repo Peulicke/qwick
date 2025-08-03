@@ -232,7 +232,9 @@ export const createGraphics3d = (backgroundColor: string) => {
         addLight: (light: Light) => {
             lights.push({
                 light,
-                transformation: transformations[transformations.length - 1]
+                transformation: createTransformation({
+                    orient: transformations[transformations.length - 1].orient
+                })
             });
         }
     };
