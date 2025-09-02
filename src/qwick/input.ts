@@ -17,7 +17,7 @@ export const createInput = () => {
         keysPressed: Set<string>;
         keysReleased: Set<string>;
     } = {
-        mousePos: [0, 0],
+        mousePos: [Math.floor(window.innerWidth / 2), Math.floor(window.innerHeight / 2)],
         keysDown: new Set(),
         keysPressed: new Set(),
         keysReleased: new Set()
