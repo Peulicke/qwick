@@ -1,6 +1,6 @@
 import { orient, vec2, vec3 } from "@peulicke/geometry";
+import { combineTransformations, createTransformation } from "@peulicke/geometry/transformation";
 import type { Graphics3d } from ".";
-import { combineTransformations, createTransformation } from "./transformation";
 
 export type Camera3dState = {
     pos: vec3.Vec3;

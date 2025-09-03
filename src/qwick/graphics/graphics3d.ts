@@ -1,13 +1,13 @@
 import { getEntries } from "@peulicke/algorithms/object";
 import { orient, vec3 } from "@peulicke/geometry";
-import type { Mesh } from "@peulicke/mesh/mesh";
-import * as THREE from "three";
 import {
     applyTransformation,
     combineTransformations,
     createTransformation,
     type Transformation
-} from "./transformation";
+} from "@peulicke/geometry/transformation";
+import type { Mesh } from "@peulicke/mesh/mesh";
+import * as THREE from "three";
 
 export const createMesh = (points: vec3.Vec3[], faces: vec3.Vec3[], color: vec3.Vec3): Mesh => ({
     points,
