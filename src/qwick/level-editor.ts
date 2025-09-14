@@ -119,19 +119,24 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
             level = game.loadLevel(levelEditor.getLevelData());
             return;
         }
+        let shouldActivateLevelEditorInput = true;
         l.menuInputs.forEach((menuInput, i) => {
             if (!menuInputButtons[i].clicked) return;
             const newValue = window.prompt(menuInput.label, menuInput.getValue());
             if (newValue === null) return;
             menuInput.setValue(newValue);
+            shouldActivateLevelEditorInput = false;
         });
         if (type === "lmb" && down) {
             l.menuItems.forEach((_, i) => {
                 const rect = vec2.createRect(getMenuItemPos(graphics, i), getMenuItemR());
                 if (!vec2.insideRect(qwick.input.getMousePos(), rect)) return;
                 selectedMenuItemIndex = i;
+                shouldActivateLevelEditorInput = false;
             });
         }
+        if (menuInputButtons.some(b => b.holding)) shouldActivateLevelEditorInput = false;
+        if (shouldActivateLevelEditorInput) levelEditor.input(type, down);
     };
 
     const scroll = (delta: number) => {
