@@ -139,16 +139,20 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
     };
 
     const drawPlaying = (l: Level) => {
-        if (game.show.fastForward) fastForwardButton.draw(graphics);
-        stopButton.draw(graphics);
+        l.draw3d(graphics.get3d());
+        graphics.normalize();
         graphics.context(() => {
             l.draw(graphics);
         });
         if (l.hasWon()) graphics.text("Win", 0.1);
         if (l.hasLost()) graphics.text("Lose", 0.1);
+        if (game.show.fastForward) fastForwardButton.draw(graphics);
+        stopButton.draw(graphics);
     };
 
     const drawNotPlaying = (l: LevelEditor<LevelData>) => {
+        l.draw3d(graphics.get3d());
+        graphics.normalize();
         graphics.context(() => {
             l.draw(graphics);
         });
@@ -167,12 +171,6 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
 
     const draw = (l: LevelEditor<LevelData>) => {
         graphics.begin();
-        if (l.draw3d) l.draw3d(graphics.get3d());
-        graphics.context(() => {
-            graphics.normalize();
-            l.draw(graphics);
-        });
-        graphics.normalize();
         if (level === null) drawNotPlaying(l);
         else drawPlaying(level);
         graphics.end();
