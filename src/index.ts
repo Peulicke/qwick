@@ -1,11 +1,11 @@
 import { basic } from "@peulicke/algorithms";
-import { test } from "./test";
-import type { Qwick, InputType, Graphics } from "./qwick";
-import { createQwick, graphics, matrix } from "./qwick";
-import { type Camera, createCamera } from "./qwick/graphics/camera";
 import { grid, vec2, vec3 } from "@peulicke/geometry";
-import type { LevelEditor } from "./qwick/level-editor";
 import { loadImage } from "@peulicke/image/pixels";
+import type { Graphics, InputType, Qwick } from "./qwick";
+import { createQwick, graphics, matrix } from "./qwick";
+import type { PartialLevelEditor } from "./qwick/game";
+import { type Camera, createCamera } from "./qwick/graphics/camera";
+import { test } from "./test";
 
 const smellResolution = 2;
 const border = 0.25;
@@ -433,7 +433,7 @@ const getEmptyLevelData = (): LevelData => ({
     ownUnitTypes: ["sword", "sword", "bow", "bow", "bow", "bow"]
 });
 
-const loadLevelEditor = (qwick: Qwick) => (): LevelEditor<LevelData> => {
+const loadLevelEditor = (qwick: Qwick) => (): PartialLevelEditor<LevelData> => {
     let levelState = levelDataToState(getEmptyLevelData());
 
     const camera = createCamera({});

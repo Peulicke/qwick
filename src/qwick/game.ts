@@ -6,32 +6,42 @@ export type Game<LevelData> = {
     name: string;
     levels: LevelData[];
     loadLevel: (ld: LevelData) => Level;
-    loadLevelEditor?: () => LevelEditor<LevelData>;
+    loadLevelEditor: (() => LevelEditor<LevelData>) | undefined;
     resize: () => void;
     backgroundColor: string;
     show: ShowOptions;
 };
 
+export type PartialLevelEditor<LevelData> = Partial<
+    Omit<LevelEditor<LevelData>, "getLevelData" | "setLevelData" | "show">
+> & {
+    getLevelData: () => LevelData;
+    setLevelData: (levelData: LevelData) => void;
+};
+
 export type PartialGame<LevelData> = Partial<Omit<Game<LevelData>, "loadLevel" | "loadLevelEditor" | "show">> & {
     loadLevel?: (ld: LevelData) => Partial<Level>;
-    loadLevelEditor?: () => LevelEditor<LevelData>;
+    loadLevelEditor?: () => PartialLevelEditor<LevelData>;
     show?: Partial<ShowOptions>;
 };
 
-export const fromPartialGame = <LevelData>(partialGame: PartialGame<LevelData>): Game<LevelData> => ({
-    name: "Name of the game",
-    levels: [],
-    resize: () => {},
-    backgroundColor: "#60b1c7",
-    ...partialGame,
-    loadLevel: (ld: LevelData): Level => {
-        if (partialGame.loadLevel === undefined) return defaultLevel();
-        const level = partialGame.loadLevel(ld);
-        if (level === undefined) return defaultLevel();
-        return { ...defaultLevel(), ...level };
-    },
-    show: {
-        ...defaultShowOptions(),
-        ...partialGame.show
-    }
-});
+export const fromPartialGame = <LevelData>(partialGame: PartialGame<LevelData>): Game<LevelData> => {
+    const partialLoadLevelEditor = partialGame.loadLevelEditor;
+
+    return {
+        name: "Name of the game",
+        levels: [],
+        resize: () => {},
+        backgroundColor: "#60b1c7",
+        ...partialGame,
+        loadLevel: levelData => ({ ...defaultLevel(), ...(partialGame.loadLevel?.(levelData) ?? {}) }),
+        loadLevelEditor:
+            partialLoadLevelEditor === undefined
+                ? undefined
+                : () => ({ draw: () => {}, menuInputs: [], menuItems: [], ...partialLoadLevelEditor() }),
+        show: {
+            ...defaultShowOptions(),
+            ...partialGame.show
+        }
+    };
+};
