@@ -5,7 +5,7 @@ import type { Graphics, InputType, Qwick } from "./qwick";
 import { createQwick, graphics, matrix } from "./qwick";
 import type { PartialLevelEditor } from "./qwick/game";
 import { type Camera, createCamera } from "./qwick/graphics/camera";
-import { createBoxMesh, createLight } from "./qwick/graphics/graphics3d";
+import { createBoxMesh, createLight, type Graphics3d } from "./qwick/graphics/graphics3d";
 import { test } from "./test";
 
 const smellResolution = 2;
@@ -379,6 +379,10 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     const img = loadImage("example.png");
 
+    const light = createLight({});
+
+    const blueBox = createBoxMesh([0, 0, 1]);
+
     return {
         input: (type: InputType, down: boolean) => {
             startButton.input(type, down);
@@ -415,6 +419,22 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
             });
             drawWorld(g, levelState, camera);
             if (!levelState.started) startButton.draw(g);
+        },
+        draw3d: (g: Graphics3d) => {
+            g.transformation(
+                {
+                    pos: [0.7, 0, 0],
+                    orient: orient.combine([
+                        orient.fromAxisAngle([0, 1, 0], Date.now() / 1000),
+                        orient.fromAxisAngle([1, 0, 0], Math.PI / 4)
+                    ]),
+                    scale: 0.1
+                },
+                () => {
+                    g.addLight(light);
+                    g.addMesh(blueBox);
+                }
+            );
         }
     };
 };

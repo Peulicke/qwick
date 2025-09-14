@@ -125,11 +125,14 @@ export const createGraphics3d = (backgroundColor: string) => {
     const meshes: { mesh: Mesh; transformation: Transformation }[] = [];
     const lights: { light: Light; transformation: Transformation }[] = [];
 
-    const threeMeshes: Record<symbol, THREE.InstancedMesh> = {};
-    const threeLights: Record<symbol, { light: THREE.Light; target: THREE.Object3D }> = {};
+    type Id = symbol;
+    const getNewId = (): Id => Symbol();
 
-    const meshIds = new WeakMap<Mesh, symbol>();
-    const lightIds = new WeakMap<Light, symbol>();
+    const threeMeshes: Record<Id, THREE.InstancedMesh> = {};
+    const threeLights: Record<Id, { light: THREE.Light; target: THREE.Object3D }> = {};
+
+    const meshIds = new WeakMap<Mesh, Id>();
+    const lightIds = new WeakMap<Light, Id>();
 
     scene.add(ambientLight);
     return {
@@ -139,11 +142,12 @@ export const createGraphics3d = (backgroundColor: string) => {
                 if (id !== undefined) threeMeshes[id].count = 0;
             });
             meshes.length = 0;
+            lights.length = 0;
         },
         end: () => {
             meshes.forEach(({ mesh, transformation }) => {
                 if (!meshIds.has(mesh)) {
-                    const id = Symbol();
+                    const id = getNewId();
                     meshIds.set(mesh, id);
                     const g = createBufferGeometry(mesh.points, mesh.faces, mesh.colors);
                     const material = new THREE.MeshPhongMaterial({
@@ -174,9 +178,9 @@ export const createGraphics3d = (backgroundColor: string) => {
             });
 
             lights.forEach(({ light, transformation }) => {
-                if (lightIds.has(light)) return;
-                const id = Symbol();
-                lightIds.set(light, id);
+                if (!lightIds.has(light)) lightIds.set(light, getNewId());
+                const id = lightIds.get(light)!;
+                if (threeLights[id] !== undefined) return;
                 const directionalLight = new THREE.DirectionalLight(new THREE.Color(...light.color));
                 directionalLight.castShadow = true;
                 directionalLight.shadow.mapSize.width = light.resolution;
@@ -204,6 +208,7 @@ export const createGraphics3d = (backgroundColor: string) => {
                 if (lights.find(l => lightIds.get(l.light) === key)) return;
                 scene.remove(threeLight.light);
                 scene.remove(threeLight.target);
+                delete threeLights[key];
             });
 
             const aspect = window.innerWidth / window.innerHeight;
