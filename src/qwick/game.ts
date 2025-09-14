@@ -38,7 +38,13 @@ export const fromPartialGame = <LevelData>(partialGame: PartialGame<LevelData>):
         loadLevelEditor:
             partialLoadLevelEditor === undefined
                 ? undefined
-                : () => ({ draw: () => {}, menuInputs: [], menuItems: [], ...partialLoadLevelEditor() }),
+                : () => ({
+                      draw: () => {},
+                      draw3d: () => {},
+                      menuInputs: [],
+                      menuItems: [],
+                      ...partialLoadLevelEditor()
+                  }),
         show: {
             ...defaultShowOptions(),
             ...partialGame.show

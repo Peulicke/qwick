@@ -2,6 +2,7 @@ import { vec2 } from "@peulicke/geometry";
 import type { Graphics, Qwick } from ".";
 import type { Button } from "./button";
 import type { Game } from "./game";
+import type { Graphics3d } from "./graphics";
 import type { InputType } from "./input";
 import { loadFile, saveFile } from "./io";
 import type { Level } from "./level";
@@ -26,6 +27,7 @@ export type LevelEditor<LevelData> = {
     menuItems: MenuItem[];
     menuInputs: MenuInput[];
     draw: (graphics: Graphics) => void;
+    draw3d: (graphics3d: Graphics3d) => void;
 };
 
 const getMenuItemPos = (graphics: Graphics, index: number) =>
@@ -167,6 +169,11 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
 
     const draw = (l: LevelEditor<LevelData>) => {
         graphics.begin();
+        if (l.draw3d) l.draw3d(graphics.get3d());
+        graphics.context(() => {
+            graphics.normalize();
+            l.draw(graphics);
+        });
         graphics.normalize();
         if (level === null) drawNotPlaying(l);
         else drawPlaying(level);

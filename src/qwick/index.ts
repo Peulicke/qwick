@@ -4,22 +4,22 @@ import { createCanvas } from "./canvas";
 import { type PartialGame, fromPartialGame } from "./game";
 import { createGraphics } from "./graphics";
 import "./index.css";
-import { createInput, type InputType } from "./input";
+import { type InputType, createInput } from "./input";
 import { createLevelRunner } from "./level";
 import { createLevelEditorRunner } from "./level-editor";
 import { createMenu } from "./menu";
 import { type Position, getPos } from "./position";
+import { createQwickInput } from "./qwick-input";
 import { type TestSuite, createTestSuite } from "./qwick-test";
 import { createStorage } from "./storage";
-import { createQwickInput } from "./qwick-input";
 
+export * as button from "./button";
+export * as event from "./event";
+export * as graphics from "./graphics";
 export type { Graphics } from "./graphics";
 export type { InputType } from "./input";
 export * as matrix from "./matrix";
 export * as transform2 from "./transform2";
-export * as button from "./button";
-export * as graphics from "./graphics";
-export * as event from "./event";
 
 export type QwickInput = {
     getMousePos: () => vec2.Vec2;

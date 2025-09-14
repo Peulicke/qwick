@@ -1,10 +1,11 @@
 import { basic } from "@peulicke/algorithms";
-import { grid, vec2, vec3 } from "@peulicke/geometry";
+import { grid, orient, vec2, vec3 } from "@peulicke/geometry";
 import { loadImage } from "@peulicke/image/pixels";
 import type { Graphics, InputType, Qwick } from "./qwick";
 import { createQwick, graphics, matrix } from "./qwick";
 import type { PartialLevelEditor } from "./qwick/game";
 import { type Camera, createCamera } from "./qwick/graphics/camera";
+import { createBoxMesh, createLight } from "./qwick/graphics/graphics3d";
 import { test } from "./test";
 
 const smellResolution = 2;
@@ -472,6 +473,10 @@ const loadLevelEditor = (qwick: Qwick) => (): PartialLevelEditor<LevelData> => {
         updateCamera(camera, levelState);
     };
 
+    const light = createLight({});
+
+    const blueBox = createBoxMesh([0, 0, 1]);
+
     return {
         getLevelData: () => levelStateToData(levelState),
         setLevelData: (levelData: LevelData) => {
@@ -506,7 +511,23 @@ const loadLevelEditor = (qwick: Qwick) => (): PartialLevelEditor<LevelData> => {
                 }
             }))
         ],
-        draw: g => drawWorld(g, levelState, camera)
+        draw: g => drawWorld(g, levelState, camera),
+        draw3d: g => {
+            g.transformation(
+                {
+                    pos: [0.7, 0, 0],
+                    orient: orient.combine([
+                        orient.fromAxisAngle([0, 1, 0], Date.now() / 1000),
+                        orient.fromAxisAngle([1, 0, 0], Math.PI / 4)
+                    ]),
+                    scale: 0.1
+                },
+                () => {
+                    g.addLight(light);
+                    g.addMesh(blueBox);
+                }
+            );
+        }
     };
 };
 
