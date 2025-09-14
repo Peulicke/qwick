@@ -1,4 +1,3 @@
-import { getEntries } from "@peulicke/algorithms/object";
 import { orient, vec3 } from "@peulicke/geometry";
 import {
     applyTransformation,
@@ -128,8 +127,8 @@ export const createGraphics3d = (backgroundColor: string) => {
     type Id = symbol;
     const getNewId = (): Id => Symbol();
 
-    const threeMeshes: Record<Id, THREE.InstancedMesh> = {};
-    const threeLights: Record<Id, { light: THREE.Light; target: THREE.Object3D }> = {};
+    const threeMeshes: Map<Id, THREE.InstancedMesh> = new Map();
+    const threeLights: Map<Id, { light: THREE.Light; target: THREE.Object3D }> = new Map();
 
     const meshIds = new WeakMap<Mesh, Id>();
     const lightIds = new WeakMap<Light, Id>();
@@ -139,7 +138,7 @@ export const createGraphics3d = (backgroundColor: string) => {
         begin: () => {
             meshes.forEach(({ mesh }) => {
                 const id = meshIds.get(mesh);
-                if (id !== undefined) threeMeshes[id].count = 0;
+                if (id !== undefined) threeMeshes.get(id)!.count = 0;
             });
             meshes.length = 0;
             lights.length = 0;
@@ -158,13 +157,13 @@ export const createGraphics3d = (backgroundColor: string) => {
                     threeMesh.receiveShadow = true;
                     threeMesh.castShadow = true;
                     threeMesh.count = 0;
-                    threeMeshes[id] = threeMesh;
+                    threeMeshes.set(id, threeMesh);
                     scene.add(threeMesh);
                 }
                 const id = meshIds.get(mesh);
                 if (id === undefined) throw new Error("mesh has no id");
-                const index = threeMeshes[id].count ?? 0;
-                threeMeshes[id].count = index + 1;
+                const index = threeMeshes.get(id)?.count ?? 0;
+                threeMeshes.get(id)!.count = index + 1;
 
                 const matrix = new THREE.Matrix4();
                 const position = new THREE.Vector3(...transformation.pos);
@@ -173,14 +172,14 @@ export const createGraphics3d = (backgroundColor: string) => {
 
                 matrix.compose(position, quaternion, scale);
 
-                threeMeshes[id].setMatrixAt(index, matrix);
-                threeMeshes[id].instanceMatrix.needsUpdate = true;
+                threeMeshes.get(id)!.setMatrixAt(index, matrix);
+                threeMeshes.get(id)!.instanceMatrix.needsUpdate = true;
             });
 
             lights.forEach(({ light, transformation }) => {
                 if (!lightIds.has(light)) lightIds.set(light, getNewId());
                 const id = lightIds.get(light)!;
-                if (threeLights[id] !== undefined) return;
+                if (threeLights.has(id)) return;
                 const directionalLight = new THREE.DirectionalLight(new THREE.Color(...light.color));
                 directionalLight.castShadow = true;
                 directionalLight.shadow.mapSize.width = light.resolution;
@@ -196,19 +195,19 @@ export const createGraphics3d = (backgroundColor: string) => {
                 directionalLight.target = targetObject;
                 scene.add(directionalLight);
                 scene.add(targetObject);
-                threeLights[id] = { light: directionalLight, target: targetObject };
+                threeLights.set(id, { light: directionalLight, target: targetObject });
 
                 transformThreeObject(
-                    threeLights[id].light,
+                    threeLights.get(id)!.light,
                     combineTransformations([transformation, createTransformation({ pos: light.dir })])
                 );
             });
 
-            getEntries(threeLights).forEach(([key, threeLight]) => {
+            [...threeLights.entries()].forEach(([key, threeLight]) => {
                 if (lights.find(l => lightIds.get(l.light) === key)) return;
                 scene.remove(threeLight.light);
                 scene.remove(threeLight.target);
-                delete threeLights[key];
+                threeLights.delete(key);
             });
 
             const aspect = window.innerWidth / window.innerHeight;
