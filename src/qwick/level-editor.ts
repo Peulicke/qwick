@@ -2,11 +2,11 @@ import { vec2 } from "@peulicke/geometry";
 import type { Graphics, Qwick } from ".";
 import type { Button } from "./button";
 import type { Game } from "./game";
-import type { Graphics3d } from "./graphics";
 import type { InputType } from "./input";
 import { loadFile, saveFile } from "./io";
 import type { Level } from "./level";
 import type { Storage } from "./storage";
+import type { Ui } from "./ui";
 
 const menuItemSize = 0.1;
 
@@ -21,13 +21,11 @@ export type MenuInput = {
     setValue: (value: string) => void;
 };
 
-export type LevelEditor<LevelData> = {
+export type LevelEditor<LevelData> = Ui & {
     getLevelData: () => LevelData;
     setLevelData: (levelData: LevelData) => void;
     menuItems: MenuItem[];
     menuInputs: MenuInput[];
-    draw: (graphics: Graphics) => void;
-    draw3d: (graphics3d: Graphics3d) => void;
 };
 
 const getMenuItemPos = (graphics: Graphics, index: number) =>
@@ -183,6 +181,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
     const update = (l: LevelEditor<LevelData>) => {
         if (level === null) {
             if (l.menuItems.length > 0) l.menuItems[selectedMenuItemIndex].update();
+            l.update();
         } else {
             const fastForward = fastForwardButton.holding || qwick.input.isKeyDown("Space");
             for (let i = 0; i < (game.show.fastForward && fastForward ? 10 : 1); ++i) {
@@ -190,6 +189,10 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
             }
         }
         draw(l);
+    };
+
+    const resize = () => {
+        if (levelEditor?.resize) levelEditor.resize();
     };
 
     const isRunning = () => levelEditor !== null;
@@ -205,6 +208,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         update: (_: Storage) => {
             if (levelEditor !== null) update(levelEditor);
         },
+        resize,
         isRunning
     };
 };

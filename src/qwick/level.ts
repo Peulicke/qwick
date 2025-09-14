@@ -2,33 +2,18 @@ import { vec2 } from "@peulicke/geometry";
 import type { Graphics, Qwick } from ".";
 import { EventType, emit } from "./event";
 import type { Game } from "./game";
-import type { Graphics3d } from "./graphics";
 import type { InputType } from "./input";
 import type { Storage } from "./storage";
+import { defaultUi, type Ui } from "./ui";
 
-export type Level = {
-    update: () => void;
+export type Level = Ui & {
     hasWon: () => boolean;
     hasLost: () => boolean;
-    draw: (graphics: Graphics) => void;
-    draw3d: (graphics: Graphics3d) => void;
-    input: (type: InputType, down: boolean) => void;
-    scroll: (delta: number) => void;
-    resize: () => void;
 };
 
-export const defaultLevel = (): Level => ({
-    update: () => {},
-    hasWon: () => false,
-    hasLost: () => false,
-    draw: () => {},
-    draw3d: () => {},
-    input: () => {},
-    scroll: () => {},
-    resize: () => {}
-});
+export const defaultLevel = (): Level => ({ ...defaultUi(), hasWon: () => false, hasLost: () => false });
 
-export const createLevelRunner = <LevelDatas>(qwick: Qwick, graphics: Graphics, game: Game<LevelDatas>) => {
+export const createLevelRunner = <LevelData>(qwick: Qwick, graphics: Graphics, game: Game<LevelData>) => {
     let levelNum = 0;
     let level: Level | null = null;
     let levelSuccess = false;

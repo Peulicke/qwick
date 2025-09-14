@@ -1,6 +1,7 @@
 import { type Level, defaultLevel } from "./level";
 import { type LevelEditor } from "./level-editor";
 import { type ShowOptions, defaultShowOptions } from "./show-options";
+import { defaultUi } from "./ui";
 
 export type Game<LevelData> = {
     name: string;
@@ -39,8 +40,7 @@ export const fromPartialGame = <LevelData>(partialGame: PartialGame<LevelData>):
             partialLoadLevelEditor === undefined
                 ? undefined
                 : () => ({
-                      draw: () => {},
-                      draw3d: () => {},
+                      ...defaultUi(),
                       menuInputs: [],
                       menuItems: [],
                       ...partialLoadLevelEditor()

@@ -124,6 +124,7 @@ export const createQwick = <LevelData>(
         canvas.resize();
         game.resize();
         levelRunner.resize();
+        levelEditorRunner.resize();
     };
 
     input.listeners.input = (type: InputType, down: boolean) => {
