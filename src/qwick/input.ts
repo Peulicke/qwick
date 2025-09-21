@@ -11,15 +11,17 @@ export type Listeners = {
 export const createInput = () => {
     const listeners: Partial<Listeners> = {};
 
+    const getInitialMousePos = (): vec2.Vec2 => [Math.floor(window.innerWidth / 2), Math.floor(window.innerHeight / 2)];
+
     const input: {
         mousePos: vec2.Vec2;
-        mousePressedPos: vec2.Vec2 | undefined;
+        mousePressedPos: vec2.Vec2;
         keysDown: Set<string>;
         keysPressed: Set<string>;
         keysReleased: Set<string>;
     } = {
-        mousePos: [Math.floor(window.innerWidth / 2), Math.floor(window.innerHeight / 2)],
-        mousePressedPos: undefined,
+        mousePos: getInitialMousePos(),
+        mousePressedPos: getInitialMousePos(),
         keysDown: new Set(),
         keysPressed: new Set(),
         keysReleased: new Set()
@@ -37,7 +39,6 @@ export const createInput = () => {
         } else {
             input.keysReleased.add(type);
             input.keysDown.delete(type);
-            if (type === "lmb") input.mousePressedPos = undefined;
         }
         if (listeners.input) listeners.input(type, down);
     };
@@ -112,10 +113,7 @@ export const createInput = () => {
 
     const getMousePos = (): vec2.Vec2 => pixelPosToNormalizedPos(input.mousePos);
 
-    const getMousePressedPos = (): vec2.Vec2 | undefined => {
-        if (input.mousePressedPos === undefined) return undefined;
-        return pixelPosToNormalizedPos(input.mousePressedPos);
-    };
+    const getMousePressedPos = (): vec2.Vec2 => pixelPosToNormalizedPos(input.mousePressedPos);
 
     const getArrowInput = (): vec2.Vec2 =>
         vec2.normalize([
