@@ -13,11 +13,13 @@ export const createInput = () => {
 
     const input: {
         mousePos: vec2.Vec2;
+        mousePressedPos: vec2.Vec2 | undefined;
         keysDown: Set<string>;
         keysPressed: Set<string>;
         keysReleased: Set<string>;
     } = {
         mousePos: [Math.floor(window.innerWidth / 2), Math.floor(window.innerHeight / 2)],
+        mousePressedPos: undefined,
         keysDown: new Set(),
         keysPressed: new Set(),
         keysReleased: new Set()
@@ -31,9 +33,11 @@ export const createInput = () => {
         if (down) {
             input.keysPressed.add(type);
             input.keysDown.add(type);
+            if (type === "lmb") input.mousePressedPos = input.mousePos;
         } else {
             input.keysReleased.add(type);
             input.keysDown.delete(type);
+            if (type === "lmb") input.mousePressedPos = undefined;
         }
         if (listeners.input) listeners.input(type, down);
     };
@@ -101,10 +105,17 @@ export const createInput = () => {
         input.keysReleased.clear();
     };
 
-    const getMousePos = (): vec2.Vec2 => [
-        (input.mousePos[0] - 0.5 * window.innerWidth) / window.innerHeight,
-        (input.mousePos[1] - 0.5 * window.innerHeight) / window.innerHeight
+    const pixelPosToNormalizedPos = (pos: vec2.Vec2): vec2.Vec2 => [
+        (pos[0] - 0.5 * window.innerWidth) / window.innerHeight,
+        (pos[1] - 0.5 * window.innerHeight) / window.innerHeight
     ];
+
+    const getMousePos = (): vec2.Vec2 => pixelPosToNormalizedPos(input.mousePos);
+
+    const getMousePressedPos = (): vec2.Vec2 | undefined => {
+        if (input.mousePressedPos === undefined) return undefined;
+        return pixelPosToNormalizedPos(input.mousePressedPos);
+    };
 
     const getArrowInput = (): vec2.Vec2 =>
         vec2.normalize([
@@ -117,6 +128,7 @@ export const createInput = () => {
         listeners,
         clear,
         getMousePos,
+        getMousePressedPos,
         getArrowInput,
         destroy: () => {
             window.removeEventListener("contextmenu", contextmenu, true);

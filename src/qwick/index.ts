@@ -23,6 +23,7 @@ export * as transform2 from "./transform2";
 
 export type QwickInput = {
     getMousePos: () => vec2.Vec2;
+    getMousePressedPos: () => vec2.Vec2 | undefined;
     getMousePosPixels: () => vec2.Vec2;
     isKeyDown: (key: string) => boolean;
     wasKeyPressed: (key: string) => boolean;
