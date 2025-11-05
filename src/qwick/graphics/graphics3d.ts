@@ -65,7 +65,7 @@ export const createBoxMesh = (color: vec3.Vec3): Mesh => {
     return mergeMeshes([topBottom, leftRight, frontBack]);
 };
 
-type Light = {
+export type Light = {
     dir: vec3.Vec3;
     color: vec3.Vec3;
     resolution: number;
