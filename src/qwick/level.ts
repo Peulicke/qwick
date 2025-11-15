@@ -2,7 +2,7 @@ import { vec2 } from "@peulicke/geometry";
 import type { Graphics, Qwick } from ".";
 import { EventType, emit } from "./event";
 import type { Game } from "./game";
-import type { InputType } from "./input";
+import type { MouseInputType } from "./input";
 import type { Storage } from "./storage";
 import { defaultUi, type Ui } from "./ui";
 
@@ -42,7 +42,7 @@ export const createLevelRunner = <LevelData>(qwick: Qwick, graphics: Graphics, g
         emit({ type: EventType.LEVEL_START, levelNum });
     };
 
-    const input = (type: InputType, down: boolean) => {
+    const input = (type: MouseInputType, down: boolean) => {
         if (level === null) return;
         menuButton.input(type, down);
         if (game.show.menu && menuButton.clicked) {

@@ -4,14 +4,14 @@ import { createButton } from "./button";
 import { createCanvas } from "./canvas";
 import { type Graphics, type Graphics3d, createGraphics } from "./graphics";
 import "./index.css";
-import { type InputType, createInput } from "./input";
+import { type MouseInputType, createInput } from "./input";
 import { createQwickInput } from "./qwick-input";
 
 const buttonHeight = 0.03;
 const charWidth = 0.3;
 
 export type QwickTest = {
-    input?: (type: InputType, down: boolean) => void;
+    input?: (type: MouseInputType, down: boolean) => void;
     scroll?: (delta: number) => void;
     update?: () => void;
     draw?: (graphics: Graphics) => void;

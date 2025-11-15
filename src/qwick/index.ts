@@ -4,7 +4,7 @@ import { createCanvas } from "./canvas";
 import { type PartialGame, fromPartialGame } from "./game";
 import { createGraphics } from "./graphics";
 import "./index.css";
-import { type InputType, createInput } from "./input";
+import { type InputType, type MouseInputType, createInput } from "./input";
 import { createLevelRunner } from "./level";
 import { createLevelEditorRunner } from "./level-editor";
 import { createMenu } from "./menu";
@@ -25,9 +25,9 @@ export type QwickInput = {
     getMousePos: () => vec2.Vec2;
     getMousePressedPos: () => vec2.Vec2 | undefined;
     getMousePosPixels: () => vec2.Vec2;
-    isKeyDown: (key: string) => boolean;
-    wasKeyPressed: (key: string) => boolean;
-    wasKeyReleased: (key: string) => boolean;
+    isKeyDown: (key: InputType) => boolean;
+    wasKeyPressed: (key: InputType) => boolean;
+    wasKeyReleased: (key: InputType) => boolean;
     getArrowInput: () => vec2.Vec2;
 };
 
@@ -128,7 +128,7 @@ export const createQwick = <LevelData>(
         levelEditorRunner.resize();
     };
 
-    input.listeners.input = (type: InputType, down: boolean) => {
+    input.listeners.input = (type: MouseInputType, down: boolean) => {
         if (levelRunner.isRunning()) {
             levelRunner.input(type, down);
             return;

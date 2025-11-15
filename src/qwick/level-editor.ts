@@ -2,7 +2,7 @@ import { vec2 } from "@peulicke/geometry";
 import type { Graphics, Qwick } from ".";
 import type { Button } from "./button";
 import type { Game } from "./game";
-import type { InputType } from "./input";
+import type { MouseInputType } from "./input";
 import { loadFile, saveFile } from "./io";
 import type { Level } from "./level";
 import type { Storage } from "./storage";
@@ -84,7 +84,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         );
     };
 
-    const input = (type: InputType, down: boolean, l: LevelEditor<LevelData>) => {
+    const input = (type: MouseInputType, down: boolean, l: LevelEditor<LevelData>) => {
         if (level !== null) {
             fastForwardButton.input(type, down);
             stopButton.input(type, down);
@@ -205,7 +205,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
 
     return {
         start,
-        input: (type: InputType, down: boolean) => {
+        input: (type: MouseInputType, down: boolean) => {
             if (levelEditor !== null) input(type, down, levelEditor);
         },
         scroll: (delta: number) => {

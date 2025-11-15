@@ -1,11 +1,12 @@
 import { basic } from "@peulicke/algorithms";
 import { grid, orient, vec2, vec3 } from "@peulicke/geometry";
 import { loadImage } from "@peulicke/image/pixels";
-import type { Graphics, InputType, Qwick } from "./qwick";
+import type { Graphics, Qwick } from "./qwick";
 import { createQwick, graphics, matrix } from "./qwick";
 import type { PartialLevelEditor } from "./qwick/game";
 import { type Camera, createCamera } from "./qwick/graphics/camera";
 import { createBoxMesh, createLight, type Graphics3d } from "./qwick/graphics/graphics3d";
+import type { MouseInputType } from "./qwick/input";
 import { test } from "./test";
 
 const smellResolution = 2;
@@ -384,7 +385,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
     const blueBox = createBoxMesh([0, 0, 1]);
 
     return {
-        input: (type: InputType, down: boolean) => {
+        input: (type: MouseInputType, down: boolean) => {
             startButton.input(type, down);
             if (!levelState.started && startButton.clicked && allUnitsPlaced()) levelState.started = true;
             if (type !== "lmb") return;

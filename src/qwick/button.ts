@@ -1,12 +1,12 @@
 import { vec2 } from "@peulicke/geometry";
 import type { Graphics } from "./graphics";
 import type { Color } from "./graphics/utils";
-import type { InputType } from "./input";
+import type { MouseInputType } from "./input";
 
 export type Button = {
     holding: boolean;
     clicked: boolean;
-    input: (type: InputType, down: boolean) => void;
+    input: (type: MouseInputType, down: boolean) => void;
     draw: (graphics: Graphics, fillColor?: Color, borderColor?: Color) => void;
     drawWithBorder: (graphics: Graphics, fillColor?: Color, borderColor?: Color, borderWidth?: number) => void;
 };
@@ -39,7 +39,7 @@ export const createButton = (
     const button: Button = {
         holding: false,
         clicked: false,
-        input: (type: InputType, down: boolean) => {
+        input: (type: MouseInputType, down: boolean) => {
             if (down) button.clicked = false;
             if (type !== "lmb") return;
             if (!insideButton(getMousePos, getCenter(), getR())) {

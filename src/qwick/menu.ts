@@ -1,8 +1,8 @@
-import type { Graphics, Qwick } from ".";
-import type { InputType } from "./input";
-import type { Game } from "./game";
-import type { Storage } from "./storage";
 import { vec2 } from "@peulicke/geometry";
+import type { Graphics, Qwick } from ".";
+import type { Game } from "./game";
+import type { MouseInputType } from "./input";
+import type { Storage } from "./storage";
 
 export const createMenu = <LevelDatas>(qwick: Qwick, graphics: Graphics, game: Game<LevelDatas>) => {
     const hasLevelEditor = game.loadLevelEditor !== undefined;
@@ -35,7 +35,7 @@ export const createMenu = <LevelDatas>(qwick: Qwick, graphics: Graphics, game: G
         );
     });
 
-    const input = (type: InputType, down: boolean): number | undefined => {
+    const input = (type: MouseInputType, down: boolean): number | undefined => {
         startButton.input(type, down);
         if (startButton.clicked) return 0;
         if (hasLevelEditor) {

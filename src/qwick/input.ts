@@ -1,10 +1,13 @@
 import { vec2 } from "@peulicke/geometry";
+import type { KeyCode } from "./input-types";
 
-export type InputType = "lmb" | "rmb";
+export type MouseInputType = "lmb" | "rmb";
+
+export type InputType = MouseInputType | KeyCode;
 
 export type Listeners = {
     resize: () => void;
-    input: (type: InputType, down: boolean) => void;
+    input: (type: MouseInputType, down: boolean) => void;
     scroll: (delta: number) => void;
 };
 
@@ -16,9 +19,9 @@ export const createInput = () => {
     const input: {
         mousePos: vec2.Vec2;
         mousePressedPos: vec2.Vec2;
-        keysDown: Set<string>;
-        keysPressed: Set<string>;
-        keysReleased: Set<string>;
+        keysDown: Set<InputType>;
+        keysPressed: Set<InputType>;
+        keysReleased: Set<InputType>;
     } = {
         mousePos: getInitialMousePos(),
         mousePressedPos: getInitialMousePos(),
@@ -31,7 +34,7 @@ export const createInput = () => {
         if (listeners.resize) listeners.resize();
     };
 
-    const onInput = (type: InputType, down: boolean) => {
+    const onInput = (type: MouseInputType, down: boolean) => {
         if (down) {
             input.keysPressed.add(type);
             input.keysDown.add(type);
@@ -53,14 +56,16 @@ export const createInput = () => {
     window.addEventListener("contextmenu", contextmenu, true);
 
     const keydown = (e: KeyboardEvent) => {
-        if (!input.keysDown.has(e.code)) input.keysPressed.add(e.code);
-        input.keysDown.add(e.code);
+        const code = e.code as KeyCode;
+        if (!input.keysDown.has(code)) input.keysPressed.add(code);
+        input.keysDown.add(code);
     };
     window.addEventListener("keydown", keydown, true);
 
     const keyup = (e: KeyboardEvent) => {
-        input.keysReleased.add(e.code);
-        input.keysDown.delete(e.code);
+        const code = e.code as KeyCode;
+        input.keysReleased.add(code);
+        input.keysDown.delete(code);
     };
     window.addEventListener("keyup", keyup, true);
 
