@@ -11,8 +11,8 @@ export const createQwickInput = (input: Input): QwickInput => ({
         getPixels: () => input.mousePos
     },
     mousePosInverted: {
-        get: () => invertVertically(input.getMousePos(), 1),
-        getPressed: () => invertVertically(input.getMousePressedPos(), 1),
+        get: () => invertVertically(input.getMousePos(), 0),
+        getPressed: () => invertVertically(input.getMousePressedPos(), 0),
         getPixels: () => invertVertically(input.mousePos, window.innerHeight)
     },
     isKeyDown: (key: InputType) => input.keysDown.has(key),
