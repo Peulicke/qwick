@@ -5,7 +5,7 @@ import { createBoxMesh, createLight, createMesh, createPlaneMesh } from "./qwick
 import type { CreateQwickTest, TestSuite } from "./qwick/qwick-test";
 
 const testA: CreateQwickTest = ({ input }) => {
-    let pos = input.getMousePos();
+    let pos = input.mousePos.get();
     let size = 0.25;
 
     const scroll = (delta: number) => {
@@ -13,7 +13,7 @@ const testA: CreateQwickTest = ({ input }) => {
     };
 
     const update = () => {
-        pos = input.getMousePos();
+        pos = input.mousePos.get();
     };
 
     const draw = (graphics: Graphics) => {
@@ -82,7 +82,7 @@ export const test3d: CreateQwickTest = ({ input }) => {
             });
             g.transformation(
                 {
-                    pos: [input.getMousePos()[0] * 10, 3, input.getMousePos()[1] * 10 * Math.SQRT2],
+                    pos: [input.mousePos.get()[0] * 10, 3, input.mousePos.get()[1] * 10 * Math.SQRT2],
                     orient: orient.fromAxisAngle([0, 1, 0], Date.now() / 1000)
                 },
                 () => {

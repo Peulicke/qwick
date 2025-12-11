@@ -296,7 +296,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
         }
     };
 
-    const getMousePos = () => camera.screenToWorldCoords(qwick.input.getMousePos());
+    const getMousePos = () => camera.screenToWorldCoords(qwick.input.mousePos.get());
 
     const allUnitsPlaced = () =>
         levelState.units.filter(u => u.team === 0).every(u => getAreaType(u.pos) === "placable");
@@ -461,7 +461,7 @@ const loadLevelEditor = (qwick: Qwick) => (): PartialLevelEditor<LevelData> => {
     const camera = createCamera({});
     updateCamera(camera, levelState);
 
-    const getPos = () => vec2.round(camera.screenToWorldCoords(qwick.input.getMousePos()));
+    const getPos = () => vec2.round(camera.screenToWorldCoords(qwick.input.mousePos.get()));
 
     const createAreaMenuItem = (type: AreaType) => ({
         update: () => {

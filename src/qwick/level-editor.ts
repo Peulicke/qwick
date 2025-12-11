@@ -129,7 +129,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
         if (type === "lmb" && down) {
             l.menuItems.forEach((_, i) => {
                 const rect = vec2.createRect(getMenuItemPos(graphics, i), getMenuItemR());
-                if (!vec2.insideRect(qwick.input.getMousePos(), rect)) return;
+                if (!vec2.insideRect(qwick.input.mousePos.get(), rect)) return;
                 selectedMenuItemIndex = i;
                 shouldActivateLevelEditorInput = false;
             });

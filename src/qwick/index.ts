@@ -21,10 +21,15 @@ export type { InputType } from "./input";
 export * as matrix from "./matrix";
 export * as transform2 from "./transform2";
 
+export type MousePosGetter = {
+    get: () => vec2.Vec2;
+    getPressed: () => vec2.Vec2 | undefined;
+    getPixels: () => vec2.Vec2;
+};
+
 export type QwickInput = {
-    getMousePos: () => vec2.Vec2;
-    getMousePressedPos: () => vec2.Vec2 | undefined;
-    getMousePosPixels: () => vec2.Vec2;
+    mousePos: MousePosGetter;
+    mousePosInverted: MousePosGetter;
     isKeyDown: (key: InputType) => boolean;
     wasKeyPressed: (key: InputType) => boolean;
     wasKeyReleased: (key: InputType) => boolean;
