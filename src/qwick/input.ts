@@ -1,7 +1,7 @@
 import { vec2 } from "@peulicke/geometry";
 import type { KeyCode } from "./input-types";
 
-export type MouseInputType = "lmb" | "rmb";
+export type MouseInputType = "lmb" | "rmb" | "mmb";
 
 export type InputType = MouseInputType | KeyCode;
 
@@ -83,6 +83,7 @@ export const createInput = () => {
     const mousedown = (e: MouseEvent) => {
         setMousePos(e.x, e.y);
         if (e.button === 0) onInput("lmb", true);
+        if (e.button === 1) onInput("mmb", true);
         if (e.button === 2) onInput("rmb", true);
     };
     window.addEventListener("mousedown", mousedown, true);
@@ -95,6 +96,7 @@ export const createInput = () => {
 
     const mouseup = (e: MouseEvent) => {
         if (e.button === 0) onInput("lmb", false);
+        if (e.button === 1) onInput("mmb", false);
         if (e.button === 2) onInput("rmb", false);
     };
     window.addEventListener("mouseup", mouseup, true);
