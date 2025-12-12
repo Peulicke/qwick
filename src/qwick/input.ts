@@ -56,6 +56,7 @@ export const createInput = () => {
     window.addEventListener("contextmenu", contextmenu, true);
 
     const keydown = (e: KeyboardEvent) => {
+        e.preventDefault();
         const code = e.code as KeyCode;
         if (!input.keysDown.has(code)) input.keysPressed.add(code);
         input.keysDown.add(code);
