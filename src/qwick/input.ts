@@ -1,5 +1,5 @@
 import { vec2 } from "@peulicke/geometry";
-import type { KeyCode } from "./input-types";
+import { isFunctionKey, type KeyCode } from "./input-types";
 
 export type MouseInputType = "lmb" | "rmb" | "mmb";
 
@@ -56,8 +56,8 @@ export const createInput = () => {
     window.addEventListener("contextmenu", contextmenu, true);
 
     const keydown = (e: KeyboardEvent) => {
-        e.preventDefault();
         const code = e.code as KeyCode;
+        if (!isFunctionKey(code)) e.preventDefault();
         if (!input.keysDown.has(code)) input.keysPressed.add(code);
         input.keysDown.add(code);
     };

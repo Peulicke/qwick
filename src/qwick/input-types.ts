@@ -38,31 +38,34 @@ export type DigitKey =
     | "Digit8"
     | "Digit9";
 
-export type FunctionKey =
-    | "F1"
-    | "F2"
-    | "F3"
-    | "F4"
-    | "F5"
-    | "F6"
-    | "F7"
-    | "F8"
-    | "F9"
-    | "F10"
-    | "F11"
-    | "F12"
-    | "F13"
-    | "F14"
-    | "F15"
-    | "F16"
-    | "F17"
-    | "F18"
-    | "F19"
-    | "F20"
-    | "F21"
-    | "F22"
-    | "F23"
-    | "F24";
+export const functionKeys = [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6",
+    "F7",
+    "F8",
+    "F9",
+    "F10",
+    "F11",
+    "F12",
+    "F13",
+    "F14",
+    "F15",
+    "F16",
+    "F17",
+    "F18",
+    "F19",
+    "F20",
+    "F21",
+    "F22",
+    "F23",
+    "F24"
+] as const;
+
+export type FunctionKey = (typeof functionKeys)[number];
 
 export type ArrowKey = "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight";
 
@@ -170,3 +173,8 @@ export type KeyCode =
     | SystemKey
     | IntlKey
     | SoftKey;
+
+export const isFunctionKey = (code: KeyCode): code is FunctionKey => {
+    const fk: readonly KeyCode[] = functionKeys;
+    return fk.includes(code);
+};
