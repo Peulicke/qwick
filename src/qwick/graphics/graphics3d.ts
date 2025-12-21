@@ -179,23 +179,24 @@ export const createGraphics3d = (backgroundColor: string) => {
             lights.forEach(({ light, transformation }) => {
                 if (!lightIds.has(light)) lightIds.set(light, getNewId());
                 const id = lightIds.get(light)!;
-                if (threeLights.has(id)) return;
-                const directionalLight = new THREE.DirectionalLight(new THREE.Color(...light.color));
-                directionalLight.castShadow = true;
-                directionalLight.shadow.mapSize.width = light.resolution;
-                directionalLight.shadow.mapSize.height = light.resolution;
-                directionalLight.shadow.camera.left = -light.size;
-                directionalLight.shadow.camera.right = light.size;
-                directionalLight.shadow.camera.top = -light.size;
-                directionalLight.shadow.camera.bottom = light.size;
-                directionalLight.shadow.camera.near = -100;
-                directionalLight.shadow.camera.far = 100;
-                directionalLight.shadow.bias = -1e-4;
-                const targetObject = new THREE.Object3D();
-                directionalLight.target = targetObject;
-                scene.add(directionalLight);
-                scene.add(targetObject);
-                threeLights.set(id, { light: directionalLight, target: targetObject });
+                if (!threeLights.has(id)) {
+                    const directionalLight = new THREE.DirectionalLight(new THREE.Color(...light.color));
+                    directionalLight.castShadow = true;
+                    directionalLight.shadow.mapSize.width = light.resolution;
+                    directionalLight.shadow.mapSize.height = light.resolution;
+                    directionalLight.shadow.camera.left = -light.size;
+                    directionalLight.shadow.camera.right = light.size;
+                    directionalLight.shadow.camera.top = -light.size;
+                    directionalLight.shadow.camera.bottom = light.size;
+                    directionalLight.shadow.camera.near = -100;
+                    directionalLight.shadow.camera.far = 100;
+                    directionalLight.shadow.bias = -1e-4;
+                    const targetObject = new THREE.Object3D();
+                    directionalLight.target = targetObject;
+                    scene.add(directionalLight);
+                    scene.add(targetObject);
+                    threeLights.set(id, { light: directionalLight, target: targetObject });
+                }
 
                 transformThreeObject(
                     threeLights.get(id)!.light,
