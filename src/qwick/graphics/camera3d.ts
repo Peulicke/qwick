@@ -1,7 +1,7 @@
 import { orient, vec2, vec3 } from "@peulicke/geometry";
 import { combineTransformations, createTransformation } from "@peulicke/geometry/transformation";
 import type { Graphics3d } from ".";
-import type { Plane } from "@peulicke/geometry/plane";
+import { linePlaneIntersection, type Plane } from "@peulicke/geometry/plane";
 
 export type Camera3dState = {
     pos: vec3.Vec3;
@@ -10,21 +10,6 @@ export type Camera3dState = {
 };
 
 export type Context = (graphics: Graphics3d, func: () => void) => void;
-
-type Line = {
-    from: vec3.Vec3;
-    to: vec3.Vec3;
-};
-
-export const linePlaneIntersection = (line: Line, plane: Plane): vec3.Vec3 => {
-    const n = vec3.normalize(plane.dir);
-    const lineDir = vec3.normalize(vec3.sub(line.to, line.from));
-    const lineDirAlongNormal = vec3.dot(lineDir, n);
-    const lineToPlaneDiff = vec3.sub(plane.pos, line.from);
-    const lineToPlaneDiffAlongNormal = vec3.dot(lineToPlaneDiff, n);
-    const scale = lineToPlaneDiffAlongNormal / lineDirAlongNormal;
-    return vec3.add(line.from, vec3.scale(lineDir, scale));
-};
 
 export type Camera3d = {
     state: Camera3dState;
