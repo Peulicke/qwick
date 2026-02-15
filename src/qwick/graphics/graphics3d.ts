@@ -173,6 +173,12 @@ export const createGraphics3d = (backgroundColor: string) => {
                 matrix.compose(position, quaternion, scale);
 
                 threeMeshes.get(id)!.setMatrixAt(index, matrix);
+                threeMeshes.get(id)!.instanceMatrix.updateRanges = [
+                    {
+                        start: 0,
+                        count: 16 * threeMeshes.get(id)!.count
+                    }
+                ];
                 threeMeshes.get(id)!.instanceMatrix.needsUpdate = true;
             });
 
