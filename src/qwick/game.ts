@@ -6,8 +6,8 @@ import { defaultUi } from "./ui";
 export type Game<LevelData> = {
     name: string;
     levels: LevelData[];
-    loadLevel: (ld: LevelData) => Level;
-    loadLevelEditor: (() => LevelEditor<LevelData>) | undefined;
+    loadLevel: (ld: LevelData, isInteractingWithUi: () => boolean) => Level;
+    loadLevelEditor: ((isInteractingWithUi: () => boolean) => LevelEditor<LevelData>) | undefined;
     resize: () => void;
     backgroundColor: string;
     show: ShowOptions;
@@ -21,8 +21,8 @@ export type PartialLevelEditor<LevelData> = Partial<
 };
 
 export type PartialGame<LevelData> = Partial<Omit<Game<LevelData>, "loadLevel" | "loadLevelEditor" | "show">> & {
-    loadLevel?: (ld: LevelData) => Partial<Level>;
-    loadLevelEditor?: () => PartialLevelEditor<LevelData>;
+    loadLevel?: (ld: LevelData, isInteractingWithUi: () => boolean) => Partial<Level>;
+    loadLevelEditor?: (isInteractingWithUi: () => boolean) => PartialLevelEditor<LevelData>;
     show?: Partial<ShowOptions>;
 };
 
@@ -35,15 +35,18 @@ export const fromPartialGame = <LevelData>(partialGame: PartialGame<LevelData>):
         resize: () => {},
         backgroundColor: "#60b1c7",
         ...partialGame,
-        loadLevel: levelData => ({ ...defaultLevel(), ...(partialGame.loadLevel?.(levelData) ?? {}) }),
+        loadLevel: (levelData, isInteractingWithUi) => ({
+            ...defaultLevel(),
+            ...(partialGame.loadLevel?.(levelData, isInteractingWithUi) ?? {})
+        }),
         loadLevelEditor:
             partialLoadLevelEditor === undefined
                 ? undefined
-                : () => ({
+                : isInteractingWithUi => ({
                       ...defaultUi(),
                       menuInputs: [],
                       menuItems: [],
-                      ...partialLoadLevelEditor()
+                      ...partialLoadLevelEditor(isInteractingWithUi)
                   }),
         show: {
             ...defaultShowOptions(),

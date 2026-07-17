@@ -35,10 +35,15 @@ export const createLevelRunner = <LevelData>(qwick: Qwick, graphics: Graphics, g
     const successButton = qwick.createButton(getGameOverButtonRect, "Next level");
     const failButton = qwick.createButton(getGameOverButtonRect, "Retry");
 
+    const isInteractingWithUi = () =>
+        [menuButton, restartButton, fastForwardButton, successButton, failButton].some(
+            button => button.holding || button.clicked
+        );
+
     const loadLevel = () => {
         levelSuccess = false;
         levelFail = false;
-        level = game.loadLevel(game.levels[levelNum]);
+        level = game.loadLevel(game.levels[levelNum], isInteractingWithUi);
         emit({ type: EventType.LEVEL_START, levelNum });
     };
 

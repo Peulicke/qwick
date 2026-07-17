@@ -3,7 +3,7 @@ import { grid, orient, vec2, vec3 } from "@peulicke/geometry";
 import { loadImage } from "@peulicke/image/pixels";
 import type { Graphics, Qwick } from "./qwick";
 import { createQwick, graphics, matrix } from "./qwick";
-import type { PartialLevelEditor } from "./qwick/game";
+import type { PartialGame, PartialLevelEditor } from "./qwick/game";
 import { type Camera, createCamera } from "./qwick/graphics/camera";
 import { createBoxMesh, createLight, type Graphics3d } from "./qwick/graphics/graphics3d";
 import type { MouseInputType } from "./qwick/input";
@@ -264,7 +264,9 @@ const updateCamera = (camera: Camera, levelState: LevelState) => {
     camera.state.zoom = (1 - border) / levelState.areas[0].length;
 };
 
-const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
+const loadLevel =
+    (qwick: Qwick): PartialGame<LevelData>["loadLevel"] =>
+    (levelData, isInteractingWithUi) => {
     const startButton = qwick.createButton(
         () => qwick.canvas.getSubSquareMiddle([5, 9], [2, 8], [0, 0], [0.01, 0.01]),
         "Start"
@@ -367,7 +369,10 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     const updatePreparation = () => {
         if (levelState.selectedUnit.index === -1) return;
-        levelState.units[levelState.selectedUnit.index].pos = vec2.add(getMousePos(), levelState.selectedUnit.offset);
+        levelState.units[levelState.selectedUnit.index].pos = vec2.add(
+            getMousePos(),
+            levelState.selectedUnit.offset
+        );
     };
 
     const updateSimulation = () => {
@@ -386,6 +391,7 @@ const loadLevel = (qwick: Qwick) => (levelData: LevelData) => {
 
     return {
         input: (type: MouseInputType, down: boolean) => {
+            if (isInteractingWithUi()) return;
             startButton.input(type, down);
             if (!levelState.started && startButton.clicked && allUnitsPlaced()) levelState.started = true;
             if (type !== "lmb") return;

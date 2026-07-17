@@ -72,9 +72,14 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
     const fastForwardButton = qwick.createButton(() => getButtonRect(2), "▶▶10⨯");
     const stopButton = qwick.createButton(() => getButtonRect(3), "Stop");
 
+    const isInteractingWithUi = () =>
+        [menuButton, loadButton, saveButton, playButton, fastForwardButton, stopButton].some(
+            button => button.holding || button.clicked
+        );
+
     const start = () => {
         if (game.loadLevelEditor === undefined) return;
-        levelEditor = game.loadLevelEditor();
+        levelEditor = game.loadLevelEditor(isInteractingWithUi);
         menuInputButtons = levelEditor.menuInputs.map((menuInput, i) =>
             qwick.createButton(
                 () => getMenuInputRect(graphics, i),
@@ -116,7 +121,7 @@ export const createLevelEditorRunner = <LevelData>(qwick: Qwick, graphics: Graph
             return;
         }
         if (playButton.clicked) {
-            level = game.loadLevel(levelEditor.getLevelData());
+            level = game.loadLevel(levelEditor.getLevelData(), isInteractingWithUi);
             return;
         }
         l.menuInputs.forEach((menuInput, i) => {
